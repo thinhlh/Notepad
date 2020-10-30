@@ -1,0 +1,15 @@
+D:\Learning\UIProgramming\Notepad\Notepad\bin\Debug\Notepad.exe.config
+D:\Learning\UIProgramming\Notepad\Notepad\bin\Debug\Notepad.exe
+D:\Learning\UIProgramming\Notepad\Notepad\bin\Debug\Notepad.pdb
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\Notepad.csprojAssemblyReference.cache
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\MainWindow.g.cs
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\App.g.cs
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\Notepad_MarkupCompile.cache
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\Notepad_MarkupCompile.lref
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\MainWindow.baml
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\Notepad.g.resources
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\Notepad.Properties.Resources.resources
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\Notepad.csproj.GenerateResource.cache
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\Notepad.csproj.CoreCompileInputs.cache
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\Notepad.exe
+D:\Learning\UIProgramming\Notepad\Notepad\obj\Debug\Notepad.pdb
