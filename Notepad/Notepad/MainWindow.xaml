@@ -85,9 +85,7 @@
                 <MenuItem Header="Report" Name="Report"></MenuItem>
             </MenuItem>
         </Menu>
-        <TabControl  FontFamily="Consolas" Grid.Row="1" Name="tabControl">
-            
-        </TabControl>
+        <TabControl  FontFamily="Consolas" Grid.Row="1" Name="tabControl"/>
 
     </Grid>
 </Window>
