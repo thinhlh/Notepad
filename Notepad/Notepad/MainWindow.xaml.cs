@@ -2,11 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
+
 namespace Notepad
 {
     /// <summary>
@@ -67,9 +71,8 @@ namespace Notepad
 
                 /*Pointer to the end of paragraph*/
                 TextBox textBox = (TextBox)tabItems[indexForTab].Content;
-                textBox.SelectionStart = textBox.Text.Length;
-                textBox.SelectionLength = 0;
                 textBox.Text = fileData[indexForTab];
+
 
                 tabItems[indexForTab].Header = Path.GetFileName(openFileDialog.FileName);
                 tabItems[indexForTab].Content = textBox;
@@ -122,7 +125,7 @@ namespace Notepad
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             saveFileDialog.DefaultExt = ".txt";
             saveFileDialog.Filter = "Text files (*.txt)| *.txt | Java (*.java) | *.java | C (*.c) | *.c | C++ (*.cpp) | *.cpp | All files (*.*) | *.* ";
-            saveFileDialog.FileName = tabItems[index].Header.ToString();
+            saveFileDialog.FileName = tabItems[tabControl.SelectedIndex].Header.ToString();
             if (saveFileDialog.ShowDialog() == true)
             {
                 System.IO.File.WriteAllText(saveFileDialog.FileName, fileData[index]);
@@ -139,13 +142,46 @@ namespace Notepad
 
         private void CloseFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            CloseFile_Executed();
+            CloseFile_Executed(tabControl.SelectedIndex);
         }
 
         private void CloseFile_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
+
+        private void NewTerminal_Executed(object sender,ExecutedRoutedEventArgs e)
+        {
+            ProcessStartInfo process = new ProcessStartInfo();
+            process.FileName = @"C:\WINDOWS\system32\cmd.exe";
+            process.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            Process.Start(process);        
+        }
+
+        private void NewTerminal_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void NewTerminalCurrentDir_Executed(object sender,ExecutedRoutedEventArgs e)
+        {
+            ProcessStartInfo process = new ProcessStartInfo();
+            process.FileName = "cmd.exe";
+
+            // Get Path of the current Tab then set process.Working Directory to parent to open cmd at working directory    
+            var path = Path.GetFullPath(filePaths[tabControl.SelectedIndex]);
+            process.WorkingDirectory = Directory.GetParent(path).FullName;
+
+            Process.Start(process);
+        }
+        
+        private void NewTerminalCurrentDir_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if(filePaths[tabControl.SelectedIndex]!="")
+                e.CanExecute = true;
+            else e.CanExecute = false;
+        }
+
         #endregion
 
         #region Additional Function
@@ -187,7 +223,7 @@ namespace Notepad
 
         private List<int> closedTabIndexes = new List<int>();// this List holds indexs of tabs that was removed from tabControl
 
-        private int FindIndexForTab()
+        private int FindIndexForTab() // this function define which tabIndex is approriate for InitTab 
         {
             if (closedTabIndexes.Count == 0)
                 return tabControl.Items.Count;
@@ -198,7 +234,6 @@ namespace Notepad
                 return index;
             }
         }
-
         private void InitTab(TabItem tabItem)
         {
             //Add filePaths and fileData
@@ -247,30 +282,28 @@ namespace Notepad
                 Save_Executed(i);
         }
 
-        private void CloseFile_Executed()
+        private void CloseFile_Executed(int index)
         {
-            if (isSaved[tabControl.SelectedIndex] == false)
+            if (isSaved[index] == false)
             {
                 //Message then request save
                 string message = "This document have been modified, save changes?";
-                MessageBoxResult result = MessageBox.Show(message, "Yes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                MessageBoxResult result = MessageBox.Show(message, "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
-                    SaveAs_Executed(tabControl.SelectedIndex);
-                else if (result == MessageBoxResult.Cancel)
-                    return;
+                    SaveAs_Executed(index);
             }
-            tabControl.Items.RemoveAt(tabControl.SelectedIndex);
+            tabControl.Items.RemoveAt(index);
 
             // File have data and saved
 
             if (tabControl.SelectedIndex >= 0) // In case the recent deleted tab was the last tab => selected index=-1
             {
 
-                int deletedIndexTab = Int16.Parse(tabItems[tabControl.SelectedIndex].Name.Substring(8)); // Return the index of deleted tabItem by get subTring from name then convert to int
-                tabItems.RemoveAt(tabControl.SelectedIndex);
-                fileData.RemoveAt(tabControl.SelectedIndex);
-                filePaths.RemoveAt(tabControl.SelectedIndex);
-                isSaved.RemoveAt(tabControl.SelectedIndex);
+                int deletedIndexTab = Int16.Parse(tabItems[index].Name.Substring(8)); // Return the index of deleted tabItem by get subTring from name then convert to int
+                tabItems.RemoveAt(index);
+                fileData.RemoveAt(index);
+                filePaths.RemoveAt(index);
+                isSaved.RemoveAt(index);
 
                 closedTabIndexes.Add(deletedIndexTab);
             }
@@ -279,21 +312,46 @@ namespace Notepad
         private void CloseAll_Click(object sender, RoutedEventArgs e)
         {
             for (int i = tabControl.Items.Count - 1; i >= 0; i--)
-                CloseFile_Executed();
+                CloseFile_Executed(i);
         }
-
+        
         private void NewWindow_Click(object sender, RoutedEventArgs e)
         {
 
         }
-
-        private void Exit_Click(object sender, RoutedEventArgs e)
+        private void CloseWindow_Click(object sender, RoutedEventArgs e)
         {
-            //CloseAll_Click(sender,e);
-            //System.Windows.Application.Current.Shutdown();
+            CloseAll_Click(sender, e);
+            System.Windows.Application.Current.Shutdown();
         }
 
         #endregion
     }
+
+
+    #region CustomCommands
+    public static class CustomCommands
+    {
+        public static readonly RoutedUICommand NewTerminal = new RoutedUICommand(
+            "Terminal",
+            "Terminal",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.T, ModifierKeys.Control)
+            }
+        );
+
+        public static readonly RoutedUICommand NewTerminalCurrentDir = new RoutedUICommand(
+            "Terminal in Current Directory",
+            "Terminal in Current Directory",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.T, ModifierKeys.Control|ModifierKeys.Shift) //Multi ModifierKeys
+            }
+        );
+    }
+    #endregion
 }
 

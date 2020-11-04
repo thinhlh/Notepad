@@ -40,13 +40,14 @@ tạo obj SaveFileDialog và thêm file vào
 Ta sẽ thực hiện một vòng lặp hết tất cả các isSaved 
 nếu phát hiện ra mục nào chưa save thì sẽ gọi hàm save cho tabItem đó
 
-+ Ý tưởng cho chức năng Exit 
++ Với chức năng Exit và Close Window 
 	Chức năng exit sẽ cấu tạo từ những hàm close tab (remove tab) 
 	Remove tab nghĩa là sẽ tắt tab đó đi chứ không có nghĩa là xóa nó  
 	Chức năng remove sẽ remove với tab đã save và suggest save cho 	
 	những tab chưa save 
 
-
++Với chức năng mở terminal ngay tại path của file hoặc mở terminal bình thường ta sử dụng Process.Start() 
+	Với file ta sử dụng thêm directory Parent để truy cập vào thư mục cha có chứa file đó 
 
 Có các hàm phụ như 
 	TextBox_TextChanged() Nếu có sự thay đổi ở textBox lập tức gọi hàm AddSavedIcon (luôn luôn có dấu * khi thay đổi)

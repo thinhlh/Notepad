@@ -4,27 +4,42 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Notepad"
+        xmlns:self="clr-namespace:Notepad"
         mc:Ignorable="d"
         Title="Notepad" Height="450" Width="800" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" WindowStartupLocation="CenterScreen">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.New"
                         Executed="NewFile_Executed"
                         CanExecute="NewFile_CanExecute"/>
+        
         <CommandBinding Command="ApplicationCommands.Open"
                         Executed="OpenFile_Executed"
                         CanExecute="OpenFile_CanExecute"/>
+        
         <CommandBinding Command="ApplicationCommands.Save"
                         Executed="Save_Executed"
                         CanExecute="Save_CanExecute"/>
+        
         <CommandBinding Command="ApplicationCommands.SaveAs"
                         Executed="SaveAs_Executed"
                         CanExecute="SaveAs_CanExecute"/>
-
+        
         <CommandBinding Command="ApplicationCommands.Close"
                         Executed="CloseFile_Executed"
                         CanExecute="CloseFile_CanExecute"/>
+        
+
+        <CommandBinding Command="self:CustomCommands.NewTerminal"
+                        Executed="NewTerminal_Executed" 
+                        CanExecute="NewTerminal_CanExecute"/>
+
+        <CommandBinding Command="self:CustomCommands.NewTerminalCurrentDir"
+                        Executed="NewTerminalCurrentDir_Executed"
+                        CanExecute="NewTerminalCurrentDir_CanExecute"/>
+
     </Window.CommandBindings>
 
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
@@ -42,9 +57,9 @@
                 <Separator></Separator>
                 <MenuItem Header="Close File" Name="CloseFile" Command="ApplicationCommands.Close"></MenuItem>
                 <MenuItem Header="New Window" Name="NewWindow"></MenuItem>
-                <MenuItem Header="Close Window" Name="CloseWindow"></MenuItem>
+                <MenuItem Header="Close Window" Name="CloseWindow" Click="CloseWindow_Click"></MenuItem>
                 <Separator></Separator>
-                <MenuItem Header="Exit" Name="Exit"></MenuItem>
+                <MenuItem Header="Exit" Name="Exit" Click="CloseWindow_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Edit">
                 <MenuItem Header="Cut" Name="Cut" Command="ApplicationCommands.Cut"></MenuItem>
@@ -73,8 +88,8 @@
                 <MenuItem Header="Run Without Debug" Name="RunWithoutDebug"></MenuItem>
             </MenuItem>
             <MenuItem Header="Terminal" Name="Terminal">
-                <MenuItem Header="New Terminal" Name="NewTerminal"></MenuItem>
-                <MenuItem Header="Focus Terminal" Name="FocusTerminal"></MenuItem>
+                <MenuItem Header="New Terminal" Name="NewTerminal" Command="self:CustomCommands.NewTerminal"></MenuItem>
+                <MenuItem Header="Open Terminal in Current Workspace" Name="NewTerminalCurrentDir" Command="self:CustomCommands.NewTerminalCurrentDir"></MenuItem>
             </MenuItem>
             <MenuItem Header="Preferences" Name="Preferences">
                 <MenuItem Header="Dark Mode" Name="Darkmode"/>
