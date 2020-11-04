@@ -2,10 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
+
 namespace Notepad
 {
     /// <summary>
@@ -19,23 +24,18 @@ namespace Notepad
             InitializeComponent();
 
             InitTab(new TabItem());
-
         }
-
-        #region Variable
+        #region Variables
 
         private List<bool> isSaved = new List<bool>();
 
-        private List<TabItem> tabItems = new List<TabItem>(); // each Tab Item are contained here
-
-        private List<TextBox> textBoxes = new List<TextBox>(); // textBox for each Tab
+        private List<TabItem> tabItems = new List<TabItem>(); // each Tab Item is contained here
 
         private List<string> filePaths = new List<string>(); // FilePath for each Tab
 
-        private int TabCount = 0;
+        private List<string> fileData = new List<string>();//File Data for each File
 
         #endregion
-
 
         #region Command
 
@@ -43,13 +43,14 @@ namespace Notepad
         {
             InitTab(new TabItem());
         }
+
         private void NewFile_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
         private void OpenFile_Executed(object sender, ExecutedRoutedEventArgs e)
-        {     
+        {
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
             openFileDialog.DefaultExt = ".txt";
@@ -57,17 +58,26 @@ namespace Notepad
 
             if (openFileDialog.ShowDialog() == true)
             {
-                if(textBoxes[tabControl.SelectedIndex].Text.Length>0)InitTab(new TabItem());
-                textBoxes[tabControl.SelectedIndex].Text = System.IO.File.ReadAllText(openFileDialog.FileName);
-                tabItems[tabControl.SelectedIndex].Header = openFileDialog.FileName.ToString();
+                int indexForTab;// Defining which tab the file will be open
+                // If open in new tab => tabItems.Count-1
+                // if open in recent tab => tabControl.selecte
+                if (fileData[tabControl.SelectedIndex].Length > 0)
+                {
+                    InitTab(new TabItem());
+                    indexForTab = tabItems.Count - 1;
+                }
+                else indexForTab = tabControl.SelectedIndex;
+                fileData[indexForTab] = System.IO.File.ReadAllText(openFileDialog.FileName);
 
                 /*Pointer to the end of paragraph*/
-                textBoxes[tabControl.SelectedIndex].SelectionStart = textBoxes[tabControl.SelectedIndex].Text.Length;
-                textBoxes[tabControl.SelectedIndex].SelectionLength = 0;
-                
-                tabItems[tabControl.SelectedIndex].Header = Path.GetFileName(openFileDialog.FileName);
-                filePaths[tabControl.SelectedIndex] = openFileDialog.FileName;
-                isSaved[tabControl.SelectedIndex] = true;
+                TextBox textBox = (TextBox)tabItems[indexForTab].Content;
+                textBox.Text = fileData[indexForTab];
+
+
+                tabItems[indexForTab].Header = Path.GetFileName(openFileDialog.FileName);
+                tabItems[indexForTab].Content = textBox;
+                filePaths[indexForTab] = openFileDialog.FileName;
+                isSaved[indexForTab] = true;
             }
 
         }
@@ -79,29 +89,19 @@ namespace Notepad
 
         private void Save_Executed(object sender, ExecutedRoutedEventArgs e) // For normal Save 
         {
-            if (!isSaved[tabControl.SelectedIndex]) // not yet saved
-            {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-
-                bool fileExsisted = System.IO.File.Exists(filePaths[tabControl.SelectedIndex]);
-                if (fileExsisted)
-                {
-                    System.IO.File.WriteAllText(filePaths[tabControl.SelectedIndex], textBoxes[tabControl.SelectedIndex].Text);
-                    RemoveSavedIcon(tabControl.SelectedIndex);
-                }
-                else SaveAs_Executed(sender, e);
-            }
+            Save_Executed(tabControl.SelectedIndex);
         }
+
         private void Save_Executed(int index)//for saving tab index_th using for Save All method Only 
         {
-            if (!isSaved[tabControl.SelectedIndex]) // not yet saved
+            if (!isSaved[index]) // not yet saved
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
 
                 bool fileExsisted = System.IO.File.Exists(filePaths[index]);
                 if (fileExsisted)
                 {
-                    System.IO.File.WriteAllText(filePaths[index], textBoxes[index].Text);
+                    System.IO.File.WriteAllText(filePaths[index], fileData[index]);
                     RemoveSavedIcon(index);
                 }
                 else SaveAs_Executed(index);
@@ -112,25 +112,12 @@ namespace Notepad
         {
             e.CanExecute = true;
         }
-        
+
         private void SaveAs_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-
-            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            saveFileDialog.DefaultExt = ".txt";
-            saveFileDialog.Filter = "Text files (*.txt)| *.txt | Java (*.java) | *.java | C (*.c) | *.c | C++ (*.cpp) | *.cpp | All files (*.*) | *.* ";
-            //saveFileDialog.FileName = "*.txt";
-            saveFileDialog.FileName = textBoxes[tabControl.SelectedIndex].Text.Substring(0);
-            if (saveFileDialog.ShowDialog()==true)
-            {
-                System.IO.File.WriteAllText(saveFileDialog.FileName, textBoxes[tabControl.SelectedIndex].Text);
-                RemoveSavedIcon(tabControl.SelectedIndex);
-                tabItems[tabControl.SelectedIndex].Header = Path.GetFileName(saveFileDialog.FileName);
-                filePaths[tabControl.SelectedIndex] = saveFileDialog.FileName;
-            }
-
+            SaveAs_Executed(tabControl.SelectedIndex);
         }
+
         private void SaveAs_Executed(int index) // Save As for Save All Method Only 
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -138,10 +125,10 @@ namespace Notepad
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             saveFileDialog.DefaultExt = ".txt";
             saveFileDialog.Filter = "Text files (*.txt)| *.txt | Java (*.java) | *.java | C (*.c) | *.c | C++ (*.cpp) | *.cpp | All files (*.*) | *.* ";
-            saveFileDialog.FileName = tabItems[index].Header.ToString();
-            if (saveFileDialog.ShowDialog()==true)
+            saveFileDialog.FileName = tabItems[tabControl.SelectedIndex].Header.ToString();
+            if (saveFileDialog.ShowDialog() == true)
             {
-                System.IO.File.WriteAllText(saveFileDialog.FileName, textBoxes[index].Text);
+                System.IO.File.WriteAllText(saveFileDialog.FileName, fileData[index]);
                 RemoveSavedIcon(index);
                 tabItems[index].Header = Path.GetFileName(saveFileDialog.FileName);
                 filePaths[index] = saveFileDialog.FileName;
@@ -153,36 +140,56 @@ namespace Notepad
             e.CanExecute = true;
         }
 
-
         private void CloseFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            String message = tabItems[tabControl.SelectedIndex].Header.ToString() + " have been modified, save changes ?";
-            if (!isSaved[tabControl.SelectedIndex])
-            {
-                MessageBoxResult result = MessageBox.Show(message, "Yes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                    Save_Executed(sender, e);
-                else if (result == MessageBoxResult.No)
-                {
-                    tabControl.Items.Remove(tabControl.SelectedItem);
-                    // header cua tab sau va text box cua tab truoc hien thi cung mot luc!   
-                }
-
-            }
+            CloseFile_Executed(tabControl.SelectedIndex);
         }
+
         private void CloseFile_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
+        private void NewTerminal_Executed(object sender,ExecutedRoutedEventArgs e)
+        {
+            ProcessStartInfo process = new ProcessStartInfo();
+            process.FileName = @"C:\WINDOWS\system32\cmd.exe";
+            process.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            Process.Start(process);        
+        }
+
+        private void NewTerminal_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void NewTerminalCurrentDir_Executed(object sender,ExecutedRoutedEventArgs e)
+        {
+            ProcessStartInfo process = new ProcessStartInfo();
+            process.FileName = "cmd.exe";
+
+            // Get Path of the current Tab then set process.Working Directory to parent to open cmd at working directory    
+            var path = Path.GetFullPath(filePaths[tabControl.SelectedIndex]);
+            process.WorkingDirectory = Directory.GetParent(path).FullName;
+
+            Process.Start(process);
+        }
+        
+        private void NewTerminalCurrentDir_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if(filePaths[tabControl.SelectedIndex]!="")
+                e.CanExecute = true;
+            else e.CanExecute = false;
+        }
 
         #endregion
 
-
         #region Additional Function
+
+        /* use tabControl.SelectedIndex as an argument for normal save and save as 
+         * use index in loop for save all method */
+
         private void RemoveSavedIcon(int index)
-            /* use tabControl.SelectedIndex as an argument for normal save and save as 
-             * use index in loop for save all method */
         {
             isSaved[index] = true;
 
@@ -202,37 +209,58 @@ namespace Notepad
 
             if (isSaved[tabControl.SelectedIndex]) // normal situation
             {
-                //Raise * at the end and keep isSaved=false when there is a change with out save before
+                //Raise* at the end and keep isSaved = false when there is a change with out save before
                 AddSavedIcon();
             }
 
             //When init situation // is Save equal to false and header does not contains * => so add * when text changed
-            if (header.Contains("*")==false&&isSaved[tabControl.SelectedIndex]==false)
+            else if (header.Contains("*") == false && isSaved[tabControl.SelectedIndex] == false)
                 AddSavedIcon();
+
+            TextBox textBox = (TextBox)sender;
+            fileData[tabControl.SelectedIndex] = textBox.Text;
+        }
+
+        private List<int> closedTabIndexes = new List<int>();// this List holds indexs of tabs that was removed from tabControl
+
+        private int FindIndexForTab() // this function define which tabIndex is approriate for InitTab 
+        {
+            if (closedTabIndexes.Count == 0)
+                return tabControl.Items.Count;
+            else
+            {
+                int index = closedTabIndexes[0];
+                closedTabIndexes.RemoveAt(0);
+                return index;
+            }
         }
         private void InitTab(TabItem tabItem)
         {
-
-            //Setup for TextBox
-            textBoxes.Add(new TextBox());
-            textBoxes[TabCount].AcceptsReturn = true;
-            textBoxes[TabCount].AcceptsTab = true;
-            textBoxes[TabCount].HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            textBoxes[TabCount].VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            textBoxes[TabCount].BorderThickness = new Thickness(0);
-            textBoxes[TabCount].Margin = new Thickness(0, -2, 0, 0);
-            textBoxes[TabCount].FontSize = 20;
-            textBoxes[TabCount].TextChanged += TextBox_TextChanged;
-
-            //Setup for tabItem
-            tabItem.Header = "Document " + (TabCount + 1); // Header Display Always larger than 1 of the tab count in tabItems
-            tabItem.Name = "Document" + TabCount;
-            tabItem.Content = textBoxes[TabCount];
-
-            //Add filePaths
+            //Add filePaths and fileData
 
             filePaths.Add("");
-            
+            fileData.Add("");
+
+            //Setup for TextBox of  tabItem
+            TextBox textBox = new TextBox();
+            tabItem.Content = textBox;
+
+            textBox.Text = fileData[tabItems.Count];
+            textBox.AcceptsReturn = true;
+            textBox.AcceptsTab = true;
+            textBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            textBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            textBox.BorderThickness = new Thickness(0);
+            textBox.Margin = new Thickness(0, -2, 0, 0);
+            textBox.FontSize = 20;
+            textBox.TextChanged += TextBox_TextChanged;
+
+            //Setup for tabItem
+            int tabIndex = FindIndexForTab();
+            tabItem.Header = "Document " + (tabIndex + 1); // Header Display Always larger than 1 of the number of element in tabItems
+            tabItem.Name = "Document" + (tabIndex);
+            tabItem.Content = textBox;
+
             //Add to tabItems
             tabItems.Add(tabItem);
 
@@ -240,18 +268,90 @@ namespace Notepad
             tabControl.Items.Add(tabItem);
             tabItem.Focus();
 
-            // Init is Save 
+            // Init isSave 
             isSaved.Add(new bool());
-            TabCount++;
         }
 
-        private void SaveAll_Click(object sender,RoutedEventArgs e)
+        #endregion
+
+        #region Click
+
+        private void SaveAll_Click(object sender, RoutedEventArgs e)
         {
-            for(int i=0;i<tabItems.Count;i++)
-                if(isSaved[i]==false)
-                    Save_Executed(i);
+            for (int i = tabControl.Items.Count - 1; i >= 0; i--)
+                Save_Executed(i);
         }
 
+        private void CloseFile_Executed(int index)
+        {
+            if (isSaved[index] == false)
+            {
+                //Message then request save
+                string message = "This document have been modified, save changes?";
+                MessageBoxResult result = MessageBox.Show(message, "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                    SaveAs_Executed(index);
+            }
+            tabControl.Items.RemoveAt(index);
+
+            // File have data and saved
+
+            if (tabControl.SelectedIndex >= 0) // In case the recent deleted tab was the last tab => selected index=-1
+            {
+
+                int deletedIndexTab = Int16.Parse(tabItems[index].Name.Substring(8)); // Return the index of deleted tabItem by get subTring from name then convert to int
+                tabItems.RemoveAt(index);
+                fileData.RemoveAt(index);
+                filePaths.RemoveAt(index);
+                isSaved.RemoveAt(index);
+
+                closedTabIndexes.Add(deletedIndexTab);
+            }
+        }
+
+        private void CloseAll_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = tabControl.Items.Count - 1; i >= 0; i--)
+                CloseFile_Executed(i);
+        }
+        
+        private void NewWindow_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void CloseWindow_Click(object sender, RoutedEventArgs e)
+        {
+            CloseAll_Click(sender, e);
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        #endregion
+    }
+
+
+    #region CustomCommands
+    public static class CustomCommands
+    {
+        public static readonly RoutedUICommand NewTerminal = new RoutedUICommand(
+            "Terminal",
+            "Terminal",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.T, ModifierKeys.Control)
+            }
+        );
+
+        public static readonly RoutedUICommand NewTerminalCurrentDir = new RoutedUICommand(
+            "Terminal in Current Directory",
+            "Terminal in Current Directory",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.T, ModifierKeys.Control|ModifierKeys.Shift) //Multi ModifierKeys
+            }
+        );
     }
     #endregion
 }
+
