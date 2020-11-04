@@ -1,4 +1,6 @@
 READ ME.txt 
+#Project Information at notion [https://www.notion.so/GUI-Programming-Project-5871d5806f0e46ee9903c990f9d169c5]
+
 Quá trình suy nghĩ và đưa ra giải pháp 
 
 Bước đầu ta có 1 xaml TabControl => Ngay tại cửa sổ tạo Window sẽ thêm sẵn 1 tabItem có header là Document 1* với * là chưa lưu 
