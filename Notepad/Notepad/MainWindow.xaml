@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Notepad"
         xmlns:self="clr-namespace:Notepad"
         mc:Ignorable="d"
-        Title="Notepad" Height="450" Width="800" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" WindowStartupLocation="CenterScreen">
+        Title="Notepad" Height="450" Width="800" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" WindowStartupLocation="CenterScreen" Icon="SublimeIcon.png">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.New"
                         Executed="NewFile_Executed"
@@ -37,6 +37,10 @@
                         Executed="NewTerminalCurrentDir_Executed"
                         CanExecute="NewTerminalCurrentDir_CanExecute"/>
 
+        <CommandBinding Command="self:CustomCommands.Exit"
+                        Executed="Exit_Executed"
+                        CanExecute="Exit_CanExecute"/>
+
     </Window.CommandBindings>
 
     
@@ -48,59 +52,77 @@
         <Menu Grid.Row="0" Background="White" >
             <MenuItem Header="File" Name="File">
                 <MenuItem Header="New File" Command="ApplicationCommands.New"  Name="NewFile"/>
-                <MenuItem Header="Open File" Command="ApplicationCommands.Open" Name="OpenFile"></MenuItem>
-                <MenuItem Header="Open Folder" Name="OpenFolder"></MenuItem>
-                <Separator></Separator>
-                <MenuItem Header="Save" Name="Save" Command="ApplicationCommands.Save"></MenuItem>
-                <MenuItem Header="Save As" Command="ApplicationCommands.SaveAs" Name="SaveAs"></MenuItem>
-                <MenuItem Header="Save All" Name="SaveAll" Click="SaveAll_Click"></MenuItem>
-                <Separator></Separator>
-                <MenuItem Header="Close File" Name="CloseFile" Command="ApplicationCommands.Close"></MenuItem>
-                <MenuItem Header="New Window" Name="NewWindow"></MenuItem>
-                <MenuItem Header="Close Window" Name="CloseWindow" Click="CloseWindow_Click"></MenuItem>
-                <Separator></Separator>
-                <MenuItem Header="Exit" Name="Exit" Click="CloseWindow_Click"></MenuItem>
+                <MenuItem Header="Open File" Command="ApplicationCommands.Open" Name="OpenFile"/>
+                <MenuItem Header="Open Folder" Name="OpenFolder"/>
+                    
+                    <Separator/>
+                
+                <MenuItem Header="Save" Name="Save" Command="ApplicationCommands.Save"/>
+                <MenuItem Header="Save As" Command="ApplicationCommands.SaveAs" Name="SaveAs"/>
+                <MenuItem Header="Save All" Name="SaveAll" Click="SaveAll_Click"/>
+                 
+                    <Separator/>
+                
+                <MenuItem Header="Close File" Name="CloseFile" Command="ApplicationCommands.Close"/>
+                <MenuItem Header="New Window" Name="NewWindow"/>
+                <MenuItem Header="Close Window" Name="CloseWindow" Click="CloseWindow_Click"/>
+                    
+                    <Separator/>
+                
+                <MenuItem Header="Exit" Name="Exit" Command="self:CustomCommands.Exit"/>
             </MenuItem>
+            
             <MenuItem Header="Edit">
-                <MenuItem Header="Cut" Name="Cut" Command="ApplicationCommands.Cut"></MenuItem>
-                <MenuItem Header="Copy" Name="Copy" Command="ApplicationCommands.Copy"></MenuItem>
-                <MenuItem Header="Paste" Name="Paste" Command="ApplicationCommands.Paste"></MenuItem>
-                <MenuItem Header="Undo" Name="Undo" Command="ApplicationCommands.Undo"></MenuItem>
-                <Separator></Separator>
-                <MenuItem Header="Find" Name="Find" Command="ApplicationCommands.Find"></MenuItem>
-                <MenuItem Header="Replace" Name="Replace" Command="ApplicationCommands.Replace"></MenuItem>
+                <MenuItem Header="Cut" Name="Cut" Command="ApplicationCommands.Cut"/>
+                <MenuItem Header="Copy" Name="Copy" Command="ApplicationCommands.Copy"/>
+                <MenuItem Header="Paste" Name="Paste" Command="ApplicationCommands.Paste"/>
+                <MenuItem Header="Undo" Name="Undo" Command="ApplicationCommands.Undo"/>
+                
+                    <Separator/>
+                
+                <MenuItem Header="Find" Name="Find" Command="ApplicationCommands.Find"/>
+                <MenuItem Header="Replace" Name="Replace" Command="ApplicationCommands.Replace"/>
             </MenuItem>
+            
             <MenuItem Header="Selection" Name="Selection">
-                <MenuItem Header="Select All" Name="SelectAll" Command="ApplicationCommands.SelectAll"></MenuItem>
+                <MenuItem Header="Select All" Name="SelectAll" Command="ApplicationCommands.SelectAll"/>
             </MenuItem>
+            
             <MenuItem Header="Languages" Name="Languages">
-                <MenuItem Header="C" Name="C"></MenuItem>
-                <MenuItem Header="C++" Name="CPlusPlus"></MenuItem>
-                <MenuItem Header="Java" Name="Java"></MenuItem>
-                <MenuItem Header="JavaScript" Name="JavaScript"></MenuItem>
+                <MenuItem Header="C" Name="C"/>
+                <MenuItem Header="C++" Name="CPlusPlus"/>
+                <MenuItem Header="Java" Name="Java"/>
+                <MenuItem Header="JavaScript" Name="JavaScript"/>
                 <MenuItem Header="HTML" Name="HTML"></MenuItem>
             </MenuItem>
+            
             <MenuItem Header="Run" Name="Run">
-                <MenuItem Header="Build" Name="Build"></MenuItem>
-                <MenuItem Header="Build And Run" Name="BuildAndRun"></MenuItem>
-                <Separator></Separator>
-                <MenuItem Header="Debug" Name="Debug"></MenuItem>
-                <MenuItem Header="Run Without Debug" Name="RunWithoutDebug"></MenuItem>
+                <MenuItem Header="Build" Name="Build"/>
+                <MenuItem Header="Build And Run" Name="BuildAndRun"/>
+                
+                    <Separator/>
+                
+                <MenuItem Header="Debug" Name="Debug"/>
+                <MenuItem Header="Run Without Debug" Name="RunWithoutDebug"/>
             </MenuItem>
+            
             <MenuItem Header="Terminal" Name="Terminal">
-                <MenuItem Header="New Terminal" Name="NewTerminal" Command="self:CustomCommands.NewTerminal"></MenuItem>
-                <MenuItem Header="Open Terminal in Current Workspace" Name="NewTerminalCurrentDir" Command="self:CustomCommands.NewTerminalCurrentDir"></MenuItem>
+                <MenuItem Header="New Terminal" Name="NewTerminal" Command="self:CustomCommands.NewTerminal"/>
+                <MenuItem Header="Open Terminal in Current Workspace" Name="NewTerminalCurrentDir" Command="self:CustomCommands.NewTerminalCurrentDir"/>
             </MenuItem>
+            
             <MenuItem Header="Preferences" Name="Preferences">
                 <MenuItem Header="Dark Mode" Name="Darkmode"/>
-                <MenuItem Header="Auto Save" Name="AutoSave"></MenuItem>
+                <MenuItem Header="Auto Save" Name="AutoSave"/>
             </MenuItem>
+            
             <MenuItem Header="Help" Name="Help">
-                <MenuItem Header="About" Name="About"></MenuItem>
-                <MenuItem Header="Report" Name="Report"></MenuItem>
+                <MenuItem Header="About" Name="About"/>
+                <MenuItem Header="Report" Name="Report"/>
             </MenuItem>
         </Menu>
-        <TabControl  FontFamily="Consolas" Grid.Row="1" Name="tabControl"/>
+        <Button Click="SyntaxHighlighting">Click</Button>
 
+        <TabControl  FontFamily="Consolas" Grid.Row="1" Name="tabControl"/>
     </Grid>
 </Window>

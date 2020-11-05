@@ -1,15 +1,15 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
+using System.Windows.Media;
 
 namespace Notepad
 {
@@ -25,6 +25,7 @@ namespace Notepad
 
             InitTab(new TabItem());
         }
+
         #region Variables
 
         private List<bool> isSaved = new List<bool>();
@@ -69,13 +70,15 @@ namespace Notepad
                 else indexForTab = tabControl.SelectedIndex;
                 fileData[indexForTab] = System.IO.File.ReadAllText(openFileDialog.FileName);
 
+                // Add content to richTextBox
+                RichTextBox richTextBox = (RichTextBox)tabItems[indexForTab].Content;
+                SetText(richTextBox, fileData[indexForTab]);
                 /*Pointer to the end of paragraph*/
-                TextBox textBox = (TextBox)tabItems[indexForTab].Content;
-                textBox.Text = fileData[indexForTab];
+                richTextBox.ScrollToEnd();
 
 
                 tabItems[indexForTab].Header = Path.GetFileName(openFileDialog.FileName);
-                tabItems[indexForTab].Content = textBox;
+                tabItems[indexForTab].Content = richTextBox;
                 filePaths[indexForTab] = openFileDialog.FileName;
                 isSaved[indexForTab] = true;
             }
@@ -150,12 +153,12 @@ namespace Notepad
             e.CanExecute = true;
         }
 
-        private void NewTerminal_Executed(object sender,ExecutedRoutedEventArgs e)
+        private void NewTerminal_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             ProcessStartInfo process = new ProcessStartInfo();
             process.FileName = @"C:\WINDOWS\system32\cmd.exe";
             process.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            Process.Start(process);        
+            Process.Start(process);
         }
 
         private void NewTerminal_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -163,7 +166,7 @@ namespace Notepad
             e.CanExecute = true;
         }
 
-        private void NewTerminalCurrentDir_Executed(object sender,ExecutedRoutedEventArgs e)
+        private void NewTerminalCurrentDir_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             ProcessStartInfo process = new ProcessStartInfo();
             process.FileName = "cmd.exe";
@@ -174,13 +177,24 @@ namespace Notepad
 
             Process.Start(process);
         }
-        
+
         private void NewTerminalCurrentDir_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if(filePaths[tabControl.SelectedIndex]!="")
+            if (filePaths[tabControl.SelectedIndex] != "")
                 e.CanExecute = true;
             else e.CanExecute = false;
         }
+
+        private void Exit_Executed(object sender,ExecutedRoutedEventArgs e)
+        {
+            CloseWindow_Click(sender, (RoutedEventArgs)e);
+        }
+
+        private void Exit_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
 
         #endregion
 
@@ -217,8 +231,8 @@ namespace Notepad
             else if (header.Contains("*") == false && isSaved[tabControl.SelectedIndex] == false)
                 AddSavedIcon();
 
-            TextBox textBox = (TextBox)sender;
-            fileData[tabControl.SelectedIndex] = textBox.Text;
+            RichTextBox richTextBox = (RichTextBox)sender;
+            fileData[tabControl.SelectedIndex] = GetText(richTextBox);
         }
 
         private List<int> closedTabIndexes = new List<int>();// this List holds indexs of tabs that was removed from tabControl
@@ -234,6 +248,34 @@ namespace Notepad
                 return index;
             }
         }
+        #region RichTextBox Setup
+        
+        private void RichTextBoxSetUp(RichTextBox richTextBox)
+        {
+            SetText(richTextBox, fileData[tabItems.Count]);
+            richTextBox.AcceptsReturn = true;
+            richTextBox.AcceptsTab = true;
+            richTextBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            richTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            richTextBox.BorderThickness = new Thickness(0);
+            richTextBox.Margin = new Thickness(0, -2, 0, 0);
+            richTextBox.FontSize = 16;
+            richTextBox.TextChanged += TextBox_TextChanged;
+        }
+
+        private void SetText(RichTextBox richTextBox, string text)
+        {
+            richTextBox.Document.Blocks.Clear();
+            richTextBox.Document.Blocks.Add(new Paragraph(new Run(text)));
+        }
+
+        private string GetText(RichTextBox richTextBox)
+        {
+            return new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd).Text;
+        }
+
+        #endregion
+
         private void InitTab(TabItem tabItem)
         {
             //Add filePaths and fileData
@@ -241,25 +283,15 @@ namespace Notepad
             filePaths.Add("");
             fileData.Add("");
 
-            //Setup for TextBox of  tabItem
-            TextBox textBox = new TextBox();
-            tabItem.Content = textBox;
-
-            textBox.Text = fileData[tabItems.Count];
-            textBox.AcceptsReturn = true;
-            textBox.AcceptsTab = true;
-            textBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            textBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            textBox.BorderThickness = new Thickness(0);
-            textBox.Margin = new Thickness(0, -2, 0, 0);
-            textBox.FontSize = 20;
-            textBox.TextChanged += TextBox_TextChanged;
+            //Setup for RichTextBox of tabItem
+            RichTextBox richTextBox = new RichTextBox();
+            RichTextBoxSetUp(richTextBox);
 
             //Setup for tabItem
             int tabIndex = FindIndexForTab();
             tabItem.Header = "Document " + (tabIndex + 1); // Header Display Always larger than 1 of the number of element in tabItems
             tabItem.Name = "Document" + (tabIndex);
-            tabItem.Content = textBox;
+            tabItem.Content = richTextBox;
 
             //Add to tabItems
             tabItems.Add(tabItem);
@@ -272,6 +304,11 @@ namespace Notepad
             isSaved.Add(new bool());
         }
 
+        private void SyntaxHighlighting(object sender,RoutedEventArgs e)
+        {
+            
+        }
+        
         #endregion
 
         #region Click
@@ -351,7 +388,17 @@ namespace Notepad
                 new KeyGesture(Key.T, ModifierKeys.Control|ModifierKeys.Shift) //Multi ModifierKeys
             }
         );
+        public static readonly RoutedUICommand Exit = new RoutedUICommand(
+            "Exit",
+            "Exit",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.F4, ModifierKeys.Alt) //Multi ModifierKeys
+            }
+        );
     }
+
     #endregion
 }
 

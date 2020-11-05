@@ -1,7 +1,9 @@
 READ ME.txt 
 #Project Information at notion [https://www.notion.so/GUI-Programming-Project-5871d5806f0e46ee9903c990f9d169c5]
 
-Quá trình suy nghĩ và đưa ra giải pháp 
+Quá trình suy nghĩ và đưa ra giải pháp
+
+Sử dụng richtextbox thay cho textbox vì textbox kjhoong làm được syntax highlighting 
 
 Bước đầu ta có 1 xaml TabControl => Ngay tại cửa sổ tạo Window sẽ thêm sẵn 1 tabItem có header là Document 1* với * là chưa lưu 
 
@@ -52,6 +54,8 @@ nếu phát hiện ra mục nào chưa save thì sẽ gọi hàm save cho tabIte
 	Với file ta sử dụng thêm directory Parent để truy cập vào thư mục cha có chứa file đó 
 
 Có các hàm phụ như 
-	TextBox_TextChanged() Nếu có sự thay đổi ở textBox lập tức gọi hàm AddSavedIcon (luôn luôn có dấu * khi thay đổi)
+	TextBox_TextChanged() Nếu có sự thay đổi ở RichTextBox lập tức gọi hàm AddSavedIcon (luôn luôn có dấu * khi thay đổi)
 	RemoveSavedIcon() bỏ dấu * ở header và chỉnh isSaved=true
 	AddSavedIcon() thêm dấu * ở header và chỉnh isSaved=false
+	SetText(RichTextBox,string) dùng để thêm content vào RichTextBox
+	GetText(RichTextBox) dùng để lấy content của RichTextBox nếu cần
