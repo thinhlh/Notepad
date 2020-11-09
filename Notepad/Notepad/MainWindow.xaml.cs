@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -62,7 +61,7 @@ namespace Notepad
                 int indexForTab;// Defining which tab the file will be open
                 // If open in new tab => tabItems.Count-1
                 // if open in recent tab => tabControl.selecte
-                if (fileData[tabControl.SelectedIndex].Length > 0)
+                if (fileData[tabControl.SelectedIndex]!="")
                 {
                     InitTab(new TabItem());
                     indexForTab = tabItems.Count - 1;
@@ -127,7 +126,7 @@ namespace Notepad
 
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             saveFileDialog.DefaultExt = ".txt";
-            saveFileDialog.Filter = "Text files (*.txt)| *.txt | Java (*.java) | *.java | C (*.c) | *.c | C++ (*.cpp) | *.cpp | All files (*.*) | *.* ";
+            saveFileDialog.Filter = "Text (*.txt)| *.txt | Java (*.java) | *.java | C (*.c) | *.c | C++ (*.cpp) | *.cpp | All files (*.*) | *.* ";
             saveFileDialog.FileName = tabItems[tabControl.SelectedIndex].Header.ToString();
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -233,6 +232,7 @@ namespace Notepad
 
             RichTextBox richTextBox = (RichTextBox)sender;
             fileData[tabControl.SelectedIndex] = GetText(richTextBox);
+                   
         }
 
         private List<int> closedTabIndexes = new List<int>();// this List holds indexs of tabs that was removed from tabControl
@@ -261,6 +261,7 @@ namespace Notepad
             richTextBox.Margin = new Thickness(0, -2, 0, 0);
             richTextBox.FontSize = 16;
             richTextBox.TextChanged += TextBox_TextChanged;
+            richTextBox.PreviewKeyDown += SyntaxHighlighting.RichTextBox_PreviewKeyDown;
         }
 
         private void SetText(RichTextBox richTextBox, string text)
@@ -303,11 +304,6 @@ namespace Notepad
             // Init isSave 
             isSaved.Add(new bool());
         }
-
-        private void SyntaxHighlighting(object sender,RoutedEventArgs e)
-        {
-            
-        }
         
         #endregion
 
@@ -323,11 +319,15 @@ namespace Notepad
         {
             if (isSaved[index] == false)
             {
-                //Message then request save
-                string message = "This document have been modified, save changes?";
-                MessageBoxResult result = MessageBox.Show(message, "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                    SaveAs_Executed(index);
+                RichTextBox richTextBox = (RichTextBox)tabItems[index].Content;
+                if (fileData[index]!="")
+                {
+                    //Message then request save
+                    string message = "This document have been modified, save changes?";
+                    MessageBoxResult result = MessageBox.Show(message, "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                        SaveAs_Executed(index);
+                }
             }
             tabControl.Items.RemoveAt(index);
 
@@ -342,11 +342,14 @@ namespace Notepad
                 filePaths.RemoveAt(index);
                 isSaved.RemoveAt(index);
 
+                //Add Index of tab then sort it for reopen new tab situation 
                 closedTabIndexes.Add(deletedIndexTab);
+                closedTabIndexes.Sort();
             }
         }
 
-        private void CloseAll_Click(object sender, RoutedEventArgs e)
+
+        private void CloseAllFiles_Click(object sender, RoutedEventArgs e)
         {
             for (int i = tabControl.Items.Count - 1; i >= 0; i--)
                 CloseFile_Executed(i);
@@ -358,17 +361,37 @@ namespace Notepad
         }
         private void CloseWindow_Click(object sender, RoutedEventArgs e)
         {
-            CloseAll_Click(sender, e);
+            CloseAllFiles_Click(sender, e);
             System.Windows.Application.Current.Shutdown();
         }
-
+        private void btn_click(object sender,RoutedEventArgs e)
+        {
+            SyntaxHighlighting.GetLineAtCurrentCaret((RichTextBox)tabItems[tabControl.SelectedIndex].Content);
+        }
         #endregion
     }
-
 
     #region CustomCommands
     public static class CustomCommands
     {
+        public static readonly RoutedUICommand CloseFile = new RoutedUICommand(
+            "Close File",
+            "Close File",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.W, ModifierKeys.Control) //Multi ModifierKeys
+            }
+        );
+        public static readonly RoutedUICommand Exit = new RoutedUICommand(
+            "Exit",
+            "Exit",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.F4, ModifierKeys.Alt) //Multi ModifierKeys
+            }
+        );
         public static readonly RoutedUICommand NewTerminal = new RoutedUICommand(
             "Terminal",
             "Terminal",
@@ -388,17 +411,54 @@ namespace Notepad
                 new KeyGesture(Key.T, ModifierKeys.Control|ModifierKeys.Shift) //Multi ModifierKeys
             }
         );
-        public static readonly RoutedUICommand Exit = new RoutedUICommand(
-            "Exit",
-            "Exit",
-            typeof(CustomCommands),
-            new InputGestureCollection()
-            {
-                new KeyGesture(Key.F4, ModifierKeys.Alt) //Multi ModifierKeys
-            }
-        );
+        
     }
 
     #endregion
+
+    public class SyntaxHighlighting : MainWindow
+    {
+        public static void SyntaHighlighting()
+        {
+            
+        }
+        private static void TextChanged_PreviewKeyDown(object sender,KeyEventArgs e)
+        {
+            
+        }
+        public static void GetLineAtCurrentCaret(RichTextBox richTextBox)
+        {
+            
+        }
+
+        public static void RichTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            RichTextBox richTextBox = (RichTextBox)sender;
+            if (e.Key == Key.Space)
+            {
+                TextPointer start = richTextBox.CaretPosition;
+                string text1 = start.GetTextInRun(LogicalDirection.Backward);
+                TextPointer end = start.GetNextContextPosition(LogicalDirection.Backward);
+                string text2 = end.GetTextInRun(LogicalDirection.Backward);
+
+                richTextBox.Selection.Select(start, end);
+                richTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
+                richTextBox.Selection.Select(start, start);
+                richTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            }
+        }
+
+        public static void IRegex(string line)
+        {
+            Regex symbols = new Regex(@"([\t\n(){}:;])<>");
+            String[] words = symbols.Split(line); // list of words 
+           
+        }
+
+        public static void Coloring(TextRange textRange,SolidColorBrush color)
+        {
+            textRange.ApplyPropertyValue(TextElement.ForegroundProperty, color);
+        }
+    }
 }
 
