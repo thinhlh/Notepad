@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-
 namespace Notepad
 {
     /// <summary>
@@ -61,7 +60,7 @@ namespace Notepad
                 int indexForTab;// Defining which tab the file will be open
                 // If open in new tab => tabItems.Count-1
                 // if open in recent tab => tabControl.selecte
-                if (fileData[tabControl.SelectedIndex]!="")
+                if (fileData[tabControl.SelectedIndex] != "")
                 {
                     InitTab(new TabItem());
                     indexForTab = tabItems.Count - 1;
@@ -80,8 +79,10 @@ namespace Notepad
                 tabItems[indexForTab].Content = richTextBox;
                 filePaths[indexForTab] = openFileDialog.FileName;
                 isSaved[indexForTab] = true;
-            }
 
+                //Update Status Bar
+                UpdateStatusBar(indexForTab);
+            }
         }
 
         private void OpenFile_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -134,6 +135,9 @@ namespace Notepad
                 RemoveSavedIcon(index);
                 tabItems[index].Header = Path.GetFileName(saveFileDialog.FileName);
                 filePaths[index] = saveFileDialog.FileName;
+
+                //Update Status Bar
+                UpdateStatusBar(index);
             }
         }
 
@@ -154,10 +158,12 @@ namespace Notepad
 
         private void NewTerminal_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            ProcessStartInfo process = new ProcessStartInfo();
-            process.FileName = @"C:\WINDOWS\system32\cmd.exe";
+            ProcessStartInfo process = new ProcessStartInfo("cmd.exe");
+
             process.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
             Process.Start(process);
+
         }
 
         private void NewTerminal_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -167,13 +173,11 @@ namespace Notepad
 
         private void NewTerminalCurrentDir_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            ProcessStartInfo process = new ProcessStartInfo();
-            process.FileName = "cmd.exe";
+            ProcessStartInfo process = new ProcessStartInfo("cmd.exe");
 
             // Get Path of the current Tab then set process.Working Directory to parent to open cmd at working directory    
-            var path = Path.GetFullPath(filePaths[tabControl.SelectedIndex]);
+            var path = getParentFullPath(tabControl.SelectedIndex);
             process.WorkingDirectory = Directory.GetParent(path).FullName;
-
             Process.Start(process);
         }
 
@@ -184,7 +188,7 @@ namespace Notepad
             else e.CanExecute = false;
         }
 
-        private void Exit_Executed(object sender,ExecutedRoutedEventArgs e)
+        private void Exit_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             CloseWindow_Click(sender, (RoutedEventArgs)e);
         }
@@ -232,7 +236,7 @@ namespace Notepad
 
             RichTextBox richTextBox = (RichTextBox)sender;
             fileData[tabControl.SelectedIndex] = GetText(richTextBox);
-                   
+
         }
 
         private List<int> closedTabIndexes = new List<int>();// this List holds indexs of tabs that was removed from tabControl
@@ -248,8 +252,9 @@ namespace Notepad
                 return index;
             }
         }
+
         #region RichTextBox Setup
-        
+
         private void RichTextBoxSetUp(RichTextBox richTextBox)
         {
             SetText(richTextBox, fileData[tabItems.Count]);
@@ -273,6 +278,23 @@ namespace Notepad
         private string GetText(RichTextBox richTextBox)
         {
             return new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd).Text;
+        }
+
+        private void UpdateStatusBar(int index)
+        {
+            if (filePaths[index] == "")
+            {
+                StatusText.DataContext = "Plain Text";
+            }
+            else
+            {
+                StatusText.DataContext = filePaths[tabControl.SelectedIndex];
+            }
+        }
+
+        private string getParentFullPath(int tabIndex)
+        {
+            return Path.Combine(filePaths[tabIndex], "..");
         }
 
         #endregion
@@ -303,8 +325,11 @@ namespace Notepad
 
             // Init isSave 
             isSaved.Add(new bool());
+
+            // Update Status Bar
+            UpdateStatusBar(tabIndex);
         }
-        
+
         #endregion
 
         #region Click
@@ -320,13 +345,15 @@ namespace Notepad
             if (isSaved[index] == false)
             {
                 RichTextBox richTextBox = (RichTextBox)tabItems[index].Content;
-                if (fileData[index]!="")
+                if (fileData[index] != "")
                 {
                     //Message then request save
                     string message = "This document have been modified, save changes?";
-                    MessageBoxResult result = MessageBox.Show(message, "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    MessageBoxResult result = MessageBox.Show(message, "Request", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                     if (result == MessageBoxResult.Yes)
                         SaveAs_Executed(index);
+                    else if (result == MessageBoxResult.Cancel)
+                        return;
                 }
             }
             tabControl.Items.RemoveAt(index);
@@ -348,25 +375,95 @@ namespace Notepad
             }
         }
 
-
         private void CloseAllFiles_Click(object sender, RoutedEventArgs e)
         {
             for (int i = tabControl.Items.Count - 1; i >= 0; i--)
                 CloseFile_Executed(i);
         }
-        
+
         private void NewWindow_Click(object sender, RoutedEventArgs e)
         {
-
+            Process.Start("Notepad.exe");
         }
+
         private void CloseWindow_Click(object sender, RoutedEventArgs e)
         {
             CloseAllFiles_Click(sender, e);
             System.Windows.Application.Current.Shutdown();
         }
-        private void btn_click(object sender,RoutedEventArgs e)
+
+        private void btn_click(object sender, RoutedEventArgs e)
         {
             SyntaxHighlighting.GetLineAtCurrentCaret((RichTextBox)tabItems[tabControl.SelectedIndex].Content);
+        }
+
+        private void Build_Click(object sender, RoutedEventArgs e)
+        {
+            string childFileNameWithExt = Path.GetFileName(filePaths[tabControl.SelectedIndex]);
+            string childFileNameWithoutExt = Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]);
+            ProcessStartInfo startInfo = new ProcessStartInfo("cmd");
+            Process process = new Process();
+
+            if (isSaved[tabControl.SelectedIndex] == false)
+            {
+                MessageBoxResult result = MessageBox.Show("You need to save before compile, save changes?", "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    Save_Executed(tabControl.SelectedIndex);
+                }
+                else return;
+            }
+
+            // We can not use normal argument to write in cmd we have to use redirect Standard Input the write in cmd 
+
+
+            startInfo.UseShellExecute = false; // For redirect Input
+            startInfo.WorkingDirectory = getParentFullPath(tabControl.SelectedIndex);
+            startInfo.RedirectStandardInput = true;// Allow to write later
+            startInfo.CreateNoWindow = true;
+
+            process.StartInfo = startInfo;
+            process.Start();
+
+            process.StandardInput.WriteLine("g++ " + childFileNameWithExt + " -o " + childFileNameWithoutExt);
+            process.StandardInput.Flush();
+            process.StandardInput.Close();
+        }
+
+        private void BuildAndRun_Click(object sender, RoutedEventArgs e)
+        {
+            Build_Click(sender, e);
+            Process process = new Process();
+
+            process.StartInfo.FileName = "cmd.exe";
+            process.StartInfo.WorkingDirectory = getParentFullPath(tabControl.SelectedIndex);
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardInput = true;
+
+            process.Start();
+            process.StandardInput.WriteLine(Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]));
+            process.WaitForExit();
+
+        }
+
+        private void Test(object sender, RoutedEventArgs e)
+        {
+
+            Process process = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe");
+
+            startInfo.UseShellExecute = false;
+            startInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            startInfo.Arguments = "cmd";
+            startInfo.RedirectStandardInput = true;
+            startInfo.RedirectStandardOutput = true;
+            
+            process.StartInfo = startInfo;
+
+            process.Start();
+            MessageBox.Show(process.StandardOutput.ReadToEnd());
+            
+            
         }
         #endregion
     }

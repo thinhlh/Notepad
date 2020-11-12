@@ -1,9 +1,8 @@
 ﻿<Window x:Class="Notepad.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Notepad"
         xmlns:self="clr-namespace:Notepad"
         mc:Ignorable="d"
         Title="Notepad" Height="450" Width="800" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" WindowStartupLocation="CenterScreen" Icon="SublimeIcon.png">
@@ -11,15 +10,15 @@
         <CommandBinding Command="ApplicationCommands.New"
                         Executed="NewFile_Executed"
                         CanExecute="NewFile_CanExecute"/>
-        
+
         <CommandBinding Command="ApplicationCommands.Open"
                         Executed="OpenFile_Executed"
                         CanExecute="OpenFile_CanExecute"/>
-        
+
         <CommandBinding Command="ApplicationCommands.Save"
                         Executed="Save_Executed"
                         CanExecute="Save_CanExecute"/>
-        
+
         <CommandBinding Command="ApplicationCommands.SaveAs"
                         Executed="SaveAs_Executed"
                         CanExecute="SaveAs_CanExecute"/>
@@ -32,7 +31,7 @@
         <CommandBinding Command="self:CustomCommands.Exit"
                         Executed="Exit_Executed"
                         CanExecute="Exit_CanExecute"/>
-        
+
         <CommandBinding Command="self:CustomCommands.NewTerminal"
                         Executed="NewTerminal_Executed" 
                         CanExecute="NewTerminal_CanExecute"/>
@@ -43,11 +42,12 @@
 
     </Window.CommandBindings>
 
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Background="White" >
             <MenuItem Header="File" Name="File">
@@ -63,10 +63,10 @@
 
                 <Separator/>
 
-                <MenuItem Header="Close File" Name="CloseFile" Command="self:Customcommands.CloseFile"/>
+                <MenuItem Header="Close File" Name="CloseFile" Command="self:CustomCommands.CloseFile"/>
                 <MenuItem Header="Close All Files" Name="CloseAllFiles" Click="CloseAllFiles_Click"/>
-                <MenuItem Header="New Window" Name="NewWindow"/>
-                
+                <MenuItem Header="New Window" Name="NewWindow" Click="NewWindow_Click"/>
+
                 <Separator/>
 
                 <MenuItem Header="Exit" Name="Exit" Command="self:CustomCommands.Exit"/>
@@ -89,16 +89,16 @@
             </MenuItem>
 
             <MenuItem Header="Languages" Name="Languages">
-                <MenuItem Header="C" Name="C"/>
-                <MenuItem Header="C++" Name="CPlusPlus"/>
-                <MenuItem Header="Java" Name="Java"/>
-                <MenuItem Header="JavaScript" Name="JavaScript"/>
-                <MenuItem Header="HTML" Name="HTML"></MenuItem>
+                <ComboBoxItem Name="C" Content="C" />
+                <ComboBoxItem Name="CPlusPlus" Content="C++"/>
+                <ComboBoxItem Name="Java" Content="Java"/>
+                <ComboBoxItem Name="JavaScript" Content="JavaScript"/>
+                <ComboBoxItem Name="CSharp" Content="C#"/>
             </MenuItem>
 
             <MenuItem Header="Run" Name="Run">
-                <MenuItem Header="Build" Name="Build"/>
-                <MenuItem Header="Build And Run" Name="BuildAndRun"/>
+                <MenuItem Header="Build" Name="Build" Click="Build_Click" />
+                <MenuItem Header="Build And Run" Name="BuildAndRun" Click="BuildAndRun_Click"/>
 
                 <Separator/>
 
@@ -121,9 +121,15 @@
                 <MenuItem Header="Report" Name="Report"/>
             </MenuItem>
         </Menu>
-        
-        <!--<Button Click="btn_click">Click Me~</Button>-->
+
         <TabControl  FontFamily="Consolas" Grid.Row="1" Name="tabControl"/>
+
+
+        <StatusBar Grid.Row="2" Name="StatusBar" Background="White" BorderThickness="0.3" BorderBrush="Gray" FontWeight="Medium">
+            <StatusBarItem>
+                <TextBlock Name="StatusText" Text="{Binding}"/>
+            </StatusBarItem>
+        </StatusBar>
+        <Button Click="Test"></Button>
     </Grid>
-    
 </Window>

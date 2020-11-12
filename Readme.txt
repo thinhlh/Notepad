@@ -53,6 +53,13 @@ nếu phát hiện ra mục nào chưa save thì sẽ gọi hàm save cho tabIte
 +Với chức năng mở terminal ngay tại path của file hoặc mở terminal bình thường ta sử dụng Process.Start() 
 	Với file ta sử dụng thêm directory Parent để truy cập vào thư mục cha có chứa file đó 
 
++ Với tính năng build và build and run 
+	Làm build trước bằng cách truyền argument vào khi mở terminal 
+
+	Ban đầu thử truyền argument cho nhưng không thành công 
+	Sau đó sử dụng cách redirectStandardInput nghĩa là mở cmd trước sau đó sẽ writeLine argument sau 		khi cmd đã mở lên
+
+
 Có các hàm phụ như 
 	TextBox_TextChanged() Nếu có sự thay đổi ở RichTextBox lập tức gọi hàm AddSavedIcon (luôn luôn có dấu * khi thay đổi)
 	RemoveSavedIcon() bỏ dấu * ở header và chỉnh isSaved=true
