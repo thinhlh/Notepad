@@ -40,6 +40,16 @@
                         Executed="NewTerminalCurrentDir_Executed"
                         CanExecute="NewTerminalCurrentDir_CanExecute"/>
 
+        <CommandBinding Command="self:CustomCommands.Build"
+                        Executed="Build_Executed"
+                        CanExecute="Build_CanExecute"/>
+
+        <CommandBinding Command="self:CustomCommands.BuildAndRun"
+                        Executed="BuildAndRun_Executed"
+                        CanExecute="BuildAndRun_CanExecute"/>
+        
+        
+
     </Window.CommandBindings>
 
 
@@ -90,15 +100,15 @@
 
             <MenuItem Header="Languages" Name="Languages">
                 <ComboBoxItem Name="C" Content="C" />
-                <ComboBoxItem Name="CPlusPlus" Content="C++"/>
-                <ComboBoxItem Name="Java" Content="Java"/>
-                <ComboBoxItem Name="JavaScript" Content="JavaScript"/>
+                    <ComboBoxItem Name="CPlusPlus" Content="C++"/>
+                    <ComboBoxItem Name="Java" Content="Java"/>
+                    <ComboBoxItem Name="JavaScript" Content="JavaScript"/>
                 <ComboBoxItem Name="CSharp" Content="C#"/>
             </MenuItem>
 
             <MenuItem Header="Run" Name="Run">
-                <MenuItem Header="Build" Name="Build" Click="Build_Click" />
-                <MenuItem Header="Build And Run" Name="BuildAndRun" Click="BuildAndRun_Click"/>
+                <MenuItem Header="Build" Name="Build" Command="self:CustomCommands.Build" />
+                <MenuItem Header="Build And Run" Name="BuildAndRun" Command="self:CustomCommands.BuildAndRun"/>
 
                 <Separator/>
 
@@ -130,6 +140,6 @@
                 <TextBlock Name="StatusText" Text="{Binding}"/>
             </StatusBarItem>
         </StatusBar>
-        <Button Click="Test"></Button>
+        <!--<Button Click="Test"></Button>-->
     </Grid>
 </Window>

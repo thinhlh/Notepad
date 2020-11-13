@@ -66,3 +66,14 @@ Có các hàm phụ như
 	AddSavedIcon() thêm dấu * ở header và chỉnh isSaved=false
 	SetText(RichTextBox,string) dùng để thêm content vào RichTextBox
 	GetText(RichTextBox) dùng để lấy content của RichTextBox nếu cần
+
+
+
+===============================================================================================
+đang trong quá trình hoàn thiện: 
+	Khoảng cách 2 dòng trong RichTextBox lớn 
+	Syntax Highlighting nên làm theo hướng nào? Dò từng từ sau mỗi dấu cách hay là hướng khác>
+	Cách truyền argument vào khi chạy process
+	Find và FindNext FindPrevious có thể tham khảo thêm 
+	CMD chỉ hiện lên khi compile bị lỗi
+	

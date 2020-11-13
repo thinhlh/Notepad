@@ -128,7 +128,8 @@ namespace Notepad
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             saveFileDialog.DefaultExt = ".txt";
             saveFileDialog.Filter = "Text (*.txt)| *.txt | Java (*.java) | *.java | C (*.c) | *.c | C++ (*.cpp) | *.cpp | All files (*.*) | *.* ";
-            saveFileDialog.FileName = tabItems[tabControl.SelectedIndex].Header.ToString();
+            string tabHeader = (string)tabItems[tabControl.SelectedIndex].Header;
+            saveFileDialog.FileName = tabHeader.Substring(0, tabHeader.Length - 1); // remove the * flag
             if (saveFileDialog.ShowDialog() == true)
             {
                 System.IO.File.WriteAllText(saveFileDialog.FileName, fileData[index]);
@@ -153,7 +154,7 @@ namespace Notepad
 
         private void CloseFile_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = true;
+            e.CanExecute = !(tabControl.SelectedIndex < 0);
         }
 
         private void NewTerminal_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -198,6 +199,73 @@ namespace Notepad
             e.CanExecute = true;
         }
 
+        private void Build_Executed(object sender,ExecutedRoutedEventArgs e)
+        {
+            string childFileNameWithExt = Path.GetFileName(filePaths[tabControl.SelectedIndex]);
+            string childFileNameWithoutExt = Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]);
+            ProcessStartInfo startInfo = new ProcessStartInfo("cmd");
+            Process process = new Process();
+
+
+            if (isSaved[tabControl.SelectedIndex] == false)
+            {
+                MessageBoxResult result = MessageBox.Show("You need to save before compile, save changes?", "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    Save_Executed(tabControl.SelectedIndex);
+                }
+                else return;
+            }
+
+            // We can not use normal argument to write in cmd we have to use redirect Standard Input the write in cmd 
+
+            startInfo.UseShellExecute = false; // For redirect Input
+            startInfo.WorkingDirectory = getParentFullPath(tabControl.SelectedIndex);
+            startInfo.RedirectStandardInput = true;// Allow to write later
+            process.StartInfo = startInfo;
+            process.Start();
+
+            process.StandardInput.WriteLine("g++ " + childFileNameWithExt + " -o " + childFileNameWithoutExt);
+            process.StandardInput.Flush();
+            process.WaitForExit();
+
+        }
+
+        private void Build_CanExecute(object sender,CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void BuildAndRun_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Build_Executed(sender, e);
+            string childFileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]);
+            string parentPath = getParentFullPath(tabControl.SelectedIndex);
+            if (
+                (isSaved[tabControl.SelectedIndex]==false)
+                ||
+                (System.IO.File.Exists(Path.Combine(parentPath,childFileNameWithoutExtension+".exe"))==false)
+               )
+                return; // must be saved and compiled sucessfully
+
+            Process process = new Process();
+            process.StartInfo.FileName = "cmd.exe";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.WorkingDirectory = getParentFullPath(tabControl.SelectedIndex);
+
+            process.Start();
+            process.StandardInput.WriteLine(Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]));
+
+            process.WaitForExit();
+            System.IO.File.Delete(Path.Combine(parentPath, childFileNameWithoutExtension + ".exe")); //Delete .exe File
+
+        }
+
+        private void BuildAndRun_CanExecute(object sender,CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
 
         #endregion
 
@@ -266,7 +334,9 @@ namespace Notepad
             richTextBox.Margin = new Thickness(0, -2, 0, 0);
             richTextBox.FontSize = 16;
             richTextBox.TextChanged += TextBox_TextChanged;
-            richTextBox.PreviewKeyDown += SyntaxHighlighting.RichTextBox_PreviewKeyDown;
+            
+            
+            //richTextBox.PreviewKeyDown += SyntaxHighlighting.RichTextBox_PreviewKeyDown;
         }
 
         private void SetText(RichTextBox richTextBox, string text)
@@ -283,13 +353,9 @@ namespace Notepad
         private void UpdateStatusBar(int index)
         {
             if (filePaths[index] == "")
-            {
                 StatusText.DataContext = "Plain Text";
-            }
             else
-            {
                 StatusText.DataContext = filePaths[tabControl.SelectedIndex];
-            }
         }
 
         private string getParentFullPath(int tabIndex)
@@ -324,7 +390,7 @@ namespace Notepad
             tabItem.Focus();
 
             // Init isSave 
-            isSaved.Add(new bool());
+            isSaved.Add(true);
 
             // Update Status Bar
             UpdateStatusBar(tabIndex);
@@ -344,11 +410,12 @@ namespace Notepad
         {
             if (isSaved[index] == false)
             {
-                RichTextBox richTextBox = (RichTextBox)tabItems[index].Content;
                 if (fileData[index] != "")
                 {
                     //Message then request save
-                    string message = "This document have been modified, save changes?";
+                    string tabHeader = (string)tabItems[index].Header;
+                    string message = tabHeader.Substring(0,tabHeader.Length-1) + " have been modified, save changes?";
+
                     MessageBoxResult result = MessageBox.Show(message, "Request", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                     if (result == MessageBoxResult.Yes)
                         SaveAs_Executed(index);
@@ -357,22 +424,17 @@ namespace Notepad
                 }
             }
             tabControl.Items.RemoveAt(index);
+            
+            int deletedIndexTab = Int16.Parse(tabItems[index].Name.Substring(8)); // Return the index of deleted tabItem by get subTring from name then convert to int
 
-            // File have data and saved
+            tabItems.RemoveAt(index);
+            fileData.RemoveAt(index);
+            filePaths.RemoveAt(index);
+            isSaved.RemoveAt(index);
 
-            if (tabControl.SelectedIndex >= 0) // In case the recent deleted tab was the last tab => selected index=-1
-            {
-
-                int deletedIndexTab = Int16.Parse(tabItems[index].Name.Substring(8)); // Return the index of deleted tabItem by get subTring from name then convert to int
-                tabItems.RemoveAt(index);
-                fileData.RemoveAt(index);
-                filePaths.RemoveAt(index);
-                isSaved.RemoveAt(index);
-
-                //Add Index of tab then sort it for reopen new tab situation 
-                closedTabIndexes.Add(deletedIndexTab);
-                closedTabIndexes.Sort();
-            }
+            //Add Index of tab then sort it for reopen new tab situation 
+            closedTabIndexes.Add(deletedIndexTab);
+            closedTabIndexes.Sort();
         }
 
         private void CloseAllFiles_Click(object sender, RoutedEventArgs e)
@@ -390,60 +452,6 @@ namespace Notepad
         {
             CloseAllFiles_Click(sender, e);
             System.Windows.Application.Current.Shutdown();
-        }
-
-        private void btn_click(object sender, RoutedEventArgs e)
-        {
-            SyntaxHighlighting.GetLineAtCurrentCaret((RichTextBox)tabItems[tabControl.SelectedIndex].Content);
-        }
-
-        private void Build_Click(object sender, RoutedEventArgs e)
-        {
-            string childFileNameWithExt = Path.GetFileName(filePaths[tabControl.SelectedIndex]);
-            string childFileNameWithoutExt = Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]);
-            ProcessStartInfo startInfo = new ProcessStartInfo("cmd");
-            Process process = new Process();
-
-            if (isSaved[tabControl.SelectedIndex] == false)
-            {
-                MessageBoxResult result = MessageBox.Show("You need to save before compile, save changes?", "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    Save_Executed(tabControl.SelectedIndex);
-                }
-                else return;
-            }
-
-            // We can not use normal argument to write in cmd we have to use redirect Standard Input the write in cmd 
-
-
-            startInfo.UseShellExecute = false; // For redirect Input
-            startInfo.WorkingDirectory = getParentFullPath(tabControl.SelectedIndex);
-            startInfo.RedirectStandardInput = true;// Allow to write later
-            startInfo.CreateNoWindow = true;
-
-            process.StartInfo = startInfo;
-            process.Start();
-
-            process.StandardInput.WriteLine("g++ " + childFileNameWithExt + " -o " + childFileNameWithoutExt);
-            process.StandardInput.Flush();
-            process.StandardInput.Close();
-        }
-
-        private void BuildAndRun_Click(object sender, RoutedEventArgs e)
-        {
-            Build_Click(sender, e);
-            Process process = new Process();
-
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.WorkingDirectory = getParentFullPath(tabControl.SelectedIndex);
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardInput = true;
-
-            process.Start();
-            process.StandardInput.WriteLine(Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]));
-            process.WaitForExit();
-
         }
 
         private void Test(object sender, RoutedEventArgs e)
@@ -468,7 +476,6 @@ namespace Notepad
         #endregion
     }
 
-    #region CustomCommands
     public static class CustomCommands
     {
         public static readonly RoutedUICommand CloseFile = new RoutedUICommand(
@@ -480,6 +487,7 @@ namespace Notepad
                 new KeyGesture(Key.W, ModifierKeys.Control) //Multi ModifierKeys
             }
         );
+
         public static readonly RoutedUICommand Exit = new RoutedUICommand(
             "Exit",
             "Exit",
@@ -489,6 +497,7 @@ namespace Notepad
                 new KeyGesture(Key.F4, ModifierKeys.Alt) //Multi ModifierKeys
             }
         );
+
         public static readonly RoutedUICommand NewTerminal = new RoutedUICommand(
             "Terminal",
             "Terminal",
@@ -508,10 +517,27 @@ namespace Notepad
                 new KeyGesture(Key.T, ModifierKeys.Control|ModifierKeys.Shift) //Multi ModifierKeys
             }
         );
-        
-    }
 
-    #endregion
+        public static readonly RoutedUICommand Build = new RoutedUICommand(
+            "Build",
+            "Build",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.F5)
+            }
+        );
+
+        public static readonly RoutedUICommand BuildAndRun = new RoutedUICommand(
+            "Build and Run",
+            "Build and Run",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.F5, ModifierKeys.Control)
+            }
+        );
+    }
 
     public class SyntaxHighlighting : MainWindow
     {
