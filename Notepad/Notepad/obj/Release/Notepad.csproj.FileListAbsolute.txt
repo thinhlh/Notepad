@@ -18,3 +18,23 @@ D:\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.CoreCompileInputs
 D:\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.CopyComplete
 D:\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.exe
 D:\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.pdb
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\bin\Release\Notepad.exe.config
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\bin\Release\Notepad.exe
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\bin\Release\Notepad.pdb
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\bin\Release\ConsoleControl.WPF.dll
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\bin\Release\ConsoleControlAPI.dll
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\bin\Release\ConsoleControl.WPF.xml
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\bin\Release\ConsoleControlAPI.xml
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.csprojAssemblyReference.cache
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\MainWindow.g.cs
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\App.g.cs
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad_MarkupCompile.cache
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad_MarkupCompile.lref
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\MainWindow.baml
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.g.resources
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.Properties.Resources.resources
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.GenerateResource.cache
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.CoreCompileInputs.cache
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.CopyComplete
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.exe
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.pdb

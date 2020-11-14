@@ -71,9 +71,13 @@ Có các hàm phụ như
 
 ===============================================================================================
 đang trong quá trình hoàn thiện: 
-	Khoảng cách 2 dòng trong RichTextBox lớn 
+	
 	Syntax Highlighting nên làm theo hướng nào? Dò từng từ sau mỗi dấu cách hay là hướng khác>
+	Khoảng cách 2 dòng trong RichTextBox lớn 
 	Cách truyền argument vào khi chạy process
 	Find và FindNext FindPrevious có thể tham khảo thêm 
 	CMD chỉ hiện lên khi compile bị lỗi
 	
+==================================================================================================
+Để syntax Highlighting 1 file lớn nên làm render trước vài phần mà người dùng sẽ kéo xuống 
+nhưng trang chưa đụng tới có thể chưa cần render

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -36,7 +35,7 @@ namespace Notepad
 
         #endregion
 
-        #region Command
+        #region Commands
 
         private void NewFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -269,7 +268,7 @@ namespace Notepad
 
         #endregion
 
-        #region Additional Function
+        #region Additional Functions
 
         /* use tabControl.SelectedIndex as an argument for normal save and save as 
          * use index in loop for save all method */
@@ -319,51 +318,26 @@ namespace Notepad
                 closedTabIndexes.RemoveAt(0);
                 return index;
             }
-        }
-
-        #region RichTextBox Setup
-
-        private void RichTextBoxSetUp(RichTextBox richTextBox)
-        {
-            SetText(richTextBox, fileData[tabItems.Count]);
-            richTextBox.AcceptsReturn = true;
-            richTextBox.AcceptsTab = true;
-            richTextBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            richTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            richTextBox.BorderThickness = new Thickness(0);
-            richTextBox.Margin = new Thickness(0, -2, 0, 0);
-            richTextBox.FontSize = 16;
-            richTextBox.TextChanged += TextBox_TextChanged;
             
-            
-            //richTextBox.PreviewKeyDown += SyntaxHighlighting.RichTextBox_PreviewKeyDown;
         }
 
-        private void SetText(RichTextBox richTextBox, string text)
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            richTextBox.Document.Blocks.Clear();
-            richTextBox.Document.Blocks.Add(new Paragraph(new Run(text)));
+            if(e.Source is TabControl)
+            {
+                UpdateStatusBar(tabControl.SelectedIndex);
+            }
         }
 
-        private string GetText(RichTextBox richTextBox)
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            return new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd).Text;
+            for (int i = 0; i < tabControl.Items.Count; i++)
+            {
+                RichTextBox richTextBox = (RichTextBox)tabItems[i].Content;
+                richTextBox.FontSize = e.NewValue;
+                //tabItems[i].FontSize = e.NewValue;
+            }
         }
-
-        private void UpdateStatusBar(int index)
-        {
-            if (filePaths[index] == "")
-                StatusText.DataContext = "Plain Text";
-            else
-                StatusText.DataContext = filePaths[tabControl.SelectedIndex];
-        }
-
-        private string getParentFullPath(int tabIndex)
-        {
-            return Path.Combine(filePaths[tabIndex], "..");
-        }
-
-        #endregion
 
         private void InitTab(TabItem tabItem)
         {
@@ -392,9 +366,55 @@ namespace Notepad
             // Init isSave 
             isSaved.Add(true);
 
-            // Update Status Bar
-            UpdateStatusBar(tabIndex);
+            tabControl.SelectionChanged += TabControl_SelectionChanged;
         }
+
+        #region RichTextBox Setup
+
+        private void RichTextBoxSetUp(RichTextBox richTextBox)
+        {
+            SetText(richTextBox, fileData[tabItems.Count]);
+            richTextBox.AcceptsReturn = true;
+            richTextBox.AcceptsTab = true;
+            richTextBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            richTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            richTextBox.BorderThickness = new Thickness(0);
+            richTextBox.Margin = new Thickness(0, -2, 0, 0);
+            richTextBox.FontSize = 18;
+            richTextBox.TextChanged += TextBox_TextChanged;
+            
+            //richTextBox.PreviewKeyDown += SyntaxHighlighting.RichTextBox_PreviewKeyDown;
+        }
+
+        private void SetText(RichTextBox richTextBox, string text)
+        {
+            richTextBox.Document.Blocks.Clear();
+            richTextBox.Document.Blocks.Add(new Paragraph(new Run(text)));
+        }
+
+        private string GetText(RichTextBox richTextBox)
+        {
+            return new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd).Text;
+        }
+
+        private void UpdateStatusBar(int index)
+        {
+            if (index == -1)
+                StatusText.DataContext="None";// No update when close all tab
+            else if (filePaths[index] == "")
+                StatusText.DataContext = "Plain Text";
+            else
+                StatusText.DataContext = filePaths[tabControl.SelectedIndex];
+        }
+
+        private string getParentFullPath(int tabIndex)
+        {
+            return Path.Combine(filePaths[tabIndex], "..");
+        }
+
+        #endregion
+
+        
 
         #endregion
 
@@ -465,14 +485,15 @@ namespace Notepad
             startInfo.Arguments = "cmd";
             startInfo.RedirectStandardInput = true;
             startInfo.RedirectStandardOutput = true;
-            
+           
             process.StartInfo = startInfo;
 
             process.Start();
-            MessageBox.Show(process.StandardOutput.ReadToEnd());
+            
             
             
         }
+        
         #endregion
     }
 
@@ -569,13 +590,6 @@ namespace Notepad
                 richTextBox.Selection.Select(start, start);
                 richTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
             }
-        }
-
-        public static void IRegex(string line)
-        {
-            Regex symbols = new Regex(@"([\t\n(){}:;])<>");
-            String[] words = symbols.Split(line); // list of words 
-           
         }
 
         public static void Coloring(TextRange textRange,SolidColorBrush color)

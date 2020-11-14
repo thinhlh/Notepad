@@ -139,7 +139,11 @@
             <StatusBarItem>
                 <TextBlock Name="StatusText" Text="{Binding}"/>
             </StatusBarItem>
+            
+            <StatusBarItem HorizontalAlignment="Right">
+                <Slider Minimum="10" Maximum="50" Width="150" TickFrequency="10" IsSnapToTickEnabled="True" TickPlacement="BottomRight" ValueChanged="Slider_ValueChanged"/>
+            </StatusBarItem>
         </StatusBar>
-        <!--<Button Click="Test"></Button>-->
+        <Button Click="Test"></Button>
     </Grid>
 </Window>
