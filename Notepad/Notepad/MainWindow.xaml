@@ -6,6 +6,27 @@
         xmlns:self="clr-namespace:Notepad"
         mc:Ignorable="d"
         Title="Notepad" Height="450" Width="800" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" WindowStartupLocation="CenterScreen" Icon="SublimeIcon.png">
+
+    <Window.Resources>
+        <RichTextBox x:Key="richTextBoxStyle"
+            AcceptsReturn="True"
+            AcceptsTab="True"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto"
+            BorderThickness="0"
+            FontSize="18"
+            TextChanged="TextBox_TextChanged" 
+            Margin="0,-2,0,0"
+            Loaded="RichTextBox_Loaded"
+        >
+            <RichTextBox.Resources>
+                <Style TargetType="Paragraph">
+                    <Setter Property="Margin" Value="0"/>
+                </Style>
+            </RichTextBox.Resources>
+        </RichTextBox>
+    </Window.Resources>
+
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.New"
                         Executed="NewFile_Executed"
@@ -139,11 +160,10 @@
             <StatusBarItem>
                 <TextBlock Name="StatusText" Text="{Binding}"/>
             </StatusBarItem>
-            
+
             <StatusBarItem HorizontalAlignment="Right">
                 <Slider Minimum="10" Maximum="50" Width="150" TickFrequency="10" IsSnapToTickEnabled="True" TickPlacement="BottomRight" ValueChanged="Slider_ValueChanged"/>
             </StatusBarItem>
         </StatusBar>
-        <Button Click="Test"></Button>
     </Grid>
 </Window>
