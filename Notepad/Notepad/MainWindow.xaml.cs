@@ -414,7 +414,15 @@ namespace Notepad
 
         #endregion
 
-        
+        private void ConsoleControl(object sender,RoutedEventArgs e)
+        {
+            ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe");
+            processStartInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            processStartInfo.Arguments = "/START g++";
+
+            //Console.StartProcess(processStartInfo);
+            
+        }
 
         #endregion
 
@@ -478,20 +486,12 @@ namespace Notepad
         {
 
             Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe");
-
-            startInfo.UseShellExecute = false;
-            startInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            startInfo.Arguments = "cmd";
-            startInfo.RedirectStandardInput = true;
-            startInfo.RedirectStandardOutput = true;
-           
-            process.StartInfo = startInfo;
-
+            process.StartInfo.FileName = "cmd.exe";
+            process.StartInfo.Arguments = "/c g++";
+            process.StartInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             process.Start();
-            
-            
-            
+            process.WaitForExit();
+              
         }
         
         #endregion

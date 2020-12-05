@@ -5,6 +5,9 @@
              xmlns:local="clr-namespace:Notepad"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="{x:Type Paragraph}">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="TextIndent" Value="40"></Setter>
+        </Style>
     </Application.Resources>
 </Application>

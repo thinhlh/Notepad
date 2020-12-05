@@ -1,31 +1,12 @@
-﻿<Window x:Class="Notepad.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:self="clr-namespace:Notepad"
+        xmlns:WPF="clr-namespace:ConsoleControl.WPF;assembly=ConsoleControl.WPF" x:Class="Notepad.MainWindow"
         mc:Ignorable="d"
         Title="Notepad" Height="450" Width="800" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" WindowStartupLocation="CenterScreen" Icon="SublimeIcon.png">
-
-    <Window.Resources>
-        <RichTextBox x:Key="richTextBoxStyle"
-            AcceptsReturn="True"
-            AcceptsTab="True"
-            HorizontalScrollBarVisibility="Auto"
-            VerticalScrollBarVisibility="Auto"
-            BorderThickness="0"
-            FontSize="18"
-            TextChanged="TextBox_TextChanged" 
-            Margin="0,-2,0,0"
-            Loaded="RichTextBox_Loaded"
-        >
-            <RichTextBox.Resources>
-                <Style TargetType="Paragraph">
-                    <Setter Property="Margin" Value="0"/>
-                </Style>
-            </RichTextBox.Resources>
-        </RichTextBox>
-    </Window.Resources>
 
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.New"
@@ -68,97 +49,95 @@
         <CommandBinding Command="self:CustomCommands.BuildAndRun"
                         Executed="BuildAndRun_Executed"
                         CanExecute="BuildAndRun_CanExecute"/>
-        
-        
 
     </Window.CommandBindings>
 
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Background="White" >
-            <MenuItem Header="File" Name="File">
-                <MenuItem Header="New File" Command="ApplicationCommands.New"  Name="NewFile"/>
-                <MenuItem Header="Open File" Command="ApplicationCommands.Open" Name="OpenFile"/>
-                <MenuItem Header="Open Folder" Name="OpenFolder"/>
+            <MenuItem Header="File" x:Name="File">
+                <MenuItem Header="New File" Command="ApplicationCommands.New"  x:Name="NewFile"/>
+                <MenuItem Header="Open File" Command="ApplicationCommands.Open" x:Name="OpenFile"/>
+                <MenuItem Header="Open Folder" x:Name="OpenFolder"/>
 
                 <Separator/>
 
-                <MenuItem Header="Save" Name="Save" Command="ApplicationCommands.Save"/>
-                <MenuItem Header="Save As" Command="ApplicationCommands.SaveAs" Name="SaveAs"/>
-                <MenuItem Header="Save All" Name="SaveAll" Click="SaveAll_Click"/>
+                <MenuItem Header="Save" x:Name="Save" Command="ApplicationCommands.Save"/>
+                <MenuItem Header="Save As" Command="ApplicationCommands.SaveAs" x:Name="SaveAs"/>
+                <MenuItem Header="Save All" x:Name="SaveAll" Click="SaveAll_Click"/>
 
                 <Separator/>
 
-                <MenuItem Header="Close File" Name="CloseFile" Command="self:CustomCommands.CloseFile"/>
-                <MenuItem Header="Close All Files" Name="CloseAllFiles" Click="CloseAllFiles_Click"/>
-                <MenuItem Header="New Window" Name="NewWindow" Click="NewWindow_Click"/>
+                <MenuItem Header="Close File" x:Name="CloseFile" Command="self:CustomCommands.CloseFile"/>
+                <MenuItem Header="Close All Files" x:Name="CloseAllFiles" Click="CloseAllFiles_Click"/>
+                <MenuItem Header="New Window" x:Name="NewWindow" Click="NewWindow_Click"/>
 
                 <Separator/>
 
-                <MenuItem Header="Exit" Name="Exit" Command="self:CustomCommands.Exit"/>
+                <MenuItem Header="Exit" x:Name="Exit" Command="self:CustomCommands.Exit"/>
             </MenuItem>
 
             <MenuItem Header="Edit">
-                <MenuItem Header="Cut" Name="Cut" Command="ApplicationCommands.Cut"/>
-                <MenuItem Header="Copy" Name="Copy" Command="ApplicationCommands.Copy"/>
-                <MenuItem Header="Paste" Name="Paste" Command="ApplicationCommands.Paste"/>
-                <MenuItem Header="Undo" Name="Undo" Command="ApplicationCommands.Undo"/>
+                <MenuItem Header="Cut" x:Name="Cut" Command="ApplicationCommands.Cut"/>
+                <MenuItem Header="Copy" x:Name="Copy" Command="ApplicationCommands.Copy"/>
+                <MenuItem Header="Paste" x:Name="Paste" Command="ApplicationCommands.Paste"/>
+                <MenuItem Header="Undo" x:Name="Undo" Command="ApplicationCommands.Undo"/>
 
                 <Separator/>
 
-                <MenuItem Header="Find" Name="Find" Command="ApplicationCommands.Find"/>
-                <MenuItem Header="Replace" Name="Replace" Command="ApplicationCommands.Replace"/>
+                <MenuItem Header="Find" x:Name="Find" Command="ApplicationCommands.Find"/>
+                <MenuItem Header="Replace" x:Name="Replace" Command="ApplicationCommands.Replace"/>
             </MenuItem>
 
-            <MenuItem Header="Selection" Name="Selection">
-                <MenuItem Header="Select All" Name="SelectAll" Command="ApplicationCommands.SelectAll"/>
+            <MenuItem Header="Selection" x:Name="Selection">
+                <MenuItem Header="Select All" x:Name="SelectAll" Command="ApplicationCommands.SelectAll"/>
             </MenuItem>
 
-            <MenuItem Header="Languages" Name="Languages">
-                <ComboBoxItem Name="C" Content="C" />
-                    <ComboBoxItem Name="CPlusPlus" Content="C++"/>
-                    <ComboBoxItem Name="Java" Content="Java"/>
-                    <ComboBoxItem Name="JavaScript" Content="JavaScript"/>
-                <ComboBoxItem Name="CSharp" Content="C#"/>
+            <MenuItem Header="Languages" x:Name="Languages">
+                <ComboBoxItem x:Name="C" Content="C" />
+                <ComboBoxItem x:Name="CPlusPlus" Content="C++"/>
+                <ComboBoxItem x:Name="Java" Content="Java"/>
+                <ComboBoxItem x:Name="JavaScript" Content="JavaScript"/>
+                <ComboBoxItem x:Name="CSharp" Content="C#"/>
             </MenuItem>
 
-            <MenuItem Header="Run" Name="Run">
-                <MenuItem Header="Build" Name="Build" Command="self:CustomCommands.Build" />
-                <MenuItem Header="Build And Run" Name="BuildAndRun" Command="self:CustomCommands.BuildAndRun"/>
+            <MenuItem Header="Run" x:Name="Run">
+                <MenuItem Header="Build" x:Name="Build" Command="self:CustomCommands.Build" />
+                <MenuItem Header="Build And Run" x:Name="BuildAndRun" Command="self:CustomCommands.BuildAndRun"/>
 
                 <Separator/>
 
-                <MenuItem Header="Debug" Name="Debug"/>
-                <MenuItem Header="Run Without Debug" Name="RunWithoutDebug"/>
+                <MenuItem Header="Debug" x:Name="Debug"/>
+                <MenuItem Header="Run Without Debug" x:Name="RunWithoutDebug"/>
             </MenuItem>
 
-            <MenuItem Header="Terminal" Name="Terminal">
-                <MenuItem Header="New Terminal" Name="NewTerminal" Command="self:CustomCommands.NewTerminal"/>
-                <MenuItem Header="Open Terminal in Current Workspace" Name="NewTerminalCurrentDir" Command="self:CustomCommands.NewTerminalCurrentDir"/>
+            <MenuItem Header="Terminal" x:Name="Terminal">
+                <MenuItem Header="New Terminal" x:Name="NewTerminal" Command="self:CustomCommands.NewTerminal"/>
+                <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDir" Command="self:CustomCommands.NewTerminalCurrentDir"/>
             </MenuItem>
 
-            <MenuItem Header="Preferences" Name="Preferences">
-                <MenuItem Header="Dark Mode" Name="Darkmode"/>
-                <MenuItem Header="Auto Save" Name="AutoSave"/>
+            <MenuItem Header="Preferences" x:Name="Preferences">
+                <MenuItem Header="Dark Mode" x:Name="Darkmode"/>
+                <MenuItem Header="Auto Save" x:Name="AutoSave"/>
             </MenuItem>
 
-            <MenuItem Header="Help" Name="Help">
-                <MenuItem Header="About" Name="About"/>
-                <MenuItem Header="Report" Name="Report"/>
+            <MenuItem Header="Help" x:Name="Help">
+                <MenuItem Header="About" x:Name="About"/>
+                <MenuItem Header="Report" x:Name="Report"/>
             </MenuItem>
         </Menu>
 
-        <TabControl  FontFamily="Consolas" Grid.Row="1" Name="tabControl"/>
+        <TabControl  FontFamily="Consolas" Grid.Row="1" x:Name="tabControl"/>
+        <!--<WPF:ConsoleControl Height="200" Name="Console" Loaded="ConsoleControl"></WPF:ConsoleControl>-->
 
-
-        <StatusBar Grid.Row="2" Name="StatusBar" Background="White" BorderThickness="0.3" BorderBrush="Gray" FontWeight="Medium">
+        <StatusBar Grid.Row="2" x:Name="StatusBar" Background="White" BorderThickness="0.3" BorderBrush="Gray" FontWeight="Medium">
             <StatusBarItem>
-                <TextBlock Name="StatusText" Text="{Binding}"/>
+                <TextBlock x:Name="StatusText" Text="{Binding}"/>
             </StatusBarItem>
 
             <StatusBarItem HorizontalAlignment="Right">

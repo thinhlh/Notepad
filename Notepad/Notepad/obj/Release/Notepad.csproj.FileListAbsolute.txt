@@ -38,3 +38,23 @@ C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.c
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.CopyComplete
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.exe
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\Notepad.pdb
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.csprojAssemblyReference.cache
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\MainWindow.g.cs
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\App.g.cs
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad_MarkupCompile.cache
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad_MarkupCompile.lref
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.exe
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.pdb
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\bin\Release\Notepad.exe.config
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\bin\Release\Notepad.exe
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\bin\Release\Notepad.pdb
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\bin\Release\ConsoleControl.WPF.dll
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\bin\Release\ConsoleControlAPI.dll
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\bin\Release\ConsoleControl.WPF.xml
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\bin\Release\ConsoleControlAPI.xml
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\MainWindow.baml
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.g.resources
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.Properties.Resources.resources
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.GenerateResource.cache
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.CoreCompileInputs.cache
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.CopyComplete
