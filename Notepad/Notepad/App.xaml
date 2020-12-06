@@ -1,13 +1,20 @@
 ﻿<Application 
-             x:Class="Notepad.ICommand"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Notepad"
+             xmlns:viewmodel="clr-namespace:Notepad.Classes"
              StartupUri="MainWindow.xaml">
+
     <Application.Resources>
-        <Style TargetType="{x:Type Paragraph}">
-            <Setter Property="Margin" Value="0"/>
-            <Setter Property="TextIndent" Value="40"></Setter>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <viewmodel:MainViewModel x:Key="MainVM"/>
+                    <Style TargetType="{x:Type Paragraph}">
+                        <Setter Property="Margin" Value="0"/>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
