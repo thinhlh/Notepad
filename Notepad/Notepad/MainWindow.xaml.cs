@@ -7,7 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
+using Notepad.Classes;
+using Notepad.ViewModels;
 namespace Notepad
 {
     /// <summary>
@@ -383,7 +384,7 @@ namespace Notepad
             richTextBox.FontSize = 18;
             richTextBox.TextChanged += TextBox_TextChanged;
             
-            //richTextBox.PreviewKeyDown += SyntaxHighlighting.RichTextBox_PreviewKeyDown;
+            richTextBox.PreviewKeyDown += SyntaxHighlighting.RichTextBox_PreviewKeyDown;
         }
 
         private void SetText(RichTextBox richTextBox, string text)
@@ -560,42 +561,5 @@ namespace Notepad
         );
     }
 
-    public class SyntaxHighlighting : MainWindow
-    {
-        public static void SyntaHighlighting()
-        {
-            
-        }
-        private static void TextChanged_PreviewKeyDown(object sender,KeyEventArgs e)
-        {
-            
-        }
-        public static void GetLineAtCurrentCaret(RichTextBox richTextBox)
-        {
-            
-        }
-
-        public static void RichTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            RichTextBox richTextBox = (RichTextBox)sender;
-            if (e.Key == Key.Space)
-            {
-                TextPointer start = richTextBox.CaretPosition;
-                string text1 = start.GetTextInRun(LogicalDirection.Backward);
-                TextPointer end = start.GetNextContextPosition(LogicalDirection.Backward);
-                string text2 = end.GetTextInRun(LogicalDirection.Backward);
-
-                richTextBox.Selection.Select(start, end);
-                richTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
-                richTextBox.Selection.Select(start, start);
-                richTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-            }
-        }
-
-        public static void Coloring(TextRange textRange,SolidColorBrush color)
-        {
-            textRange.ApplyPropertyValue(TextElement.ForegroundProperty, color);
-        }
-    }
 }
 

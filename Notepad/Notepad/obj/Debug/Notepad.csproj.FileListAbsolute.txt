@@ -59,3 +59,5 @@ C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\Notepad.c
 C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe
 C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\Notepad.pdb
 C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\App.baml
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\Resources\MainResource.baml
