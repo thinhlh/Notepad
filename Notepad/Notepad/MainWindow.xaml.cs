@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Notepad.Classes;
 namespace Notepad
 {
     /// <summary>
@@ -17,21 +18,21 @@ namespace Notepad
     {
         public MainWindow()
         {
-
             InitializeComponent();
-
-            InitTab(new TabItem());
         }
 
         #region Variables
 
-        private List<bool> isSaved = new List<bool>();
 
-        private List<TabItem> tabItems = new List<TabItem>(); // each Tab Item is contained here
+        private List<MainTabItem> tabItems = new List<MainTabItem>();
+        
+        //private List<TabItem> tabItems = new List<TabItem>(); // each Tab Item is contained here
 
-        private List<string> filePaths = new List<string>(); // FilePath for each Tab
+        //private List<string> filePaths = new List<string>(); // FilePath for each Tab
 
-        private List<string> fileData = new List<string>();//File Data for each File
+        //private List<string> fileData = new List<string>();//File Data for each File
+
+        //private List<bool> isSaved = new List<bool>();
 
         #endregion
 
@@ -39,7 +40,7 @@ namespace Notepad
 
         private void NewFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            InitTab(new TabItem());
+            InitTab();
         }
 
         private void NewFile_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -59,25 +60,25 @@ namespace Notepad
                 int indexForTab;// Defining which tab the file will be open
                 // If open in new tab => tabItems.Count-1
                 // if open in recent tab => tabControl.selecte
-                if (fileData[tabControl.SelectedIndex] != "")
+                if (tabItems[tabControl.SelectedIndex].FilePath != "" || tabItems[tabControl.SelectedIndex].Data != "")
                 {
-                    InitTab(new TabItem());
+                    InitTab();
                     indexForTab = tabItems.Count - 1;
                 }
                 else indexForTab = tabControl.SelectedIndex;
-                fileData[indexForTab] = System.IO.File.ReadAllText(openFileDialog.FileName);
+                tabItems[indexForTab].FilePath = System.IO.File.ReadAllText(openFileDialog.FileName);
 
                 // Add content to richTextBox
                 RichTextBox richTextBox = (RichTextBox)tabItems[indexForTab].Content;
-                SetText(richTextBox, fileData[indexForTab]);
+                SetText(richTextBox, tabItems[indexForTab].FilePath);
                 /*Pointer to the end of paragraph*/
                 richTextBox.ScrollToEnd();
 
 
                 tabItems[indexForTab].Header = Path.GetFileName(openFileDialog.FileName);
                 tabItems[indexForTab].Content = richTextBox;
-                filePaths[indexForTab] = openFileDialog.FileName;
-                isSaved[indexForTab] = true;
+                tabItems[indexForTab].FilePath = openFileDialog.FileName;
+                tabItems[indexForTab].IsSaved = true;
 
                 //Update Status Bar
                 UpdateStatusBar(indexForTab);
@@ -96,14 +97,14 @@ namespace Notepad
 
         private void Save_Executed(int index)//for saving tab index_th using for Save All method Only 
         {
-            if (!isSaved[index]) // not yet saved
+            if (!tabItems[index].IsSaved||tabItems[index].Data=="") // not yet saved or new tab but not have data
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
 
-                bool fileExsisted = System.IO.File.Exists(filePaths[index]);
+                bool fileExsisted = System.IO.File.Exists(tabItems[index].FilePath);
                 if (fileExsisted)
                 {
-                    System.IO.File.WriteAllText(filePaths[index], fileData[index]);
+                    System.IO.File.WriteAllText(tabItems[index].FilePath, tabItems[index].Data);
                     RemoveSavedIcon(index);
                 }
                 else SaveAs_Executed(index);
@@ -131,10 +132,10 @@ namespace Notepad
             saveFileDialog.FileName = tabHeader.Substring(0, tabHeader.Length - 1); // remove the * flag
             if (saveFileDialog.ShowDialog() == true)
             {
-                System.IO.File.WriteAllText(saveFileDialog.FileName, fileData[index]);
+                System.IO.File.WriteAllText(saveFileDialog.FileName, tabItems[index].Data);
                 RemoveSavedIcon(index);
                 tabItems[index].Header = Path.GetFileName(saveFileDialog.FileName);
-                filePaths[index] = saveFileDialog.FileName;
+                tabItems[index].FilePath = saveFileDialog.FileName;
 
                 //Update Status Bar
                 UpdateStatusBar(index);
@@ -183,7 +184,7 @@ namespace Notepad
 
         private void NewTerminalCurrentDir_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (filePaths[tabControl.SelectedIndex] != "")
+            if (tabItems[tabControl.SelectedIndex].FilePath != "")
                 e.CanExecute = true;
             else e.CanExecute = false;
         }
@@ -200,13 +201,13 @@ namespace Notepad
 
         private void Build_Executed(object sender,ExecutedRoutedEventArgs e)
         {
-            string childFileNameWithExt = Path.GetFileName(filePaths[tabControl.SelectedIndex]);
-            string childFileNameWithoutExt = Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]);
+            string childFileNameWithExt = Path.GetFileName(tabItems[tabControl.SelectedIndex].FilePath);
+            string childFileNameWithoutExt = Path.GetFileNameWithoutExtension(tabItems[tabControl.SelectedIndex].FilePath);
             ProcessStartInfo startInfo = new ProcessStartInfo("cmd");
             Process process = new Process();
 
 
-            if (isSaved[tabControl.SelectedIndex] == false)
+            if (tabItems[tabControl.SelectedIndex].IsSaved == false)
             {
                 MessageBoxResult result = MessageBox.Show("You need to save before compile, save changes?", "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
@@ -238,10 +239,10 @@ namespace Notepad
         private void BuildAndRun_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Build_Executed(sender, e);
-            string childFileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]);
+            string childFileNameWithoutExtension = Path.GetFileNameWithoutExtension(tabItems[tabControl.SelectedIndex].FilePath);
             string parentPath = getParentFullPath(tabControl.SelectedIndex);
             if (
-                (isSaved[tabControl.SelectedIndex]==false)
+                (tabItems[tabControl.SelectedIndex].IsSaved==false)
                 ||
                 (System.IO.File.Exists(Path.Combine(parentPath,childFileNameWithoutExtension+".exe"))==false)
                )
@@ -254,7 +255,7 @@ namespace Notepad
             process.StartInfo.WorkingDirectory = getParentFullPath(tabControl.SelectedIndex);
 
             process.Start();
-            process.StandardInput.WriteLine(Path.GetFileNameWithoutExtension(filePaths[tabControl.SelectedIndex]));
+            process.StandardInput.WriteLine(Path.GetFileNameWithoutExtension(tabItems[tabControl.SelectedIndex].FilePath));
 
             process.WaitForExit();
             System.IO.File.Delete(Path.Combine(parentPath, childFileNameWithoutExtension + ".exe")); //Delete .exe File
@@ -269,13 +270,17 @@ namespace Notepad
         #endregion
 
         #region Additional Functions
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            InitTab();
+        }
 
         /* use tabControl.SelectedIndex as an argument for normal save and save as 
          * use index in loop for save all method */
 
         private void RemoveSavedIcon(int index)
         {
-            isSaved[index] = true;
+            tabItems[index].IsSaved = true;
 
             string header = tabItems[index].Header.ToString();
             tabItems[index].Header = header.Remove(header.Length - 1, 1);
@@ -284,26 +289,24 @@ namespace Notepad
         private void AddSavedIcon()
         {
             tabItems[tabControl.SelectedIndex].Header += "*";
-            isSaved[tabControl.SelectedIndex] = false;
+            tabItems[tabControl.SelectedIndex].IsSaved = false;
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             String header = tabItems[tabControl.SelectedIndex].Header.ToString();
 
-            if (isSaved[tabControl.SelectedIndex]) // normal situation
+            if (tabItems[tabControl.SelectedIndex].IsSaved) // normal situation
             {
                 //Raise* at the end and keep isSaved = false when there is a change with out save before
                 AddSavedIcon();
             }
 
-            //When init situation // is Save equal to false and header does not contains * => so add * when text changed
-            else if (header.Contains("*") == false && isSaved[tabControl.SelectedIndex] == false)
+            //When init situation // is Save equal to true and header does not contains * => so add * when text changed
+            else if (header.Contains("*") == false && tabItems[tabControl.SelectedIndex].IsSaved == false)
                 AddSavedIcon();
 
-            RichTextBox richTextBox = (RichTextBox)sender;
-            fileData[tabControl.SelectedIndex] = GetText(richTextBox);
-
+            tabItems[tabControl.SelectedIndex].Data = GetText(sender as RichTextBox);
         }
 
         private List<int> closedTabIndexes = new List<int>();// this List holds indexs of tabs that was removed from tabControl
@@ -339,12 +342,14 @@ namespace Notepad
             }
         }
 
-        private void InitTab(TabItem tabItem)
+        private void InitTab()
         {
+            MainTabItem tabItem = new MainTabItem();
+            tabItems.Add(tabItem);
             //Add filePaths and fileData
 
-            filePaths.Add("");
-            fileData.Add("");
+            //filePaths.Add("");
+            //fileData.Add("");
 
             //Setup for RichTextBox of tabItem
             RichTextBox richTextBox = new RichTextBox();
@@ -357,33 +362,26 @@ namespace Notepad
             tabItem.Content = richTextBox;
 
             //Add to tabItems
-            tabItems.Add(tabItem);
+            //tabItems.Add(tabItem);
 
             //Add tabItem to tabControl
             tabControl.Items.Add(tabItem);
             tabItem.Focus();
 
             // Init isSave 
-            isSaved.Add(true);
+            //isSaved.Add(true);
 
             tabControl.SelectionChanged += TabControl_SelectionChanged;
+            UpdateStatusBar(tabControl.SelectedIndex);
         }
 
         #region RichTextBox Setup
 
         private void RichTextBoxSetUp(RichTextBox richTextBox)
         {
-            SetText(richTextBox, fileData[tabItems.Count]);
-            richTextBox.AcceptsReturn = true;
-            richTextBox.AcceptsTab = true;
-            richTextBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            richTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            richTextBox.BorderThickness = new Thickness(0);
-            richTextBox.Margin = new Thickness(0, -2, 0, 0);
-            richTextBox.FontSize = 18;
+            SetText(richTextBox, tabItems[tabItems.Count-1].Data);
             richTextBox.TextChanged += TextBox_TextChanged;
             
-            //richTextBox.PreviewKeyDown += SyntaxHighlighting.RichTextBox_PreviewKeyDown;
         }
 
         private void SetText(RichTextBox richTextBox, string text)
@@ -401,15 +399,15 @@ namespace Notepad
         {
             if (index == -1)
                 StatusText.DataContext="None";// No update when close all tab
-            else if (filePaths[index] == "")
+            else if (tabItems[index].FilePath == "")
                 StatusText.DataContext = "Plain Text";
             else
-                StatusText.DataContext = filePaths[tabControl.SelectedIndex];
+                StatusText.DataContext = tabItems[tabControl.SelectedIndex].FilePath;
         }
 
         private string getParentFullPath(int tabIndex)
         {
-            return Path.Combine(filePaths[tabIndex], "..");
+            return Path.Combine(tabItems[tabIndex].FilePath, "..");
         }
 
         #endregion
@@ -423,7 +421,6 @@ namespace Notepad
             //Console.StartProcess(processStartInfo);
             
         }
-
         #endregion
 
         #region Click
@@ -436,29 +433,26 @@ namespace Notepad
 
         private void CloseFile_Executed(int index)
         {
-            if (isSaved[index] == false)
+            if (tabItems[index].IsSaved == false)
             {
-                if (fileData[index] != "")
-                {
-                    //Message then request save
-                    string tabHeader = (string)tabItems[index].Header;
-                    string message = tabHeader.Substring(0,tabHeader.Length-1) + " have been modified, save changes?";
+                //Message then request save
+                string tabHeader = (string)tabItems[index].Header;
+                string message = tabHeader.Substring(0,tabHeader.Length-1) + " have been modified, save changes?";
 
-                    MessageBoxResult result = MessageBox.Show(message, "Request", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.Yes)
-                        SaveAs_Executed(index);
-                    else if (result == MessageBoxResult.Cancel)
-                        return;
-                }
+                MessageBoxResult result = MessageBox.Show(message, "Request", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                    SaveAs_Executed(index);
+                else if (result == MessageBoxResult.Cancel)
+                    return;
             }
             tabControl.Items.RemoveAt(index);
             
             int deletedIndexTab = Int16.Parse(tabItems[index].Name.Substring(8)); // Return the index of deleted tabItem by get subTring from name then convert to int
 
             tabItems.RemoveAt(index);
-            fileData.RemoveAt(index);
-            filePaths.RemoveAt(index);
-            isSaved.RemoveAt(index);
+            //fileData.RemoveAt(index);
+            //filePaths.RemoveAt(index);
+            //isSaved.RemoveAt(index);
 
             //Add Index of tab then sort it for reopen new tab situation 
             closedTabIndexes.Add(deletedIndexTab);
@@ -482,120 +476,10 @@ namespace Notepad
             System.Windows.Application.Current.Shutdown();
         }
 
-        private void Test(object sender, RoutedEventArgs e)
-        {
 
-            Process process = new Process();
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = "/c g++";
-            process.StartInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            process.Start();
-            process.WaitForExit();
-              
-        }
-        
-        #endregion
-    }
-
-    public static class CustomCommands
-    {
-        public static readonly RoutedUICommand CloseFile = new RoutedUICommand(
-            "Close File",
-            "Close File",
-            typeof(CustomCommands),
-            new InputGestureCollection()
-            {
-                new KeyGesture(Key.W, ModifierKeys.Control) //Multi ModifierKeys
-            }
-        );
-
-        public static readonly RoutedUICommand Exit = new RoutedUICommand(
-            "Exit",
-            "Exit",
-            typeof(CustomCommands),
-            new InputGestureCollection()
-            {
-                new KeyGesture(Key.F4, ModifierKeys.Alt) //Multi ModifierKeys
-            }
-        );
-
-        public static readonly RoutedUICommand NewTerminal = new RoutedUICommand(
-            "Terminal",
-            "Terminal",
-            typeof(CustomCommands),
-            new InputGestureCollection()
-            {
-                new KeyGesture(Key.T, ModifierKeys.Control)
-            }
-        );
-
-        public static readonly RoutedUICommand NewTerminalCurrentDir = new RoutedUICommand(
-            "Terminal in Current Directory",
-            "Terminal in Current Directory",
-            typeof(CustomCommands),
-            new InputGestureCollection()
-            {
-                new KeyGesture(Key.T, ModifierKeys.Control|ModifierKeys.Shift) //Multi ModifierKeys
-            }
-        );
-
-        public static readonly RoutedUICommand Build = new RoutedUICommand(
-            "Build",
-            "Build",
-            typeof(CustomCommands),
-            new InputGestureCollection()
-            {
-                new KeyGesture(Key.F5)
-            }
-        );
-
-        public static readonly RoutedUICommand BuildAndRun = new RoutedUICommand(
-            "Build and Run",
-            "Build and Run",
-            typeof(CustomCommands),
-            new InputGestureCollection()
-            {
-                new KeyGesture(Key.F5, ModifierKeys.Control)
-            }
-        );
-    }
-
-    public class SyntaxHighlighting : MainWindow
-    {
-        public static void SyntaHighlighting()
-        {
-            
-        }
-        private static void TextChanged_PreviewKeyDown(object sender,KeyEventArgs e)
-        {
-            
-        }
-        public static void GetLineAtCurrentCaret(RichTextBox richTextBox)
-        {
-            
-        }
-
-        public static void RichTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            RichTextBox richTextBox = (RichTextBox)sender;
-            if (e.Key == Key.Space)
-            {
-                TextPointer start = richTextBox.CaretPosition;
-                string text1 = start.GetTextInRun(LogicalDirection.Backward);
-                TextPointer end = start.GetNextContextPosition(LogicalDirection.Backward);
-                string text2 = end.GetTextInRun(LogicalDirection.Backward);
-
-                richTextBox.Selection.Select(start, end);
-                richTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
-                richTextBox.Selection.Select(start, start);
-                richTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-            }
-        }
-
-        public static void Coloring(TextRange textRange,SolidColorBrush color)
-        {
-            textRange.ApplyPropertyValue(TextElement.ForegroundProperty, color);
-        }
+        #endregion   
     }
 }
+
+
 
