@@ -3,10 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:self="clr-namespace:Notepad"
+        xmlns:self="clr-namespace:Notepad.Classes"
         xmlns:WPF="clr-namespace:ConsoleControl.WPF;assembly=ConsoleControl.WPF" x:Class="Notepad.MainWindow"
         mc:Ignorable="d"
-        Title="Notepad" Height="450" Width="800" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" WindowStartupLocation="CenterScreen" Icon="SublimeIcon.png">
+        Loaded="Window_Loaded"
+        Title="Notepad" 
+        Height="450" 
+        Width="800" 
+        ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+        ScrollViewer.VerticalScrollBarVisibility="Auto"
+        WindowStartupLocation="CenterScreen" 
+        Icon="SublimeIcon.png">
 
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.New"
@@ -51,7 +58,6 @@
                         CanExecute="BuildAndRun_CanExecute"/>
 
     </Window.CommandBindings>
-
 
     <Grid>
         <Grid.RowDefinitions>

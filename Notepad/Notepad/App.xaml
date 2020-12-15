@@ -8,5 +8,15 @@
         <Style TargetType="{x:Type Paragraph}">
             <Setter Property="Margin" Value="0"/>
         </Style>
+
+        <Style TargetType="{x:Type RichTextBox}">
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="AcceptsTab" Value="True"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0,-2,0,0"/>
+            <Setter Property="FontSize" Value="18"/>
+        </Style>
     </Application.Resources>
 </Application>
