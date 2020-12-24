@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Notepad;
+﻿using System.Windows.Input;
 namespace Notepad.Classes
 {
-    public static class CustomCommands
+    public static class CommandsBinding
     {
         public static readonly RoutedUICommand CloseFile = new RoutedUICommand(
             "Close File",
             "Close File",
-            typeof(CustomCommands),
+            typeof(CommandsBinding),
             new InputGestureCollection()
             {
                 new KeyGesture(Key.W, ModifierKeys.Control) //Multi ModifierKeys
@@ -22,7 +16,7 @@ namespace Notepad.Classes
         public static readonly RoutedUICommand Exit = new RoutedUICommand(
             "Exit",
             "Exit",
-            typeof(CustomCommands),
+            typeof(CommandsBinding),
             new InputGestureCollection()
             {
                 new KeyGesture(Key.F4, ModifierKeys.Alt) //Multi ModifierKeys
@@ -32,7 +26,7 @@ namespace Notepad.Classes
         public static readonly RoutedUICommand NewTerminal = new RoutedUICommand(
             "Terminal",
             "Terminal",
-            typeof(CustomCommands),
+            typeof(CommandsBinding),
             new InputGestureCollection()
             {
                 new KeyGesture(Key.T, ModifierKeys.Control)
@@ -42,7 +36,7 @@ namespace Notepad.Classes
         public static readonly RoutedUICommand NewTerminalCurrentDir = new RoutedUICommand(
             "Terminal in Current Directory",
             "Terminal in Current Directory",
-            typeof(CustomCommands),
+            typeof(CommandsBinding),
             new InputGestureCollection()
             {
                 new KeyGesture(Key.T, ModifierKeys.Control|ModifierKeys.Shift) //Multi ModifierKeys
@@ -52,7 +46,7 @@ namespace Notepad.Classes
         public static readonly RoutedUICommand Build = new RoutedUICommand(
             "Build",
             "Build",
-            typeof(CustomCommands),
+            typeof(CommandsBinding),
             new InputGestureCollection()
             {
                 new KeyGesture(Key.F5)
@@ -62,7 +56,7 @@ namespace Notepad.Classes
         public static readonly RoutedUICommand BuildAndRun = new RoutedUICommand(
             "Build and Run",
             "Build and Run",
-            typeof(CustomCommands),
+            typeof(CommandsBinding),
             new InputGestureCollection()
             {
                 new KeyGesture(Key.F5, ModifierKeys.Control)

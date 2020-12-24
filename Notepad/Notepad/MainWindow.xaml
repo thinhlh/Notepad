@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:self="clr-namespace:Notepad.Classes"
-        xmlns:WPF="clr-namespace:ConsoleControl.WPF;assembly=ConsoleControl.WPF" x:Class="Notepad.MainWindow"
+        xmlns:classes="clr-namespace:Notepad.Classes"
+        xmlns:WPF="clr-namespace:ConsoleControl.WPF;assembly=ConsoleControl.WPF" 
+        x:Class="Notepad.MainWindow"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
         Title="Notepad" 
@@ -14,7 +15,6 @@
         ScrollViewer.VerticalScrollBarVisibility="Auto"
         WindowStartupLocation="CenterScreen" 
         Icon="SublimeIcon.png">
-
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.New"
                         Executed="NewFile_Executed"
@@ -33,27 +33,27 @@
                         CanExecute="SaveAs_CanExecute"/>
 
 
-        <CommandBinding Command="self:CustomCommands.CloseFile"
+        <CommandBinding Command="classes:CommandsBinding.CloseFile"
                         Executed="CloseFile_Executed"
                         CanExecute="CloseFile_CanExecute"/>
 
-        <CommandBinding Command="self:CustomCommands.Exit"
+        <CommandBinding Command="classes:CommandsBinding.Exit"
                         Executed="Exit_Executed"
                         CanExecute="Exit_CanExecute"/>
 
-        <CommandBinding Command="self:CustomCommands.NewTerminal"
+        <CommandBinding Command="classes:CommandsBinding.NewTerminal"
                         Executed="NewTerminal_Executed" 
                         CanExecute="NewTerminal_CanExecute"/>
 
-        <CommandBinding Command="self:CustomCommands.NewTerminalCurrentDir"
+        <CommandBinding Command="classes:CommandsBinding.NewTerminalCurrentDir"
                         Executed="NewTerminalCurrentDir_Executed"
                         CanExecute="NewTerminalCurrentDir_CanExecute"/>
 
-        <CommandBinding Command="self:CustomCommands.Build"
+        <CommandBinding Command="classes:CommandsBinding.Build"
                         Executed="Build_Executed"
                         CanExecute="Build_CanExecute"/>
 
-        <CommandBinding Command="self:CustomCommands.BuildAndRun"
+        <CommandBinding Command="classes:CommandsBinding.BuildAndRun"
                         Executed="BuildAndRun_Executed"
                         CanExecute="BuildAndRun_CanExecute"/>
 
@@ -62,8 +62,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="10*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Background="White" >
             <MenuItem Header="File" x:Name="File">
@@ -79,13 +79,13 @@
 
                 <Separator/>
 
-                <MenuItem Header="Close File" x:Name="CloseFile" Command="self:CustomCommands.CloseFile"/>
+                <MenuItem Header="Close File" x:Name="CloseFile" Command="classes:CommandsBinding.CloseFile"/>
                 <MenuItem Header="Close All Files" x:Name="CloseAllFiles" Click="CloseAllFiles_Click"/>
                 <MenuItem Header="New Window" x:Name="NewWindow" Click="NewWindow_Click"/>
 
                 <Separator/>
 
-                <MenuItem Header="Exit" x:Name="Exit" Command="self:CustomCommands.Exit"/>
+                <MenuItem Header="Exit" x:Name="Exit" Command="classes:CommandsBinding.Exit"/>
             </MenuItem>
 
             <MenuItem Header="Edit">
@@ -113,8 +113,8 @@
             </MenuItem>
 
             <MenuItem Header="Run" x:Name="Run">
-                <MenuItem Header="Build" x:Name="Build" Command="self:CustomCommands.Build" />
-                <MenuItem Header="Build And Run" x:Name="BuildAndRun" Command="self:CustomCommands.BuildAndRun"/>
+                <MenuItem Header="Build" x:Name="Build" Command="classes:CommandsBinding.Build" />
+                <MenuItem Header="Build And Run" x:Name="BuildAndRun" Command="classes:CommandsBinding.BuildAndRun"/>
 
                 <Separator/>
 
@@ -123,8 +123,8 @@
             </MenuItem>
 
             <MenuItem Header="Terminal" x:Name="Terminal">
-                <MenuItem Header="New Terminal" x:Name="NewTerminal" Command="self:CustomCommands.NewTerminal"/>
-                <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDir" Command="self:CustomCommands.NewTerminalCurrentDir"/>
+                <MenuItem Header="New Terminal" x:Name="NewTerminal" Command="classes:CommandsBinding.NewTerminal"/>
+                <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDir" Command="classes:CommandsBinding.NewTerminalCurrentDir"/>
             </MenuItem>
 
             <MenuItem Header="Preferences" x:Name="Preferences">
@@ -138,14 +138,17 @@
             </MenuItem>
         </Menu>
 
-        <TabControl  FontFamily="Consolas" Grid.Row="1" x:Name="tabControl"/>
+        <TabControl  FontFamily="Consolas" Grid.Row="1" x:Name="tabControl" SelectionChanged="TabControl_SelectionChanged"/>
+        
+        
         <!--<WPF:ConsoleControl Height="200" Name="Console" Loaded="ConsoleControl"></WPF:ConsoleControl>-->
+        <!--<Button Click="{x:Static classes:SyntaxHighlight.Button_Click}">Click Me</Button>-->
 
         <StatusBar Grid.Row="2" x:Name="StatusBar" Background="White" BorderThickness="0.3" BorderBrush="Gray" FontWeight="Medium">
             <StatusBarItem>
                 <TextBlock x:Name="StatusText" Text="{Binding}"/>
             </StatusBarItem>
-
+        
             <StatusBarItem HorizontalAlignment="Right">
                 <Slider Minimum="10" Maximum="50" Width="150" TickFrequency="10" IsSnapToTickEnabled="True" TickPlacement="BottomRight" ValueChanged="Slider_ValueChanged"/>
             </StatusBarItem>

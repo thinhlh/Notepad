@@ -9,6 +9,8 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Notepad.Classes;
+using System.Text.RegularExpressions;
+
 namespace Notepad
 {
     /// <summary>
@@ -23,16 +25,7 @@ namespace Notepad
 
         #region Variables
 
-
-        private List<MainTabItem> tabItems = new List<MainTabItem>();
-        
-        //private List<TabItem> tabItems = new List<TabItem>(); // each Tab Item is contained here
-
-        //private List<string> filePaths = new List<string>(); // FilePath for each Tab
-
-        //private List<string> fileData = new List<string>();//File Data for each File
-
-        //private List<bool> isSaved = new List<bool>();
+        private List<MainTabItem> tabItems = new List<MainTabItem>();        
 
         #endregion
 
@@ -57,20 +50,23 @@ namespace Notepad
 
             if (openFileDialog.ShowDialog() == true)
             {
-                int indexForTab;// Defining which tab the file will be open
-                // If open in new tab => tabItems.Count-1
-                // if open in recent tab => tabControl.selecte
+                int indexForTab;
+                /* 
+                 * Determining which tab the file will be open
+                 * If open in new tab => tabItems.Count-1
+                 * if open in recent tab => tabControl.selected
+                */
                 if (tabItems[tabControl.SelectedIndex].FilePath != "" || tabItems[tabControl.SelectedIndex].Data != "")
                 {
                     InitTab();
                     indexForTab = tabItems.Count - 1;
                 }
                 else indexForTab = tabControl.SelectedIndex;
-                tabItems[indexForTab].FilePath = System.IO.File.ReadAllText(openFileDialog.FileName);
+                tabItems[indexForTab].Data = System.IO.File.ReadAllText(openFileDialog.FileName);
 
                 // Add content to richTextBox
                 RichTextBox richTextBox = (RichTextBox)tabItems[indexForTab].Content;
-                SetText(richTextBox, tabItems[indexForTab].FilePath);
+                SetText(richTextBox, tabItems[indexForTab].Data);
                 /*Pointer to the end of paragraph*/
                 richTextBox.ScrollToEnd();
 
@@ -306,7 +302,8 @@ namespace Notepad
             else if (header.Contains("*") == false && tabItems[tabControl.SelectedIndex].IsSaved == false)
                 AddSavedIcon();
 
-            tabItems[tabControl.SelectedIndex].Data = GetText(sender as RichTextBox);
+            tabItems[tabControl.SelectedIndex].Data =GetText(sender as RichTextBox);
+            
         }
 
         private List<int> closedTabIndexes = new List<int>();// this List holds indexs of tabs that was removed from tabControl
@@ -345,11 +342,8 @@ namespace Notepad
         private void InitTab()
         {
             MainTabItem tabItem = new MainTabItem();
-            tabItems.Add(tabItem);
-            //Add filePaths and fileData
 
-            //filePaths.Add("");
-            //fileData.Add("");
+            tabItems.Add(tabItem);
 
             //Setup for RichTextBox of tabItem
             RichTextBox richTextBox = new RichTextBox();
@@ -361,17 +355,10 @@ namespace Notepad
             tabItem.Name = "Document" + (tabIndex);
             tabItem.Content = richTextBox;
 
-            //Add to tabItems
-            //tabItems.Add(tabItem);
 
             //Add tabItem to tabControl
             tabControl.Items.Add(tabItem);
             tabItem.Focus();
-
-            // Init isSave 
-            //isSaved.Add(true);
-
-            tabControl.SelectionChanged += TabControl_SelectionChanged;
             UpdateStatusBar(tabControl.SelectedIndex);
         }
 
@@ -381,8 +368,12 @@ namespace Notepad
         {
             SetText(richTextBox, tabItems[tabItems.Count-1].Data);
             richTextBox.TextChanged += TextBox_TextChanged;
+            //richTextBox.TextChanged += SyntaxHighlight.Text_Changed;
+            richTextBox.SelectionChanged += TestTextRange.Selection_Changed;
             
         }
+
+        
 
         private void SetText(RichTextBox richTextBox, string text)
         {
@@ -450,9 +441,6 @@ namespace Notepad
             int deletedIndexTab = Int16.Parse(tabItems[index].Name.Substring(8)); // Return the index of deleted tabItem by get subTring from name then convert to int
 
             tabItems.RemoveAt(index);
-            //fileData.RemoveAt(index);
-            //filePaths.RemoveAt(index);
-            //isSaved.RemoveAt(index);
 
             //Add Index of tab then sort it for reopen new tab situation 
             closedTabIndexes.Add(deletedIndexTab);
@@ -475,8 +463,6 @@ namespace Notepad
             CloseAllFiles_Click(sender, e);
             System.Windows.Application.Current.Shutdown();
         }
-
-
         #endregion   
     }
 }
