@@ -79,7 +79,6 @@
     <Compile Include="Classes\LineNumber.cs" />
     <Compile Include="Classes\MainTabItem.cs" />
     <Compile Include="Classes\SyntaxHighlight.cs" />
-    <Compile Include="Classes\TestTextRange.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

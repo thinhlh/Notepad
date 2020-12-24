@@ -10,6 +10,7 @@
         </Style>
 
         <Style TargetType="{x:Type RichTextBox}">
+            
             <Setter Property="AcceptsReturn" Value="True"/>
             <Setter Property="AcceptsTab" Value="True"/>
             <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
@@ -17,6 +18,14 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Margin" Value="0,-2,0,0"/>
             <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style TargetType="{x:Type TextBox}" x:Key="LineNumberTextBox">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="IsEnabled" Value="False"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="0,0,0.7,0"/>
         </Style>
     </Application.Resources>
 </Application>

@@ -25,7 +25,7 @@ namespace Notepad
 
         #region Variables
 
-        private List<MainTabItem> tabItems = new List<MainTabItem>();        
+        public List<MainTabItem> tabItems = new List<MainTabItem>();        
 
         #endregion
 
@@ -207,10 +207,9 @@ namespace Notepad
             {
                 MessageBoxResult result = MessageBox.Show("You need to save before compile, save changes?", "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
-                {
                     Save_Executed(tabControl.SelectedIndex);
-                }
-                else return;
+                else 
+                    return;
             }
 
             // We can not use normal argument to write in cmd we have to use redirect Standard Input the write in cmd 
@@ -288,9 +287,16 @@ namespace Notepad
             tabItems[tabControl.SelectedIndex].IsSaved = false;
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        [Obsolete]
+        private void RichTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            String header = tabItems[tabControl.SelectedIndex].Header.ToString();
+            //
+            //Enable wrapping
+            //
+            RichTextBox richTextBox = sender as RichTextBox;
+            FormattedText ft = new FormattedText(GetText(richTextBox), System.Globalization.CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(richTextBox.FontFamily, richTextBox.FontStyle, richTextBox.FontWeight, richTextBox.FontStretch), richTextBox.FontSize, Brushes.Black);
+            richTextBox.Document.PageWidth = ft.Width + richTextBox.FontSize;
+
 
             if (tabItems[tabControl.SelectedIndex].IsSaved) // normal situation
             {
@@ -299,10 +305,14 @@ namespace Notepad
             }
 
             //When init situation // is Save equal to true and header does not contains * => so add * when text changed
-            else if (header.Contains("*") == false && tabItems[tabControl.SelectedIndex].IsSaved == false)
-                AddSavedIcon();
+            else if (
+                tabItems[tabControl.SelectedIndex].Header.ToString().Contains("*") == false 
+                && 
+                tabItems[tabControl.SelectedIndex].IsSaved == false)
+                    
+                    AddSavedIcon();
 
-            tabItems[tabControl.SelectedIndex].Data =GetText(sender as RichTextBox);
+            tabItems[tabControl.SelectedIndex].Data =GetText(richTextBox);
             
         }
 
@@ -333,9 +343,7 @@ namespace Notepad
         {
             for (int i = 0; i < tabControl.Items.Count; i++)
             {
-                RichTextBox richTextBox = (RichTextBox)tabItems[i].Content;
-                richTextBox.FontSize = e.NewValue;
-                //tabItems[i].FontSize = e.NewValue;
+                tabItems[i].FontSize=e.NewValue;
             }
         }
 
@@ -352,11 +360,27 @@ namespace Notepad
             //Setup for tabItem
             int tabIndex = FindIndexForTab();
             tabItem.Header = "Document " + (tabIndex + 1); // Header Display Always larger than 1 of the number of element in tabItems
-            tabItem.Name = "Document" + (tabIndex);
-            tabItem.Content = richTextBox;
+            tabItem.Name = "TabItem" + (tabIndex);
 
+            //
+            //Add Grid to tabcontent include a LineNumberTextBox
+            //
+            Grid tabItemGrid = new Grid();
+            tabItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            tabItemGrid.ColumnDefinitions.Add(new ColumnDefinition() {Width=new GridLength(22,GridUnitType.Star)});
 
+            tabItemGrid.Children.Add(new TextBox()
+            {
+                Name = "LineNumberTextBox" + tabIndex,
+                Style=Application.Current.Resources["LineNumberTextBox"] as Style
+            });
+            Grid.SetColumn(richTextBox, 1);
+            tabItemGrid.Children.Add(richTextBox);
+            tabItem.Content = tabItemGrid;
+
+            //
             //Add tabItem to tabControl
+            //
             tabControl.Items.Add(tabItem);
             tabItem.Focus();
             UpdateStatusBar(tabControl.SelectedIndex);
@@ -367,13 +391,13 @@ namespace Notepad
         private void RichTextBoxSetUp(RichTextBox richTextBox)
         {
             SetText(richTextBox, tabItems[tabItems.Count-1].Data);
-            richTextBox.TextChanged += TextBox_TextChanged;
+            richTextBox.TextChanged += RichTextBox_TextChanged;
+            richTextBox.TextChanged += LineNumber.RichTextBox_TextChanged;
             //richTextBox.TextChanged += SyntaxHighlight.Text_Changed;
-            richTextBox.SelectionChanged += TestTextRange.Selection_Changed;
-            
+            //richTextBox.SelectionChanged += TestTextRange.Selection_Changed;
         }
 
-        
+
 
         private void SetText(RichTextBox richTextBox, string text)
         {

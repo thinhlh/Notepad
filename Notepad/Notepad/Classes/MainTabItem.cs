@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace Notepad.Classes
 {
-    public class MainTabItem: TabItem  // each Tab Item is contained here
+    public class MainTabItem : TabItem  // each Tab Item is contained here
     {
         private bool _isSaved { get; set; } //Check whether a file is Saved or not
         private string _data { get; set; } //Data for each File
@@ -29,7 +29,6 @@ namespace Notepad.Classes
         {
             get => _filePath;
             set => _filePath = value;
-
         }
         public MainTabItem()
         {
