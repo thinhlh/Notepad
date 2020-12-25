@@ -1,0 +1,15 @@
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MaxLineRTB.csprojAssemblyReference.cache
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MainWindow.g.cs
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\App.g.cs
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MaxLineRTB_MarkupCompile.cache
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MaxLineRTB_MarkupCompile.lref
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\bin\Debug\MaxLineRTB.exe.config
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\bin\Debug\MaxLineRTB.exe
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\bin\Debug\MaxLineRTB.pdb
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MainWindow.baml
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MaxLineRTB.g.resources
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MaxLineRTB.Properties.Resources.resources
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MaxLineRTB.csproj.GenerateResource.cache
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MaxLineRTB.csproj.CoreCompileInputs.cache
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MaxLineRTB.exe
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\MaxLineRTB\obj\Debug\MaxLineRTB.pdb

@@ -140,16 +140,14 @@
             </MenuItem>
         </Menu>
 
-        <TabControl  
-            FontFamily="Consolas" 
-            x:Name="tabControl" 
-            SelectionChanged="TabControl_SelectionChanged"
-            Grid.Row="1"/>
+
+        <TabControl  FontFamily="Consolas" x:Name="tabControl" SelectionChanged="TabControl_SelectionChanged" Grid.Row="1"/>
+
 
 
         <!--<WPF:ConsoleControl Height="200" Name="Console" Loaded="ConsoleControl"></WPF:ConsoleControl>-->
         <!--<Button Click="{x:Static classes:SyntaxHighlight.Button_Click}">Click Me</Button>-->
-
+        
         <StatusBar 
             Grid.Row="2" 
             x:Name="StatusBar" 

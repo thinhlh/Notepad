@@ -20,7 +20,7 @@ namespace Notepad.Classes
             RichTextBox richTextBox = sender as RichTextBox;
             
             lineNumber=CountLineNumber(richTextBox);
-            TextBox lineNumberTextBox=(mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].Content as Grid).Children[0] as TextBox;
+            TextBox lineNumberTextBox=((mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].Content as ScrollViewer).Content as Grid).Children[0] as TextBox;
 
             string strLine="";
             for(int i=1;i<=lineNumber;i++)
@@ -37,11 +37,6 @@ namespace Notepad.Classes
             lineNumber = textArr.Length - 1;
             return lineNumber;
 
-        }
-
-        public static void RichTextBox_ScrollViewerChanged(object sender, ScrollChangedEventArgs e)
-        {
-            MessageBox.Show("Invoked");
         }
     }
 }

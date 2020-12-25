@@ -9,7 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Notepad.Classes;
-using System.Text.RegularExpressions;
+using System.Text;
 
 namespace Notepad
 {
@@ -62,17 +62,28 @@ namespace Notepad
                     indexForTab = tabItems.Count - 1;
                 }
                 else indexForTab = tabControl.SelectedIndex;
-                tabItems[indexForTab].Data = System.IO.File.ReadAllText(openFileDialog.FileName);
+
+                /*
+                 * Load Large or small file 
+                 */
+                if(openFileDialog.FileName.Length/(1024*1024)<=2)
+                {
+                    tabItems[indexForTab].Data = LoadFile(openFileDialog);
+                }
+                else
+                {
+                    tabItems[indexForTab].Data = System.IO.File.ReadAllText(openFileDialog.FileName); //if text is smaller than 2mb
+                }
+                
 
                 // Add content to richTextBox
-                RichTextBox richTextBox = (RichTextBox)tabItems[indexForTab].Content;
+                RichTextBox richTextBox = ((tabItems[indexForTab].Content as ScrollViewer).Content as Grid).Children[1] as RichTextBox;
                 SetText(richTextBox, tabItems[indexForTab].Data);
                 /*Pointer to the end of paragraph*/
-                richTextBox.ScrollToEnd();
+                richTextBox.CaretPosition = richTextBox.Document.ContentEnd;
 
 
                 tabItems[indexForTab].Header = Path.GetFileName(openFileDialog.FileName);
-                tabItems[indexForTab].Content = richTextBox;
                 tabItems[indexForTab].FilePath = openFileDialog.FileName;
                 tabItems[indexForTab].IsSaved = true;
 
@@ -80,7 +91,6 @@ namespace Notepad
                 UpdateStatusBar(indexForTab);
             }
         }
-
         private void OpenFile_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -291,7 +301,7 @@ namespace Notepad
         private void RichTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             //
-            //Enable wrapping
+            //Disable wrapping
             //
             RichTextBox richTextBox = sender as RichTextBox;
             FormattedText ft = new FormattedText(
@@ -349,8 +359,8 @@ namespace Notepad
         {
             for (int i = 0; i < tabControl.Items.Count; i++)
             {
-                ((tabItems[i].Content as Grid).Children[0] as TextBox).FontSize = e.NewValue;
-                ((tabItems[i].Content as Grid).Children[1] as RichTextBox).FontSize = e.NewValue;
+                (((tabItems[i].Content as ScrollViewer).Content as Grid).Children[0] as TextBox).FontSize = e.NewValue;
+                (((tabItems[i].Content as ScrollViewer).Content as Grid).Children[1] as RichTextBox).FontSize = e.NewValue;
             }
         }
 
@@ -370,8 +380,9 @@ namespace Notepad
             tabItem.Name = "TabItem" + (tabIndex);
 
             //
-            //Add Grid to tabcontent include a LineNumberTextBox
+            //Add Grid to Scroll Viewer content and add scroll viewer content to tabcontent include a LineNumberTextBox
             //
+            
             Grid tabItemGrid = new Grid();
             tabItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             tabItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Star) });
@@ -383,7 +394,17 @@ namespace Notepad
             });
             Grid.SetColumn(richTextBox, 1);
             tabItemGrid.Children.Add(richTextBox);
-            tabItem.Content = tabItemGrid;
+            //
+            //Scroll viewer content =grid 
+            //
+            ScrollViewer scrollViewer = new ScrollViewer();
+            scrollViewer.Name = "ScrollViewer" + tabIndex;
+            scrollViewer.Content = tabItemGrid;
+            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            //Add scroll viewer to grid
+
+            tabItem.Content = scrollViewer;
 
             //
             //Add tabItem to tabControl
@@ -400,10 +421,10 @@ namespace Notepad
             SetText(richTextBox, tabItems[tabItems.Count - 1].Data);
             richTextBox.TextChanged += RichTextBox_TextChanged;
             richTextBox.TextChanged += LineNumber.RichTextBox_TextChanged;
-            //richTextBox.Style.Setters.Add(new EventSetter() { Event = ScrollViewer.ScrollChangedEvent, Handler = new ScrollChangedEventHandler(this.OnScrollChanged) });
             //richTextBox.TextChanged += SyntaxHighlight.Text_Changed;
             //richTextBox.SelectionChanged += TestTextRange.Selection_Changed;
         }
+
         private void SetText(RichTextBox richTextBox, string text)
         {
             richTextBox.Document.Blocks.Clear();
@@ -502,14 +523,14 @@ namespace Notepad
             }
             else if(e.Delta>0)
             {
-                if (((tabItems[0].Content as Grid).Children[0] as TextBox).FontSize+e.Delta >= 50 && tabItems.Count != 0 || tabItems.Count == 0)
+                if ((((tabItems[0].Content as ScrollViewer).Content as Grid).Children[0] as TextBox).FontSize+e.Delta >= 50 && tabItems.Count != 0 || tabItems.Count == 0)
                     return;
                 else
                 {
                     for (int i = 0; i < tabControl.Items.Count; i++)
                     {
-                        ((tabItems[i].Content as Grid).Children[0] as TextBox).FontSize += e.Delta;
-                        ((tabItems[i].Content as Grid).Children[1] as RichTextBox).FontSize += e.Delta;
+                        (((tabItems[i].Content as ScrollViewer).Content as  Grid).Children[0] as TextBox).FontSize += e.Delta;
+                        (((tabItems[i].Content as ScrollViewer).Content as Grid).Children[1] as RichTextBox).FontSize += e.Delta;
                     }
                 }
             }
@@ -521,11 +542,28 @@ namespace Notepad
                 {
                     for (int i = 0; i < tabControl.Items.Count; i++)
                     {
-                        ((tabItems[i].Content as Grid).Children[0] as TextBox).FontSize += e.Delta; //delta was <0
-                        ((tabItems[i].Content as Grid).Children[1] as RichTextBox).FontSize += e.Delta;
+                        (((tabItems[i].Content as ScrollViewer).Content as Grid).Children[0] as RichTextBox).FontSize += e.Delta; //Delta <0 => add instead of substract
+                        (((tabItems[i].Content as ScrollViewer).Content as Grid).Children[1] as RichTextBox).FontSize += e.Delta;
                     }
                 }
             }
+        }
+
+        private string LoadFile(OpenFileDialog openFileDialog)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            using (FileStream fileStream = System.IO.File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (BufferedStream bufferedStream = new BufferedStream(fileStream))
+            using (StreamReader streamReader = new StreamReader(bufferedStream))
+            {
+                while (!streamReader.EndOfStream)
+                {
+                    stringBuilder.Append(streamReader.ReadLine() + "\r\n");
+                }
+            }
+
+            return stringBuilder.ToString();
         }
     }
 }

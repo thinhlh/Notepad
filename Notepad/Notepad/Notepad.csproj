@@ -80,6 +80,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\CommandsBinding.cs" />
+    <Compile Include="Classes\LazyLoad.cs" />
     <Compile Include="Classes\LineNumber.cs" />
     <Compile Include="Classes\MainTabItem.cs" />
     <Compile Include="Classes\SyntaxHighlight.cs" />
