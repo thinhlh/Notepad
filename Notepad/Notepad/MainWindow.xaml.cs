@@ -25,7 +25,7 @@ namespace Notepad
 
         #region Variables
 
-        public List<MainTabItem> tabItems = new List<MainTabItem>();        
+        public List<MainTabItem> tabItems = new List<MainTabItem>();
 
         #endregion
 
@@ -93,7 +93,7 @@ namespace Notepad
 
         private void Save_Executed(int index)//for saving tab index_th using for Save All method Only 
         {
-            if (!tabItems[index].IsSaved||tabItems[index].Data=="") // not yet saved or new tab but not have data
+            if (!tabItems[index].IsSaved || tabItems[index].Data == "") // not yet saved or new tab but not have data
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
 
@@ -195,7 +195,7 @@ namespace Notepad
             e.CanExecute = true;
         }
 
-        private void Build_Executed(object sender,ExecutedRoutedEventArgs e)
+        private void Build_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             string childFileNameWithExt = Path.GetFileName(tabItems[tabControl.SelectedIndex].FilePath);
             string childFileNameWithoutExt = Path.GetFileNameWithoutExtension(tabItems[tabControl.SelectedIndex].FilePath);
@@ -208,7 +208,7 @@ namespace Notepad
                 MessageBoxResult result = MessageBox.Show("You need to save before compile, save changes?", "Request", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                     Save_Executed(tabControl.SelectedIndex);
-                else 
+                else
                     return;
             }
 
@@ -226,7 +226,7 @@ namespace Notepad
 
         }
 
-        private void Build_CanExecute(object sender,CanExecuteRoutedEventArgs e)
+        private void Build_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
@@ -237,9 +237,9 @@ namespace Notepad
             string childFileNameWithoutExtension = Path.GetFileNameWithoutExtension(tabItems[tabControl.SelectedIndex].FilePath);
             string parentPath = getParentFullPath(tabControl.SelectedIndex);
             if (
-                (tabItems[tabControl.SelectedIndex].IsSaved==false)
+                (tabItems[tabControl.SelectedIndex].IsSaved == false)
                 ||
-                (System.IO.File.Exists(Path.Combine(parentPath,childFileNameWithoutExtension+".exe"))==false)
+                (System.IO.File.Exists(Path.Combine(parentPath, childFileNameWithoutExtension + ".exe")) == false)
                )
                 return; // must be saved and compiled sucessfully
 
@@ -257,7 +257,7 @@ namespace Notepad
 
         }
 
-        private void BuildAndRun_CanExecute(object sender,CanExecuteRoutedEventArgs e)
+        private void BuildAndRun_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
@@ -294,7 +294,14 @@ namespace Notepad
             //Enable wrapping
             //
             RichTextBox richTextBox = sender as RichTextBox;
-            FormattedText ft = new FormattedText(GetText(richTextBox), System.Globalization.CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(richTextBox.FontFamily, richTextBox.FontStyle, richTextBox.FontWeight, richTextBox.FontStretch), richTextBox.FontSize, Brushes.Black);
+            FormattedText ft = new FormattedText(
+                GetText(richTextBox),
+                System.Globalization.CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(richTextBox.FontFamily, richTextBox.FontStyle, richTextBox.FontWeight, richTextBox.FontStretch),
+                richTextBox.FontSize,
+                Brushes.Black);
+
             richTextBox.Document.PageWidth = ft.Width + richTextBox.FontSize;
 
 
@@ -306,14 +313,14 @@ namespace Notepad
 
             //When init situation // is Save equal to true and header does not contains * => so add * when text changed
             else if (
-                tabItems[tabControl.SelectedIndex].Header.ToString().Contains("*") == false 
-                && 
+                tabItems[tabControl.SelectedIndex].Header.ToString().Contains("*") == false
+                &&
                 tabItems[tabControl.SelectedIndex].IsSaved == false)
-                    
-                    AddSavedIcon();
 
-            tabItems[tabControl.SelectedIndex].Data =GetText(richTextBox);
-            
+                AddSavedIcon();
+
+            tabItems[tabControl.SelectedIndex].Data = GetText(richTextBox);
+
         }
 
         private List<int> closedTabIndexes = new List<int>();// this List holds indexs of tabs that was removed from tabControl
@@ -328,12 +335,11 @@ namespace Notepad
                 closedTabIndexes.RemoveAt(0);
                 return index;
             }
-            
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(e.Source is TabControl)
+            if (e.Source is TabControl)
             {
                 UpdateStatusBar(tabControl.SelectedIndex);
             }
@@ -343,7 +349,8 @@ namespace Notepad
         {
             for (int i = 0; i < tabControl.Items.Count; i++)
             {
-                tabItems[i].FontSize=e.NewValue;
+                ((tabItems[i].Content as Grid).Children[0] as TextBox).FontSize = e.NewValue;
+                ((tabItems[i].Content as Grid).Children[1] as RichTextBox).FontSize = e.NewValue;
             }
         }
 
@@ -367,12 +374,12 @@ namespace Notepad
             //
             Grid tabItemGrid = new Grid();
             tabItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            tabItemGrid.ColumnDefinitions.Add(new ColumnDefinition() {Width=new GridLength(22,GridUnitType.Star)});
+            tabItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Star) });
 
             tabItemGrid.Children.Add(new TextBox()
             {
                 Name = "LineNumberTextBox" + tabIndex,
-                Style=Application.Current.Resources["LineNumberTextBox"] as Style
+                Style = Application.Current.Resources["LineNumberTextBox"] as Style
             });
             Grid.SetColumn(richTextBox, 1);
             tabItemGrid.Children.Add(richTextBox);
@@ -390,15 +397,13 @@ namespace Notepad
 
         private void RichTextBoxSetUp(RichTextBox richTextBox)
         {
-            SetText(richTextBox, tabItems[tabItems.Count-1].Data);
+            SetText(richTextBox, tabItems[tabItems.Count - 1].Data);
             richTextBox.TextChanged += RichTextBox_TextChanged;
             richTextBox.TextChanged += LineNumber.RichTextBox_TextChanged;
+            //richTextBox.Style.Setters.Add(new EventSetter() { Event = ScrollViewer.ScrollChangedEvent, Handler = new ScrollChangedEventHandler(this.OnScrollChanged) });
             //richTextBox.TextChanged += SyntaxHighlight.Text_Changed;
             //richTextBox.SelectionChanged += TestTextRange.Selection_Changed;
         }
-
-
-
         private void SetText(RichTextBox richTextBox, string text)
         {
             richTextBox.Document.Blocks.Clear();
@@ -487,7 +492,41 @@ namespace Notepad
             CloseAllFiles_Click(sender, e);
             System.Windows.Application.Current.Shutdown();
         }
-        #endregion   
+        #endregion
+
+        private void Window_PreviewMouseWheel(object sender, MouseWheelEventArgs e) // for zoom in and out
+        {
+            if(Keyboard.Modifiers!=ModifierKeys.Control)
+            {
+                return;
+            }
+            else if(e.Delta>0)
+            {
+                if (((tabItems[0].Content as Grid).Children[0] as TextBox).FontSize+e.Delta >= 50 && tabItems.Count != 0 || tabItems.Count == 0)
+                    return;
+                else
+                {
+                    for (int i = 0; i < tabControl.Items.Count; i++)
+                    {
+                        ((tabItems[i].Content as Grid).Children[0] as TextBox).FontSize += e.Delta;
+                        ((tabItems[i].Content as Grid).Children[1] as RichTextBox).FontSize += e.Delta;
+                    }
+                }
+            }
+            else
+            {
+                if (((tabItems[0].Content as Grid).Children[0] as TextBox).FontSize+e.Delta <=10 && tabItems.Count != 0 || tabItems.Count == 0)
+                    return;
+                else
+                {
+                    for (int i = 0; i < tabControl.Items.Count; i++)
+                    {
+                        ((tabItems[i].Content as Grid).Children[0] as TextBox).FontSize += e.Delta; //delta was <0
+                        ((tabItems[i].Content as Grid).Children[1] as RichTextBox).FontSize += e.Delta;
+                    }
+                }
+            }
+        }
     }
 }
 

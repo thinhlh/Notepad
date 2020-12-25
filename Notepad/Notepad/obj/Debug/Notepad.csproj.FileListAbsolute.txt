@@ -102,3 +102,4 @@ C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.csproj.Cor
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.csproj.CopyComplete
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.pdb
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\MainResourceDictionary.baml

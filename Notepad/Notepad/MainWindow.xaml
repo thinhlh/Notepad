@@ -14,7 +14,9 @@
         ScrollViewer.HorizontalScrollBarVisibility="Auto" 
         ScrollViewer.VerticalScrollBarVisibility="Auto"
         WindowStartupLocation="CenterScreen" 
-        Icon="SublimeIcon.png">
+        Icon="SublimeIcon.png"
+        PreviewMouseWheel="Window_PreviewMouseWheel">
+
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.New"
                         Executed="NewFile_Executed"
@@ -62,7 +64,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="10*"/>
+            <RowDefinition Height="12*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Background="White" >
@@ -138,20 +140,37 @@
             </MenuItem>
         </Menu>
 
-        <TabControl  FontFamily="Consolas" Grid.Row="1" x:Name="tabControl" SelectionChanged="TabControl_SelectionChanged"/>
-        
-        
+        <TabControl  
+            FontFamily="Consolas" 
+            x:Name="tabControl" 
+            SelectionChanged="TabControl_SelectionChanged"
+            Grid.Row="1"/>
+
+
         <!--<WPF:ConsoleControl Height="200" Name="Console" Loaded="ConsoleControl"></WPF:ConsoleControl>-->
         <!--<Button Click="{x:Static classes:SyntaxHighlight.Button_Click}">Click Me</Button>-->
 
-        <StatusBar Grid.Row="2" x:Name="StatusBar" Background="White" BorderThickness="0.3" BorderBrush="Gray" FontWeight="Medium">
-            <StatusBarItem>
-                <TextBlock x:Name="StatusText" Text="{Binding}"/>
-            </StatusBarItem>
-        
-            <StatusBarItem HorizontalAlignment="Right">
-                <Slider Minimum="10" Maximum="50" Width="150" TickFrequency="10" IsSnapToTickEnabled="True" TickPlacement="BottomRight" ValueChanged="Slider_ValueChanged"/>
-            </StatusBarItem>
+        <StatusBar 
+            Grid.Row="2" 
+            x:Name="StatusBar" 
+            Background="White" 
+            BorderThickness="0.3" 
+            BorderBrush="Gray" 
+            FontWeight="Medium" >
+                <StatusBarItem>
+                    <TextBlock x:Name="StatusText" Text="{Binding}"/>
+                </StatusBarItem>
+
+                <StatusBarItem HorizontalAlignment="Right">
+                    <Slider Minimum="10" 
+                            Maximum="50" 
+                            Width="150" 
+                            TickFrequency="10"
+                            IsSnapToTickEnabled="True" 
+                            TickPlacement="BottomRight" 
+                            ValueChanged="Slider_ValueChanged"/>
+                </StatusBarItem>
         </StatusBar>
+        
     </Grid>
 </Window>

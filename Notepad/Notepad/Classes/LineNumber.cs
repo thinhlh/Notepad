@@ -18,6 +18,7 @@ namespace Notepad.Classes
         public static void RichTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             RichTextBox richTextBox = sender as RichTextBox;
+            
             lineNumber=CountLineNumber(richTextBox);
             TextBox lineNumberTextBox=(mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].Content as Grid).Children[0] as TextBox;
 
@@ -35,6 +36,12 @@ namespace Notepad.Classes
             var textArr = strtext.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
             lineNumber = textArr.Length - 1;
             return lineNumber;
+
+        }
+
+        public static void RichTextBox_ScrollViewerChanged(object sender, ScrollChangedEventArgs e)
+        {
+            MessageBox.Show("Invoked");
         }
     }
 }
