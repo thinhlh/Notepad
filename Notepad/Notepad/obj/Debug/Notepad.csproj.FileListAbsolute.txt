@@ -59,7 +59,6 @@ C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\Notepad.c
 C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe
 C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\Notepad.pdb
 C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Debug\App.baml
-C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\App.baml
 C:\Users\thinh\Desktop\Notepad\Notepad\Notepad\bin\Debug\Notepad.exe.config
 C:\Users\thinh\Desktop\Notepad\Notepad\Notepad\bin\Debug\Notepad.exe
 C:\Users\thinh\Desktop\Notepad\Notepad\Notepad\bin\Debug\Notepad.pdb
@@ -102,4 +101,5 @@ C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.csproj.Cor
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.csproj.CopyComplete
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.pdb
-C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\MainResourceDictionary.baml
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.g.cs
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.baml

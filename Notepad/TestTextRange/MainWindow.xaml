@@ -11,7 +11,7 @@
             <RowDefinition Height="4*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <RichTextBox x:Name="richTextBox" Grid.Row="0" SelectionChanged="richTextBox_SelectionChanged" AcceptsReturn="True" AcceptsTab="True" FontSize="18"/>
+        <RichTextBox x:Name="richTextBox" Grid.Row="0" SelectionChanged="richTextBox_SelectionChanged" AcceptsReturn="True" AcceptsTab="True" FontSize="18" TextChanged="richTextBox_TextChanged"/>
         <TextBox Name="textBox" Grid.Row="1" Text="{Binding Word}" IsReadOnly="True"/>
     </Grid>
 </Window>

@@ -58,3 +58,5 @@ C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad
 C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.GenerateResource.cache
 C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.CoreCompileInputs.cache
 C:\Users\thinh\Desktop\Data\Learning\Notepad\Notepad\Notepad\obj\Release\Notepad.csproj.CopyComplete
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\TabItemContentUC.g.cs
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Release\TabItemContentUC.baml

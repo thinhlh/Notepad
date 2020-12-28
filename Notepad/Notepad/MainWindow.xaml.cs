@@ -56,7 +56,7 @@ namespace Notepad
                  * If open in new tab => tabItems.Count-1
                  * if open in recent tab => tabControl.selected
                 */
-                if (tabItems[tabControl.SelectedIndex].FilePath != "" || tabItems[tabControl.SelectedIndex].Data != "")
+                if (tabItems[tabControl.SelectedIndex].FilePath != "" || tabItems[tabControl.SelectedIndex].Data != "\r\n")
                 {
                     InitTab();
                     indexForTab = tabItems.Count - 1;
@@ -65,14 +65,9 @@ namespace Notepad
                 tabItems[indexForTab].Data = System.IO.File.ReadAllText(openFileDialog.FileName);
 
                 // Add content to richTextBox
-                RichTextBox richTextBox = (RichTextBox)tabItems[indexForTab].Content;
-                SetText(richTextBox, tabItems[indexForTab].Data);
-                /*Pointer to the end of paragraph*/
-                richTextBox.ScrollToEnd();
-
+                (tabItems[indexForTab].Content as TabItemContentUC).Data=tabItems[indexForTab].Data;// Set Data For RTB
 
                 tabItems[indexForTab].Header = Path.GetFileName(openFileDialog.FileName);
-                tabItems[indexForTab].Content = richTextBox;
                 tabItems[indexForTab].FilePath = openFileDialog.FileName;
                 tabItems[indexForTab].IsSaved = true;
 
@@ -93,7 +88,7 @@ namespace Notepad
 
         private void Save_Executed(int index)//for saving tab index_th using for Save All method Only 
         {
-            if (!tabItems[index].IsSaved || tabItems[index].Data == "") // not yet saved or new tab but not have data
+            if (!tabItems[index].IsSaved || tabItems[index].Data == "\r\n") // not yet saved or new tab but not have data
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
 
@@ -281,54 +276,12 @@ namespace Notepad
             tabItems[index].Header = header.Remove(header.Length - 1, 1);
         }
 
-        private void AddSavedIcon()
-        {
-            tabItems[tabControl.SelectedIndex].Header += "*";
-            tabItems[tabControl.SelectedIndex].IsSaved = false;
-        }
-
-        [Obsolete]
-        private void RichTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            //
-            //Enable wrapping
-            //
-            RichTextBox richTextBox = sender as RichTextBox;
-            FormattedText ft = new FormattedText(
-                GetText(richTextBox),
-                System.Globalization.CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight,
-                new Typeface(richTextBox.FontFamily, richTextBox.FontStyle, richTextBox.FontWeight, richTextBox.FontStretch),
-                richTextBox.FontSize,
-                Brushes.Black);
-
-            richTextBox.Document.PageWidth = ft.Width + richTextBox.FontSize;
-
-
-            if (tabItems[tabControl.SelectedIndex].IsSaved) // normal situation
-            {
-                //Raise* at the end and keep isSaved = false when there is a change with out save before
-                AddSavedIcon();
-            }
-
-            //When init situation // is Save equal to true and header does not contains * => so add * when text changed
-            else if (
-                tabItems[tabControl.SelectedIndex].Header.ToString().Contains("*") == false
-                &&
-                tabItems[tabControl.SelectedIndex].IsSaved == false)
-
-                AddSavedIcon();
-
-            tabItems[tabControl.SelectedIndex].Data = GetText(richTextBox);
-
-        }
-
         private List<int> closedTabIndexes = new List<int>();// this List holds indexs of tabs that was removed from tabControl
 
         private int FindIndexForTab() // this function define which tabIndex is approriate for InitTab 
         {
             if (closedTabIndexes.Count == 0)
-                return tabControl.Items.Count;
+                return tabControl.Items.Count-1;
             else
             {
                 int index = closedTabIndexes[0];
@@ -357,63 +310,26 @@ namespace Notepad
         private void InitTab()
         {
             MainTabItem tabItem = new MainTabItem();
-
+            //
+            //Add tabItem to tabControl
+            //
+            tabControl.Items.Add(tabItem);
             tabItems.Add(tabItem);
+            tabItem.Focus(); // selected index will focus on the new tab
+            
 
-            //Setup for RichTextBox of tabItem
-            RichTextBox richTextBox = new RichTextBox();
-            RichTextBoxSetUp(richTextBox);
 
             //Setup for tabItem
             int tabIndex = FindIndexForTab();
             tabItem.Header = "Document " + (tabIndex + 1); // Header Display Always larger than 1 of the number of element in tabItems
             tabItem.Name = "TabItem" + (tabIndex);
 
-            //
-            //Add Grid to tabcontent include a LineNumberTextBox
-            //
-            Grid tabItemGrid = new Grid();
-            tabItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            tabItemGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Star) });
-
-            tabItemGrid.Children.Add(new TextBox()
-            {
-                Name = "LineNumberTextBox" + tabIndex,
-                Style = Application.Current.Resources["LineNumberTextBox"] as Style
-            });
-            Grid.SetColumn(richTextBox, 1);
-            tabItemGrid.Children.Add(richTextBox);
-            tabItem.Content = tabItemGrid;
-
-            //
-            //Add tabItem to tabControl
-            //
-            tabControl.Items.Add(tabItem);
-            tabItem.Focus();
+            //Set Content for TabItem
+            tabItem.Content = new TabItemContentUC() { Name = "UC" };
             UpdateStatusBar(tabControl.SelectedIndex);
         }
 
         #region RichTextBox Setup
-
-        private void RichTextBoxSetUp(RichTextBox richTextBox)
-        {
-            SetText(richTextBox, tabItems[tabItems.Count - 1].Data);
-            richTextBox.TextChanged += RichTextBox_TextChanged;
-            richTextBox.TextChanged += LineNumber.RichTextBox_TextChanged;
-            //richTextBox.Style.Setters.Add(new EventSetter() { Event = ScrollViewer.ScrollChangedEvent, Handler = new ScrollChangedEventHandler(this.OnScrollChanged) });
-            //richTextBox.TextChanged += SyntaxHighlight.Text_Changed;
-            //richTextBox.SelectionChanged += TestTextRange.Selection_Changed;
-        }
-        private void SetText(RichTextBox richTextBox, string text)
-        {
-            richTextBox.Document.Blocks.Clear();
-            richTextBox.Document.Blocks.Add(new Paragraph(new Run(text)));
-        }
-
-        private string GetText(RichTextBox richTextBox)
-        {
-            return new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd).Text;
-        }
 
         private void UpdateStatusBar(int index)
         {
@@ -467,7 +383,7 @@ namespace Notepad
             }
             tabControl.Items.RemoveAt(index);
             
-            int deletedIndexTab = Int16.Parse(tabItems[index].Name.Substring(8)); // Return the index of deleted tabItem by get subTring from name then convert to int
+            int deletedIndexTab = Int16.Parse(tabItems[index].Name.Substring(7)); // Return the index of deleted tabItem by get subTring from name then convert to int
 
             tabItems.RemoveAt(index);
 
@@ -496,39 +412,10 @@ namespace Notepad
 
         private void Window_PreviewMouseWheel(object sender, MouseWheelEventArgs e) // for zoom in and out
         {
-            if(Keyboard.Modifiers!=ModifierKeys.Control)
+            for (int i = 0; i < tabControl.Items.Count; i++)
             {
-                return;
-            }
-            else if(e.Delta>0)
-            {
-                if (((tabItems[0].Content as Grid).Children[0] as TextBox).FontSize+e.Delta >= 50 && tabItems.Count != 0 || tabItems.Count == 0)
-                    return;
-                else
-                {
-                    for (int i = 0; i < tabControl.Items.Count; i++)
-                    {
-                        ((tabItems[i].Content as Grid).Children[0] as TextBox).FontSize += e.Delta;
-                        ((tabItems[i].Content as Grid).Children[1] as RichTextBox).FontSize += e.Delta;
-                    }
-                }
-            }
-            else
-            {
-                if (((tabItems[0].Content as Grid).Children[0] as TextBox).FontSize+e.Delta <=10 && tabItems.Count != 0 || tabItems.Count == 0)
-                    return;
-                else
-                {
-                    for (int i = 0; i < tabControl.Items.Count; i++)
-                    {
-                        ((tabItems[i].Content as Grid).Children[0] as TextBox).FontSize += e.Delta; //delta was <0
-                        ((tabItems[i].Content as Grid).Children[1] as RichTextBox).FontSize += e.Delta;
-                    }
-                }
+                (tabItems[i].Content as TabItemContentUC).Zoom(sender, e);
             }
         }
     }
 }
-
-
-

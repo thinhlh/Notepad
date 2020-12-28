@@ -5,6 +5,6 @@
              xmlns:local="clr-namespace:Notepad"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary Source="MainResourceDictionary.xaml"/>
+        
     </Application.Resources>
 </Application>
