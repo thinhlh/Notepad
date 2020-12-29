@@ -18,8 +18,19 @@ namespace TestTextRange
         {
             InitializeComponent();
             this.DataContext = this;
+            current = richTextBox.CaretPosition;
         }
 
+        private TextPointer current;
+        //public TextPointer Current
+        //{
+        //    get => current;
+        //    set 
+        //    { 
+        //       current = value;
+        //       OnPropertyChanged();
+        //    }
+        //}
         private string word="";
         public string Word
         {
@@ -43,13 +54,12 @@ namespace TestTextRange
                 }
             }
             return new TextRange(start, end);
-            
         }
 
         private TextRange getCurrentWordRange()
         {
             List<string> spaces = new List<string> { " ", "\t" };
-            List<string> symbols = new List<string> { ";", "(", ")", "=" };
+            List<string> symbols = new List<string> { ";", "(", ")", "=", "<", ">", "\"", ",", ".", "[", "]", ":" };
             TextPointer current = richTextBox.CaretPosition;
             TextPointer start = current, end = current;
             TextRange backward;
@@ -175,64 +185,6 @@ namespace TestTextRange
         //    }
         //}
 
-
-
-
-        //private void richTextBox_SelectionChanged(object sender, RoutedEventArgs e)
-        //{
-        //    /* Example: This is not a sentence |||and Current a pointer at 'o' in "not" 
-        //     * start will move backward until TextRange between start and current have space 
-        //     * and end pointer will move forward until TextRange between end and current have space too*/
-        //    List<string> spaces = new List<string> { " ", "\t" };
-        //    List<string> symbols=new List<string>{ ";", "(", ")", "=" };
-
-        //    TextPointer current = richTextBox.CaretPosition;
-        //    TextPointer start = current, end = current;
-
-        //    // Traverse to the end of the word
-
-        //    while(end.GetPointerContext(LogicalDirection.Forward)==TextPointerContext.Text)
-        //    {
-        //        TextRange currentCharRange = new TextRange(end, end.GetPositionAtOffset(1));
-        //        if(spaces.Contains(currentCharRange.Text)||symbols.Contains(currentCharRange.Text))
-        //        {
-        //            if(!symbols.Contains(new TextRange(start,end).Text))
-        //            {
-        //                end = end.GetPositionAtOffset(1);
-        //            }
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            end = end.GetPositionAtOffset(1);
-        //            currentCharRange = new TextRange(end, end.GetPositionAtOffset(1));
-        //        }
-        //    }
-        //    while (start.GetPointerContext(LogicalDirection.Backward) == TextPointerContext.Text)
-        //    {
-        //        TextRange currentCharRange = new TextRange(start, start.GetPositionAtOffset(-1));
-        //        if (spaces.Contains(currentCharRange.Text) || symbols.Contains(currentCharRange.Text))
-        //        {
-        //            if(!symbols.Contains(new TextRange(start,end).Text))
-        //            {
-        //                start = start.GetPositionAtOffset(-1);
-        //            }
-        //            break;
-        //        }
-
-        //        else
-        //        {
-
-        //            start = start.GetPositionAtOffset(-1);
-        //            currentCharRange = new TextRange(start.GetPositionAtOffset(-1),start);
-        //        }
-        //    }
-
-        //    Word = new TextRange(start, end).Text;
-
-        //    Highlighting(new TextRange(start, end));
-        //}
-
         private void Highlighting(TextRange textRange)
         {
             string word = textRange.Text;
@@ -241,7 +193,9 @@ namespace TestTextRange
             if (Int32.TryParse(word, out result) == true)
                 textRange.ApplyPropertyValue(ForegroundProperty, Brushes.Chocolate);
             else if (snippet.FormatList.ContainsKey(word))
+            {
                 textRange.ApplyPropertyValue(ForegroundProperty, snippet.FormatList[word]);
+            }
             else
                 textRange.ApplyPropertyValue(ForegroundProperty, Brushes.Black);
         }
@@ -255,10 +209,18 @@ namespace TestTextRange
                 PropertyChanged(this, new PropertyChangedEventArgs(newName));
             }
         }
-
         private void richTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            getCurrentWordRange();
+            
+            //if (Math.Abs(richTextBox.CaretPosition.GetOffsetToPosition(Current)) > 1)
+            //{
+            //    if (new TextRange(Current, richTextBox.CaretPosition).Text == "\r\n")
+            //        return;
+            //    else
+            //        MessageBox.Show("Pasted!");
+            //}
+
+            //Current = richTextBox.CaretPosition;
             Highlighting(getCurrentWordRange());
         }
         #endregion

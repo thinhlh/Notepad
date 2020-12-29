@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using System.Windows;
 using System.Web;
+using System.IO;
+
 namespace TestTextRange
 {
     public class Snippet
@@ -25,28 +28,42 @@ namespace TestTextRange
             C,
             JavaScripst,    
         }
-
+        
         public Snippet(Languages language)
         {
-            string json = @"{ 'name':'John', 'age':30, 'car':null }";
-            var utf8Reader = new Utf8JsonReader(Encoding.UTF8.GetBytes(json.Substring(1,json.Length-2)));
             
-            JSONDesirialize result = JsonSerializer.Deserialize<JSONDesirialize>(ref utf8Reader);
-            MessageBox.Show(result.ToString());
-        }
-        public Snippet()
-        {
+            switch (language)
+            {
+                case Languages.CPlusPlus:
+                    MessageBox.Show("OK");
+                    break;
+                case Languages.C:
+                    break;
+                case Languages.CSharph:
+                    break;
+                case Languages.Java:
+                    break;
+                case Languages.JavaScripst:
+                    break;
+                default:
+                    break;
+            }
+            Color color = (Color)ColorConverter.ConvertFromString("#d8a0df");
+           
             formatList.Add("#include", Brushes.Red);
             formatList.Add("using", Brushes.Red);
             formatList.Add("namespace", Brushes.Red);
             formatList.Add("for", Brushes.Red);
             formatList.Add("return", Brushes.Red);
             formatList.Add("while", Brushes.Red);
-
-
+            formatList.Add("break", new SolidColorBrush(color));
+            
+                     
+            
             formatList.Add("main", Brushes.Green);
 
             formatList.Add("private", Brushes.Blue);
+            formatList.Add("public", Brushes.Blue);
             formatList.Add("protected", Brushes.Blue);
             formatList.Add("int", Brushes.Blue);
             formatList.Add("string", Brushes.Blue);
@@ -54,13 +71,20 @@ namespace TestTextRange
             formatList.Add("void", Brushes.Blue);
             formatList.Add("override", Brushes.Blue);
         }
-
-
-        public static readonly List<string> keywords = new List<string> { "#include", "using", "namespace", "for", "while", "return" };
-        public static readonly List<char> symbols = new List<char> { '.', ')', '(', '[', ']', '>', '<', ':', ';', '\n', '\t', '\r' };
-        public int length()
+        public Snippet()
         {
-            return formatList.Count;
+            //using (StreamReader streamReader = File.OpenText(@"C:\Users\thinh\Desktop\json.json"))
+            //{
+            //    var obj = streamReader.ReadToEnd();
+            //    Test instance = JsonConvert.DeserializeObject<Test>(obj);
+            //    MessageBox.Show(instance.name + "\n" + instance.age);
+            //}
+
         }
+
+
+
+
+        
     }
 }

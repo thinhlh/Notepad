@@ -92,7 +92,6 @@ C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\MainWindow.g.cs
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\App.g.cs
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad_MarkupCompile.cache
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad_MarkupCompile.lref
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\App.baml
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\MainWindow.baml
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.g.resources
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.Properties.Resources.resources
@@ -103,3 +102,5 @@ C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.pdb
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.g.cs
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.baml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.baml
