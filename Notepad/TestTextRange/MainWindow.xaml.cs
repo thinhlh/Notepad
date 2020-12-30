@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -14,11 +15,12 @@ namespace TestTextRange
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+
+        private Snippet highlighter;
         public MainWindow()
         {
             InitializeComponent();
             this.DataContext = this;
-            current = richTextBox.CaretPosition;
         }
 
         private TextPointer current;
@@ -45,15 +47,39 @@ namespace TestTextRange
         {
             TextPointer start = richTextBox.CaretPosition.GetLineStartPosition(0);
             TextPointer end = richTextBox.CaretPosition.GetLineStartPosition(1);
-            if (end == null)//the last lije
+            if (end == null)//the last life
             {
-                end = start;
-                while(end.GetPointerContext(LogicalDirection.Forward)!=TextPointerContext.ElementEnd&&!new TextRange(end,end.GetPositionAtOffset(1)).Text.Contains("\r\n"))
+                end = richTextBox.CaretPosition;
+                while(end.GetPositionAtOffset(1)!=null&&end.GetPointerContext(LogicalDirection.Forward)!=TextPointerContext.ElementEnd&&!new TextRange(end,end.GetPositionAtOffset(1)).Text.Contains("\r\n"))
                 {
                     end = end.GetPositionAtOffset(1);
                 }
             }
             return new TextRange(start, end);
+        }
+        private TextPointer GetEndOfCurrentLine()
+        {
+            TextPointer end = richTextBox.CaretPosition.GetLineStartPosition(1);
+            if (end == null)//the last life
+            {
+                end = richTextBox.CaretPosition;
+                while (end.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.ElementEnd && !new TextRange(end, end.GetPositionAtOffset(1)).Text.Contains("\r\n"))
+                {
+                    end = end.GetPositionAtOffset(1);
+                }
+            }
+            return end;
+        }
+        
+        private TextRange isHavingComment()
+        {
+            TextPointer end = GetEndOfCurrentLine();
+            TextPointer current = richTextBox.CaretPosition;
+            if(current.GetTextInRun(LogicalDirection.Forward).Contains("//"))
+            {
+                return new TextRange(current, end);
+            }
+            return new TextRange(current, end);
         }
 
         private TextRange getCurrentWordRange()
@@ -74,28 +100,28 @@ namespace TestTextRange
             if (end.GetPositionAtOffset(1) == null)
                 forward = new TextRange(end, end);
             else
-                forward = new TextRange(end, end.GetPositionAtOffset(1)); 
+                forward = new TextRange(end, end.GetPositionAtOffset(1));
 
 
 
-            while(!spaces.Contains(backward.Text)&&start.GetPointerContext(LogicalDirection.Backward)==TextPointerContext.Text&&!symbols.Contains(backward.Text))
+            while (!spaces.Contains(backward.Text) && start.GetPointerContext(LogicalDirection.Backward) == TextPointerContext.Text && !symbols.Contains(backward.Text))
             {
                 start = start.GetPositionAtOffset(-1);
                 backward = new TextRange(start, start.GetPositionAtOffset(-1));
-            }    
-            while(!spaces.Contains(forward.Text) && end.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text && !symbols.Contains(forward.Text))
+            }
+            while (!spaces.Contains(forward.Text) && end.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text && !symbols.Contains(forward.Text))
             {
                 end = end.GetPositionAtOffset(1);
                 forward = new TextRange(end, end.GetPositionAtOffset(1));
             }
-            
-            if(new TextRange(start,end).Text=="")
+
+            if (new TextRange(start, end).IsEmpty)
             {
-                if(symbols.Contains(backward.Text))
+                if (symbols.Contains(backward.Text))
                 {
                     start = start.GetPositionAtOffset(-1);
                 }
-                else if(symbols.Contains(forward.Text))
+                else if (symbols.Contains(forward.Text))
                 {
                     end = end.GetPositionAtOffset(-1);
                 }
@@ -103,7 +129,39 @@ namespace TestTextRange
 
             Word = new TextRange(start, end).Text;
             return new TextRange(start, end);
+
+
+            ////Another posible solution
+            //TextPointer current = richTextBox.CaretPosition;
+
+            //// The run content before the current caret position
+            //string backward = current.GetTextInRun(LogicalDirection.Backward);
+
+            //// The run content after the current caret position
+            //string forward = current.GetTextInRun(LogicalDirection.Forward);
+            //TextPointer start = current;
+            //TextPointer end = current;
+
+            //string pattern = @"[^,;()\s\t=]+"; // Delimiters 
+
+            //// Scan text before caret
+            //Match match = Regex.Match(backward, pattern, RegexOptions.RightToLeft);
+            //if (match.Success && match.Index + match.Value.Length == backward.Length)
+            //{
+            //    start = start.GetPositionAtOffset(-backward.Length + match.Index);
+            //}
+
+            //// Scan text after caret
+            //match = Regex.Match(forward, pattern);
+            //if (match.Success && match.Index == 0)
+            //{
+            //    end = end.GetPositionAtOffset(match.Value.Length, LogicalDirection.Forward);
+            //}
+            //Word = new TextRange(start, end).Text;
+
+            //return new TextRange(start, end);
         }
+
 
         private void richTextBox_SelectionChanged(object sender,RoutedEventArgs e)
         {
@@ -187,19 +245,13 @@ namespace TestTextRange
 
         private void Highlighting(TextRange textRange)
         {
-            string word = textRange.Text;
-            Snippet snippet = new Snippet(Snippet.Languages.CSharph);
-            int result;
-            if (Int32.TryParse(word, out result) == true)
-                textRange.ApplyPropertyValue(ForegroundProperty, Brushes.Chocolate);
-            else if (snippet.FormatList.ContainsKey(word))
-            {
-                textRange.ApplyPropertyValue(ForegroundProperty, snippet.FormatList[word]);
-            }
-            else
-                textRange.ApplyPropertyValue(ForegroundProperty, Brushes.Black);
-        }
+           
+            
+            highlighter = new CSharph();
+            highlighter.Highlight(textRange);
 
+        }
+        
         #region Inplement Interface
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string newName=null)
@@ -211,19 +263,12 @@ namespace TestTextRange
         }
         private void richTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            
-            //if (Math.Abs(richTextBox.CaretPosition.GetOffsetToPosition(Current)) > 1)
-            //{
-            //    if (new TextRange(Current, richTextBox.CaretPosition).Text == "\r\n")
-            //        return;
-            //    else
-            //        MessageBox.Show("Pasted!");
-            //}
-
-            //Current = richTextBox.CaretPosition;
-            Highlighting(getCurrentWordRange());
+            int commentIndex=getCurrentLine().Text.IndexOf("//");
+            if (commentIndex != -1)
+                Highlighting(new TextRange(richTextBox.CaretPosition.GetLineStartPosition(0).GetPositionAtOffset(commentIndex+1), getCurrentLine().End));
+            else
+                Highlighting(getCurrentWordRange());
         }
         #endregion
-        //textRange.Text.Contains(";") || textRange.Text.Contains("(") || textRange.Text.Contains(")") || textRange.Text.Contains("=")
     }
 }

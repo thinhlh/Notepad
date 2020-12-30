@@ -1,90 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using System.Windows;
-using System.Web;
 using System.IO;
+using System.Windows.Documents;
 
 namespace TestTextRange
 {
-    public class Snippet
+    public abstract class Snippet
     {
-        private readonly Dictionary<string, SolidColorBrush> formatList=new Dictionary<string, SolidColorBrush>();
-        public Dictionary<string,SolidColorBrush> FormatList
+        public abstract void Highlight(TextRange textRange);
+
+        protected static bool isNumber(string str)
         {
-            get => formatList;
-        }
-        public enum Languages
-        {
-            CPlusPlus,
-            CSharph,
-            Java,
-            C,
-            JavaScripst,    
-        }
-        
-        public Snippet(Languages language)
-        {
-            
-            switch (language)
+            foreach (char ch in str)
             {
-                case Languages.CPlusPlus:
-                    MessageBox.Show("OK");
-                    break;
-                case Languages.C:
-                    break;
-                case Languages.CSharph:
-                    break;
-                case Languages.Java:
-                    break;
-                case Languages.JavaScripst:
-                    break;
-                default:
-                    break;
+                if (ch != '0' || ch != '1' || ch != '2' || ch != '3' || ch != '4' || ch != '5' || ch != '6' || ch != '7' || ch != '8' || ch != '9')
+                {
+                    return false;
+                }
             }
-            Color color = (Color)ColorConverter.ConvertFromString("#d8a0df");
-           
-            formatList.Add("#include", Brushes.Red);
-            formatList.Add("using", Brushes.Red);
-            formatList.Add("namespace", Brushes.Red);
-            formatList.Add("for", Brushes.Red);
-            formatList.Add("return", Brushes.Red);
-            formatList.Add("while", Brushes.Red);
-            formatList.Add("break", new SolidColorBrush(color));
-            
-                     
-            
-            formatList.Add("main", Brushes.Green);
-
-            formatList.Add("private", Brushes.Blue);
-            formatList.Add("public", Brushes.Blue);
-            formatList.Add("protected", Brushes.Blue);
-            formatList.Add("int", Brushes.Blue);
-            formatList.Add("string", Brushes.Blue);
-            formatList.Add("virtual", Brushes.Blue);
-            formatList.Add("void", Brushes.Blue);
-            formatList.Add("override", Brushes.Blue);
+            return true;
         }
-        public Snippet()
-        {
-            //using (StreamReader streamReader = File.OpenText(@"C:\Users\thinh\Desktop\json.json"))
-            //{
-            //    var obj = streamReader.ReadToEnd();
-            //    Test instance = JsonConvert.DeserializeObject<Test>(obj);
-            //    MessageBox.Show(instance.name + "\n" + instance.age);
-            //}
+    }
 
-        }
-
-
-
-
-        
+    public enum Languages
+    {
+        CPlusPlus,
+        CSharph,
+        Java,
+        C,
+        JavaScripst,
     }
 }

@@ -39,7 +39,6 @@ C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\bin\Debug\Micro
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\bin\Debug\System.Buffers.xml
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\bin\Debug\System.Memory.xml
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\bin\Debug\System.Numerics.Vectors.xml
-C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\obj\Debug\TestTextRange.csproj.CopyComplete
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\System.Buffers.dll
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\System.Memory.dll
@@ -56,3 +55,6 @@ C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\System.Runti
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\obj\Debug\TestTextRange.csproj.CopyComplete
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\Newtonsoft.Json.dll
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\Newtonsoft.Json.xml
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\bin\Debug\Newtonsoft.Json.dll
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\bin\Debug\Newtonsoft.Json.xml
+C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\obj\Debug\TestTextRange.exe.config
