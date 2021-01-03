@@ -35,6 +35,7 @@ namespace Notepad.Classes
             _isSaved = true;
             _data = "";
             _filePath = "";
+            this.Content = new TabItemContentUC() { Name = "UC" };
         }
     }
 }

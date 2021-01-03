@@ -51,10 +51,10 @@ C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\Microsoft.Bc
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\System.Buffers.xml
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\System.Memory.xml
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\System.Numerics.Vectors.xml
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\obj\Debug\TestTextRange.csproj.CopyComplete
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\Newtonsoft.Json.dll
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\bin\Debug\Newtonsoft.Json.xml
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\bin\Debug\Newtonsoft.Json.dll
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\bin\Debug\Newtonsoft.Json.xml
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\TestTextRange\obj\Debug\TestTextRange.exe.config
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\TestTextRange\obj\Debug\TestTextRange.exe.config

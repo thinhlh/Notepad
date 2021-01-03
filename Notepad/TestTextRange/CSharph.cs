@@ -19,13 +19,16 @@ namespace TestTextRange
 
         public override void Highlight(TextRange textRange)
         {
-            string word = textRange.Text;
-            if (word.Contains("//"))
-                textRange.ApplyPropertyValue(Control.ForegroundProperty, JsonDesirialize.CSharph.comment);
-            else if (isNumber(word))
-                textRange.ApplyPropertyValue(Control.ForegroundProperty, JsonDesirialize.CSharph.number);
-            else
-                textRange.ApplyPropertyValue(Control.ForegroundProperty, JsonDesirialize.GetKeywordColor(word));
+            //MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            //mainWindow.richTextBox.TextChanged -= mainWindow.richTextBox_TextChanged;
+            //string word = textRange.Text;
+            //if (word.Contains("//"))
+            //    textRange.ApplyPropertyValue(Control.ForegroundProperty, JsonDesirialize.CSharph.comment);
+            //else if (isNumber(word))
+            //    textRange.ApplyPropertyValue(Control.ForegroundProperty, JsonDesirialize.CSharph.number);
+            //else
+            //    textRange.ApplyPropertyValue(Control.ForegroundProperty, JsonDesirialize.GetKeywordColor(word));
+            //mainWindow.richTextBox.TextChanged += mainWindow.richTextBox_TextChanged;
         }
 
         public CSharph() //Initialize and Deserialize Snippet if haven't

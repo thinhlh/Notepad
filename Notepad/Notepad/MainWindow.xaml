@@ -14,52 +14,20 @@
         ScrollViewer.HorizontalScrollBarVisibility="Auto" 
         ScrollViewer.VerticalScrollBarVisibility="Auto"
         WindowStartupLocation="CenterScreen" 
-        Icon="SublimeIcon.png"
-        PreviewMouseWheel="Window_PreviewMouseWheel">
+        Icon="SublimeIcon.png">
 
-    <Window.CommandBindings>
-        <CommandBinding Command="ApplicationCommands.New"
-                        Executed="NewFile_Executed"
-                        CanExecute="NewFile_CanExecute"/>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding NewFileCommand}" Modifiers="Ctrl" Key="N"/>
+        <KeyBinding Command="{Binding OpenFileCommand}" Modifiers="Ctrl" Key="O"/>
+        <KeyBinding Command="{Binding SaveCommand}" Modifiers="Ctrl" Key="S"/>
+        <KeyBinding Command="{Binding SaveAsCommand}" Modifiers="Ctrl+Shift" Key="S"/>
+        <KeyBinding Command="{Binding CloseFileCommand}" Modifiers="Ctrl" Key="W"/>
+        <KeyBinding Command="{Binding NewTerminalCommand}" Modifiers="Ctrl" Key="T"/>
+        <KeyBinding Command="{Binding NewTerminalCurrentDirCommand}" Modifiers="Ctrl+Shift" Key="T"/>
+        <KeyBinding Command="{Binding BuildCommand}" Key="F5"/>
+        <KeyBinding Command="{Binding BuildAndRunCommand}" Modifiers="Ctrl" Key="F5"/>
+    </Window.InputBindings>
 
-        <CommandBinding Command="ApplicationCommands.Open"
-                        Executed="OpenFile_Executed"
-                        CanExecute="OpenFile_CanExecute"/>
-
-        <CommandBinding Command="ApplicationCommands.Save"
-                        Executed="Save_Executed"
-                        CanExecute="Save_CanExecute"/>
-
-        <CommandBinding Command="ApplicationCommands.SaveAs"
-                        Executed="SaveAs_Executed"
-                        CanExecute="SaveAs_CanExecute"/>
-
-
-        <CommandBinding Command="classes:CommandsBinding.CloseFile"
-                        Executed="CloseFile_Executed"
-                        CanExecute="CloseFile_CanExecute"/>
-
-        <CommandBinding Command="classes:CommandsBinding.Exit"
-                        Executed="Exit_Executed"
-                        CanExecute="Exit_CanExecute"/>
-
-        <CommandBinding Command="classes:CommandsBinding.NewTerminal"
-                        Executed="NewTerminal_Executed" 
-                        CanExecute="NewTerminal_CanExecute"/>
-
-        <CommandBinding Command="classes:CommandsBinding.NewTerminalCurrentDir"
-                        Executed="NewTerminalCurrentDir_Executed"
-                        CanExecute="NewTerminalCurrentDir_CanExecute"/>
-
-        <CommandBinding Command="classes:CommandsBinding.Build"
-                        Executed="Build_Executed"
-                        CanExecute="Build_CanExecute"/>
-
-        <CommandBinding Command="classes:CommandsBinding.BuildAndRun"
-                        Executed="BuildAndRun_Executed"
-                        CanExecute="BuildAndRun_CanExecute"/>
-
-    </Window.CommandBindings>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -69,25 +37,25 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Background="White" >
             <MenuItem Header="File" x:Name="File">
-                <MenuItem Header="New File" Command="ApplicationCommands.New"  x:Name="NewFile"/>
-                <MenuItem Header="Open File" Command="ApplicationCommands.Open" x:Name="OpenFile"/>
-                <MenuItem Header="Open Folder" x:Name="OpenFolder"/>
+                <MenuItem Header="New File" Command="{Binding NewFileCommand}" x:Name="NewFileMenuItem" InputGestureText="Ctrl+N"/>
+                <MenuItem Header="Open File" Command="{Binding OpenFileCommand}" x:Name="OpenFileMenuItem" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="Open Folder" Command="{Binding OpenFolderCommand}" x:Name="OpenFolderMenuItem"/>
 
                 <Separator/>
 
-                <MenuItem Header="Save" x:Name="Save" Command="ApplicationCommands.Save"/>
-                <MenuItem Header="Save As" Command="ApplicationCommands.SaveAs" x:Name="SaveAs"/>
-                <MenuItem Header="Save All" x:Name="SaveAll" Command="" Click="SaveAll_Click"/>
+                <MenuItem Header="Save" Command="{Binding SaveCommand}" x:Name="SaveMenuItem" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="Save As" Command="{Binding SaveAsCommand}" x:Name="SaveAsMenuItem" InputGestureText="Ctrl+Shift+S"/>
+                <MenuItem Header="Save All" Command="{Binding SaveAllCommand}" x:Name="SaveAllMenuItem"/>
 
                 <Separator/>
 
-                <MenuItem Header="Close File" x:Name="CloseFile" Command="classes:CommandsBinding.CloseFile"/>
-                <MenuItem Header="Close All Files" x:Name="CloseAllFiles" Click="CloseAllFiles_Click"/>
-                <MenuItem Header="New Window" x:Name="NewWindow" Click="NewWindow_Click"/>
+                <MenuItem Header="Close File" Command="{Binding CloseFileCommand}" x:Name="CloseFileMenuItem" InputGestureText="Ctrl+W"/>
+                <MenuItem Header="Close All Files" Command="{Binding CloseAllFilesCommand}" x:Name="CloseAllFiles"/>
+                <MenuItem Header="New Window" Command="{Binding NewWindowCommand}" x:Name="NewWindow"/>
 
                 <Separator/>
 
-                <MenuItem Header="Exit" x:Name="Exit" Command="classes:CommandsBinding.Exit"/>
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}" x:Name="Exit" InputGestureText="Alt+F4"/>
             </MenuItem>
 
             <MenuItem Header="Edit">
@@ -106,17 +74,18 @@
                 <MenuItem Header="Select All" x:Name="SelectAll" Command="ApplicationCommands.SelectAll"/>
             </MenuItem>
 
+
             <MenuItem Header="Languages" x:Name="Languages">
-                <ComboBoxItem x:Name="C" Content="C" />
-                <ComboBoxItem x:Name="CPlusPlus" Content="C++"/>
-                <ComboBoxItem x:Name="Java" Content="Java"/>
-                <ComboBoxItem x:Name="JavaScript" Content="JavaScript"/>
-                <ComboBoxItem x:Name="CSharp" Content="C#"/>
+                <MenuItem x:Name="PlainText" Header="Plain Text" IsCheckable="True" Checked="PlainText_Checked"/>
+                <MenuItem x:Name="CSharph" Header="C#" IsCheckable="True" Checked="CSharph_Checked"/>
+                <MenuItem x:Name="Java" Header="Java" IsCheckable="True" Checked="Java_Checked"/>
+                <MenuItem x:Name="CPlusPlus" Header="C++" IsCheckable="True" Checked="CPlusPlus_Checked"/>
+                <MenuItem x:Name="C" Header="C" IsCheckable="True" Checked="C_Checked"/>
             </MenuItem>
 
             <MenuItem Header="Run" x:Name="Run">
-                <MenuItem Header="Build" x:Name="Build" Command="classes:CommandsBinding.Build" />
-                <MenuItem Header="Build And Run" x:Name="BuildAndRun" Command="classes:CommandsBinding.BuildAndRun"/>
+                <MenuItem Header="Build" x:Name="Build" Command="{Binding BuildCommand}" />
+                <MenuItem Header="Build And Run" x:Name="BuildAndRun" Command="{Binding BuildAndRunCommand}"/>
 
                 <Separator/>
 
@@ -125,8 +94,8 @@
             </MenuItem>
 
             <MenuItem Header="Terminal" x:Name="Terminal">
-                <MenuItem Header="New Terminal" x:Name="NewTerminal" Command="classes:CommandsBinding.NewTerminal"/>
-                <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDir" Command="classes:CommandsBinding.NewTerminalCurrentDir"/>
+                <MenuItem Header="New Terminal" x:Name="NewTerminal" Command="{Binding NewTerminalCommand}"/>
+                <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDir" Command="{Binding NewTerminalCurrentDir}"/>
             </MenuItem>
 
             <MenuItem Header="Preferences" x:Name="Preferences">
@@ -147,9 +116,6 @@
             x:Name="tabControl" 
             SelectionChanged="TabControl_SelectionChanged"/>
 
-        <!--<WPF:ConsoleControl Height="200" Name="Console" Loaded="ConsoleControl"></WPF:ConsoleControl>-->
-        <!--<Button Click="{x:Static classes:SyntaxHighlight.Button_Click}">Click Me</Button>-->
-
         <StatusBar 
             Grid.Row="2" 
             x:Name="StatusBar" 
@@ -161,7 +127,7 @@
                     <TextBlock x:Name="StatusText" Text="{Binding}"/>
                 </StatusBarItem>
 
-                <StatusBarItem HorizontalAlignment="Right">
+                <!--<StatusBarItem HorizontalAlignment="Right">
                     <Slider Minimum="10" 
                             Maximum="50" 
                             Width="150" 
@@ -169,7 +135,7 @@
                             IsSnapToTickEnabled="True" 
                             TickPlacement="BottomRight" 
                             ValueChanged="Slider_ValueChanged"/>
-                </StatusBarItem>
+                </StatusBarItem>-->
         </StatusBar>
         
     </Grid>

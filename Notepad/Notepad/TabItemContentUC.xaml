@@ -6,57 +6,35 @@
              xmlns:local="clr-namespace:Notepad"
              xmlns:classes="clr-namespace:Notepad.Classes"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             classes:InputBindingsBehavior.TakesInputBindingPrecedence="True">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="30*"/>
+        </Grid.ColumnDefinitions>
 
-    <UserControl.Resources>
+        <TextBox Grid.Column="0" x:Name="textBox" Text="{Binding LineNumber}">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}" >
+                    <Setter Property="IsReadOnly" Value="true"/>
+                    <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
+                    <Setter Property="IsEnabled" Value="False"/>
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Setter Property="BorderThickness" Value="0,0,0.7,0"/>
+                    <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+                    <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <classes:RichTextBoxUC 
+                Grid.Column="1" 
+                x:Name="richTextBoxUserControl"
+                Margin="0,-2,0,0"/>
+        
 
-
-    </UserControl.Resources>
-    <ScrollViewer 
-        VerticalScrollBarVisibility="Auto"
-        x:Name="scrollViewer">
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="30*"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBox Grid.Column="0" x:Name="textBox">
-                <TextBox.Style>
-                    <Style TargetType="{x:Type TextBox}" >
-                        <Setter Property="IsReadOnly" Value="true"/>
-                        <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
-                        <Setter Property="IsEnabled" Value="False"/>
-                        <Setter Property="BorderBrush" Value="Black"/>
-                        <Setter Property="FontSize" Value="14"/>
-                        <Setter Property="TextAlignment" Value="Center"/>
-                        <Setter Property="BorderThickness" Value="0,0,0.7,0"/>
-                    </Style>
-                </TextBox.Style>
-            </TextBox>
-
-            <RichTextBox Grid.Column="1" x:Name="richTextBox">
-                <RichTextBox.Resources>
-                    <Style TargetType="{x:Type RichTextBox}">
-                        <Setter Property="AcceptsReturn" Value="True"/>
-                        <Setter Property="AcceptsTab" Value="True"/>
-                        <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
-                        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Margin" Value="0,-2,0,0"/>
-                        <Setter Property="FontSize" Value="14"/>
-                        <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
-                        <EventSetter Event="TextChanged" Handler="LineNumberOnChanged"/>
-                        <EventSetter Event="TextChanged" Handler="richTextBox_TextChanged"/>
-                    </Style>
-
-                    <Style TargetType="{x:Type Paragraph}">
-                        <Setter Property="Margin" Value="0"/>
-                    </Style>
-                </RichTextBox.Resources>
-            </RichTextBox>
-        </Grid>
-    </ScrollViewer>
+    </Grid>
 
 </UserControl>

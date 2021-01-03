@@ -12,7 +12,6 @@ namespace TestTextRange
     public class JsonDesirialize
     {
         public static CSharphSnippet CSharph { get; set; }
-
         public static DirectoryInfo TryGetSolutionDirectoryInfo(string currentPath = null)
         {
             var directory = new DirectoryInfo(

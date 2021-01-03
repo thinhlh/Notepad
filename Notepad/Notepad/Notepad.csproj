@@ -44,9 +44,13 @@
     <Reference Include="ConsoleControlAPI, Version=1.3.0.0, Culture=neutral, PublicKeyToken=7c86b8a36b9c33e2, processorArchitecture=MSIL">
       <HintPath>..\packages\ConsoleControlAPI.1.3.0\lib\net40\ConsoleControlAPI.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Text.Json, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -61,15 +65,39 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\Command.cs" />
+    <Compile Include="Classes\Commands.cs" />
+    <Compile Include="Classes\MainWindowExtension.cs" />
+    <Compile Include="Classes\TemporaryDetail.cs" />
+    <Compile Include="Snippets\CSnippet.cs" />
+    <Compile Include="Snippets\CPlusPlusSnippet.cs" />
+    <Compile Include="Classes\InputBindingsBehavior.cs" />
+    <Compile Include="Classes\JsonDeserialize.cs" />
+    <Compile Include="Classes\RichTextBoxUC.xaml.cs">
+      <DependentUpon>RichTextBoxUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Snippets\C.cs" />
+    <Compile Include="Snippets\CPlusPlus.cs" />
+    <Compile Include="Snippets\CSharph.cs" />
+    <Compile Include="Snippets\CSharphSnippet.cs" />
+    <Compile Include="Snippets\ISnippet.cs" />
+    <Compile Include="Snippets\Java.cs" />
+    <Compile Include="Snippets\JavaSnippet.cs" />
+    <Compile Include="Snippets\PlainText.cs" />
     <Compile Include="TabItemContentUC.xaml.cs">
       <DependentUpon>TabItemContentUC.xaml</DependentUpon>
     </Compile>
+    <Page Include="Classes\RichTextBoxUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -117,7 +145,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="temp\" />
+  </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>

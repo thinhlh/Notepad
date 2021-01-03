@@ -104,3 +104,16 @@ C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\TabItemCont
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.baml
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.g.cs
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.baml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe.config
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Classes\RichTextBoxUC.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Text.Json.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Memory.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Classes\RichTextBoxUC.baml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Newtonsoft.Json.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Newtonsoft.Json.xml

@@ -5,33 +5,33 @@
     { "as": "#0000ff" },
     { "base": "#0000ff" },
     { "bool": "#0000ff" },
-    { "break": "#d8a0df" }, /*violet*/
+    { "break": "#ff0000" }, /*violet*/
     { "byte": "#0000ff" },
-    { "case": "#d8a0df" }, //
-    { "catch": "#d8a0df" }, //
+    { "case": "#ff0000" }, //
+    { "catch": "#ff0000" }, //
     { "char": "#0000ff" },
     { "checked": "#0000ff" },
     { "class": "#0000ff" },
     { "const": "#0000ff" },
-    { "continue": "#d8a0df" }, //
+    { "continue": "#ff0000" }, //
     { "decimal": "#0000ff" },
     { "default": "#0000ff" },
     { "degate": "#0000ff" },
-    { "do": "#d8a0df" }, //
+    { "do": "#ff0000" }, //
     { "double": "#0000ff" },
-    { "else": "#d8a0df" }, //
+    { "else": "#ff0000" }, //
     { "enum": "#0000ff" },
     { "event": "#0000ff" },
     { "explicit": "#0000ff" },
     { "extern": "#0000ff" },
     { "false": "#0000ff" },
-    { "finally": "#d8a0df" }, //
+    { "finally": "#ff0000" }, //
     { "fixed": "#0000ff" },
     { "float": "#0000ff" },
-    { "for": "#d8a0df" }, //
-    { "foreach": "#d8a0df" }, //
-    { "goto": "#d8a0df" }, //
-    { "if": "#d8a0df" }, //
+    { "for": "#ff0000" }, //
+    { "foreach": "#ff0000" }, //
+    { "goto": "#ff0000" }, //
+    { "if": "#ff0000" }, //
     { "implicit": "#0000ff" },
     { "in": "#0000ff" },
     { "int": "#0000ff" },
@@ -66,7 +66,7 @@
     { "this": "#0000ff" },
     { "throw": "#0000ff" },
     { "true": "#0000ff" },
-    { "try": "#d8a0df" }, //
+    { "try": "#ff0000" }, //
     { "typeof": "#0000ff" },
     { "uint": "#0000ff" },
     { "ulong": "#0000ff" },
@@ -77,8 +77,11 @@
     { "virtual": "#0000ff" },
     { "void": "#0000ff" },
     { "volatile": "#0000ff" },
-    { "while": "#d8a0df" } //
+    { "while": "#ff0000" } //
   ],
   "number": "#006600",
-  "comment": "#00ff00"
+  "comment": "#00ff00",
+  "preprocessor": "#808080",
+  "String": "#CD853F"
+
 }
