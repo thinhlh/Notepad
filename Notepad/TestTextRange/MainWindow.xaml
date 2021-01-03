@@ -5,13 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestTextRange"
         mc:Ignorable="d"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="4*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <RichTextBox x:Name="richTextBox" Grid.Row="0" SelectionChanged="richTextBox_SelectionChanged" AcceptsReturn="True" AcceptsTab="True" FontSize="18"/>
+        <!--<RichTextBox x:Name="richTextBox" Grid.Row="0" SelectionChanged="richTextBox_SelectionChanged" AcceptsReturn="True" AcceptsTab="True" FontSize="18" TextChanged="richTextBox_TextChanged">
+            <RichTextBox.Resources>
+                <Style TargetType="{x:Type Paragraph}">
+                    <Setter Property="Margin" Value="0"/>
+                </Style>
+            </RichTextBox.Resources>
+        </RichTextBox>-->
+        <WindowsFormsHost Grid.Row="0">
+            <wf:RichTextBox x:Name="richTextBox" 
+                            AcceptsTab="True" 
+                            WordWrap="False" 
+                            Margin="0,0,0,0" 
+                            ScrollBars="Both" 
+                            TextChanged="richTextBox_TextChanged"
+                            SelectionChanged="richTextBox_SelectionChanged"/>
+        </WindowsFormsHost>
         <TextBox Name="textBox" Grid.Row="1" Text="{Binding Word}" IsReadOnly="True"/>
     </Grid>
 </Window>

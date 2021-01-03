@@ -1,42 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
+using Newtonsoft.Json;
+using System.Windows;
+using System.IO;
+using System.Windows.Documents;
 
 namespace TestTextRange
 {
-    public class Snippet
+    public abstract class Snippet
     {
-        private readonly Dictionary<string, SolidColorBrush> formatList=new Dictionary<string, SolidColorBrush>();
-        public Dictionary<string,SolidColorBrush> FormatList
-        {
-            get => formatList;
-        }
-        public Snippet()
-        {
-            formatList.Add("#include", Brushes.Red);
-            formatList.Add("using", Brushes.Red);
-            formatList.Add("namespace", Brushes.Red);
-            formatList.Add("for", Brushes.Red);
-            formatList.Add("return", Brushes.Red);
-            formatList.Add("while", Brushes.Red);
+        public abstract void Highlight(TextRange textRange);
 
-
-            formatList.Add("main", Brushes.Green);
-
-            formatList.Add("private", Brushes.Blue);
-            formatList.Add("protected", Brushes.Blue);
-            formatList.Add("int", Brushes.Blue);
-            formatList.Add("string", Brushes.Blue);
-            formatList.Add("virtual", Brushes.Blue);
-            formatList.Add("void", Brushes.Blue);
-            formatList.Add("override", Brushes.Blue);
-        }
-        public int length()
+        protected static bool isNumber(string str)
         {
-            return formatList.Count;
+            foreach (char ch in str)
+            {
+                if (ch != '0' || ch != '1' || ch != '2' || ch != '3' || ch != '4' || ch != '5' || ch != '6' || ch != '7' || ch != '8' || ch != '9')
+                {
+                    return false;
+                }
+            }
+            return true;
         }
+    }
+
+    public enum Languages
+    {
+        CPlusPlus,
+        CSharph,
+        Java,
+        C,
+        JavaScripst,
     }
 }

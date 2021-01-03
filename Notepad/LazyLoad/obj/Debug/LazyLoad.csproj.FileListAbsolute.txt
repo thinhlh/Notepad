@@ -1,0 +1,15 @@
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\bin\Debug\LazyLoad.exe.config
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\bin\Debug\LazyLoad.exe
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\bin\Debug\LazyLoad.pdb
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\LazyLoad.csprojAssemblyReference.cache
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\MainWindow.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\App.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\LazyLoad_MarkupCompile.cache
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\LazyLoad_MarkupCompile.lref
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\MainWindow.baml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\LazyLoad.g.resources
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\LazyLoad.Properties.Resources.resources
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\LazyLoad.csproj.GenerateResource.cache
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\LazyLoad.csproj.CoreCompileInputs.cache
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\LazyLoad.exe
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\LazyLoad\obj\Debug\LazyLoad.pdb
