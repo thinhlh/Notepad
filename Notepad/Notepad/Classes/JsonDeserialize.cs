@@ -29,5 +29,18 @@ namespace Notepad.Classes
         {
             return System.Drawing.ColorTranslator.FromHtml(color);
         }
+
+        public static Languages GetLanguageFromString(string language)
+        {
+            if (language == "CSharph")
+                return Languages.CSharph;
+            else if (language == "C")
+                return Languages.C;
+            else if (language == "Java")
+                return Languages.Java;
+            else if (language == "CPlusPlus")
+                return Languages.CPlusPlus;
+            else return Languages.None;
+        }
     }
 }

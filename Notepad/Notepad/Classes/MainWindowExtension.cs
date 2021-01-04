@@ -65,6 +65,30 @@ namespace Notepad.Classes
             else
                 mainWindow.StatusText.DataContext = tabItems[tabControl.SelectedIndex].FilePath;
         }
+        public static void RaiseUnsavedIcon()
+        {
+            List<MainTabItem> tabItems = mainWindow.tabItems;
+            TabControl tabControl = mainWindow.tabControl;
+
+            if (tabItems[tabControl.SelectedIndex].IsSaved == false)
+            {
+                return;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].Data)) //Initialize Circumstance
+                    return;
+                else
+                {
+                    //Raise* at the end and keep isSaved = false when there is a change with out save before
+                    tabItems[tabControl.SelectedIndex].Header += "*";
+                    tabItems[tabControl.SelectedIndex].IsSaved = false;
+                }
+            }
+
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;
+            //Resubscribe when this tab is Saved
+        }
 
         private static void RemoveSavedIcon(int index)
         {
@@ -93,17 +117,16 @@ namespace Notepad.Classes
         public static List<TemporaryDetail> DeserializeTemporaryDetail()
         {
             string JsonPath = TryGetSolutionDirectoryInfo().FullName + @"\Notepad\temp\TabDetails.json";
+
+            if (!File.Exists(JsonPath)) return null;
             string output = File.ReadAllText(JsonPath);
-
-            if (string.IsNullOrEmpty(output)) return null;
-
             var details = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TemporaryDetail>>(output);
             return details;
         }
         
         public static void SaveExecuted(int index)
         {
-            if (!tabItems[index].IsSaved || tabItems[index].Data == "\r\n") // not yet saved or new tab but not have data
+            if (!tabItems[index].IsSaved || string.IsNullOrWhiteSpace(tabItems[index].Data)) // not yet saved or new tab but not have data
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
 
@@ -115,6 +138,8 @@ namespace Notepad.Classes
                 }
                 else SaveAsExecuted(index);
             }
+            (tabItems[index].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[index].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;
+            //subscribe to listen when text changed again
         }
         public static void SaveAsExecuted(int index)
         {

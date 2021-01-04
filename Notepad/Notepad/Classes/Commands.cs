@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -193,7 +193,8 @@ namespace Notepad.Classes
                     details.Add(new TemporaryDetail());
                     details[i].path = (tabControl.Items[i] as MainTabItem).FilePath;
                     details[i].header = (tabControl.Items[i] as MainTabItem).Header as string;
-                    details[i].text = (tabControl.Items[i] as MainTabItem).Data;
+                    details[i].text = ((tabControl.Items[i] as MainTabItem).Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text;
+                    details[i].language = ((tabControl.Items[i] as MainTabItem).Content as TabItemContentUC).richTextBoxUserControl.Language.ToString();
 
                 }
                 string JsonPath = MainWindowExtension.TryGetSolutionDirectoryInfo().FullName+ @"\Notepad\temp\TabDetails.json";

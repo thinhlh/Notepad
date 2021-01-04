@@ -26,7 +26,7 @@ namespace Notepad.Classes
             get => _language; 
             set { 
                 _language = value;
-                InvokeHighlight(); 
+                InvokeHighlightAll(); 
             }
         }
         public int previousCaret = 0;
@@ -48,7 +48,7 @@ namespace Notepad.Classes
         public RichTextBoxUC()
         {
             InitializeComponent();
-            this.DataContext = DataContext;
+            this.DataContext = mainWindow;
 
 
             #region Setup RichTextBox
@@ -78,7 +78,7 @@ namespace Notepad.Classes
             }
         }
 
-        private void richTextBox_TextChangedSavedIcon(object sender, EventArgs e)
+        public void richTextBox_TextChangedSavedIcon(object sender, EventArgs e)
         {
 
             List<MainTabItem> tabItems = mainWindow.tabItems;
@@ -89,7 +89,7 @@ namespace Notepad.Classes
             else
                 tabItems[tabControl.SelectedIndex].Data = Text;
 
-            RaiseUnsavedIcon();
+            MainWindowExtension.RaiseUnsavedIcon();
         }
         public void richTextBox_Highlight(object sender,EventArgs e)
         {
@@ -103,6 +103,10 @@ namespace Notepad.Classes
                 virtualControl = mainWindow;
                 virtualControl.Focus();
             }
+            //Unsubscribe TextChanged Events
+            richTextBox.TextChanged -= this.richTextBox_Highlight;
+            richTextBox.TextChanged -= this.richTextBox_TextChangedSavedIcon;
+            richTextBox.TextChanged -= this.RichTextBox_TextChangedLineNumber;
 
             //check for highlight and return highlighter here
 
@@ -123,6 +127,52 @@ namespace Notepad.Classes
 
             richTextBox.Focus();
             richTextBox.SelectionStart = currentCaret;
+
+            //Subscribe TextChanged events;
+            richTextBox.TextChanged += this.richTextBox_Highlight;
+            richTextBox.TextChanged += this.richTextBox_TextChangedSavedIcon;
+            richTextBox.TextChanged += this.RichTextBox_TextChangedLineNumber;
+
+            virtualControl = null;
+        }
+
+        private void InvokeHighlightAll()
+        {
+            if (virtualControl == null)
+            {
+                virtualControl = mainWindow;
+                virtualControl.Focus();
+            }
+
+            //Unsubscribe TextChanged events;
+            richTextBox.TextChanged -= this.richTextBox_Highlight;
+            richTextBox.TextChanged -= this.richTextBox_TextChangedSavedIcon;
+            richTextBox.TextChanged -= this.RichTextBox_TextChangedLineNumber;
+
+            //check for highlight and return highlighter here
+
+            int currentCaret = richTextBox.SelectionStart;
+
+            if (Language == Languages.CSharph)
+                highlighter = new CSharph();
+            else if (Language == Languages.Java)
+                highlighter = new Java();
+            else if (Language == Languages.CPlusPlus)
+                highlighter = new CPlusPlus();
+            else if (Language == Languages.C)
+                highlighter = new C();
+            else
+                highlighter = new PlainText();
+
+            highlighter.HighlightRange(0, richTextBox.Text.Length);
+
+            richTextBox.Focus();
+            richTextBox.SelectionStart = currentCaret;
+
+            //Subscribe TextChanged events;
+            richTextBox.TextChanged += this.richTextBox_Highlight;
+            richTextBox.TextChanged += this.richTextBox_TextChangedSavedIcon;
+            richTextBox.TextChanged += this.RichTextBox_TextChangedLineNumber;
 
             virtualControl = null;
         }
@@ -297,27 +347,7 @@ namespace Notepad.Classes
 
             return charIndexOfLine;
         }
-        private void RaiseUnsavedIcon()
-        {
-            List<MainTabItem> tabItems = mainWindow.tabItems;
-            TabControl tabControl = mainWindow.tabControl;
 
-            if (tabItems[tabControl.SelectedIndex].IsSaved == false)
-            {
-                return;
-            }
-            else
-            {
-                if (Text == "" || Text == "\r\n") //Initialize Circumstance
-                    return;
-                else
-                {
-                    //Raise* at the end and keep isSaved = false when there is a change with out save before
-                    tabItems[tabControl.SelectedIndex].Header += "*";
-                    tabItems[tabControl.SelectedIndex].IsSaved = false;
-                }
-            }
-        }
 
         public int GetFirstVisibleLine()
         {
@@ -336,16 +366,51 @@ namespace Notepad.Classes
 
         private void richTextBox_PreviewKeyDown(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
         {
-            if(!e.IsInputKey&&e.Control&&e.KeyCode==System.Windows.Forms.Keys.N)
+            if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.N&&Commands.NewFileCanExecute)
             {
-               
+                Commands.NewFileExecuted();
+            }
+            else if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.O&&Commands.OpenFileCanExecute)
+            {
+                Commands.OpenFileExecuted();
+            }
+            else if(e.Control&&e.Shift&&e.KeyCode==System.Windows.Forms.Keys.O&&Commands.OpenFolderCanExecute)
+            {
+                Commands.OpenFolderExecuted();
+            }
+            else if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.S&&Commands.SaveCanExecute)
+            {
+                Commands.SaveExecuted();
+            }
+            else if(e.Control&&e.Shift&&e.KeyCode==System.Windows.Forms.Keys.S&&Commands.SaveAsCanExecute)
+            {
+                Commands.SaveAsExecuted();
+            }
+            else if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.W&&Commands.CloseAllFilesCanExecute)
+            {
+                Commands.CloseFileExecuted();
+            }
+            else if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.T&&Commands.NewTerminalCanExecute)
+            {
+                Commands.NewTerminalExecuted();
+            }
+            else if(e.Control&&e.Shift&&e.KeyCode==System.Windows.Forms.Keys.T&&Commands.NewTerminalCurrentDirCanExecute)
+            {
+                Commands.NewTerminalCurrentDirExecuted();
+            }
+            else if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.B&&Commands.BuildCanExecute)
+            {
+                Commands.BuildExecuted();
+            }
+            else if(e.Control&&e.Shift&&e.KeyCode==System.Windows.Forms.Keys.B&&Commands.BuildAndRunCanExecute)
+            {
+                Commands.BuildAndRunExecuted();
             }
         }
 
         private void richTextBox_VScroll(object sender, EventArgs e)
         {
             ScrollChangedEventArgs scrollChangedEventArgs = e as ScrollChangedEventArgs;
-            
         }
     }
 }

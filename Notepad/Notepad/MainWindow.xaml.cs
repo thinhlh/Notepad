@@ -23,6 +23,12 @@ namespace Notepad
             InitializeComponent();
             this.DataContext = this;
         }
+
+        /// <summary>
+        /// Loaded Event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var details = MainWindowExtension.DeserializeTemporaryDetail();
@@ -39,31 +45,49 @@ namespace Notepad
                     tabItems[i].FilePath = detail.path;
                     tabItems[i].Header = detail.header;
                     tabItems[i].Data = detail.text;
-                    tabItems[i].IsSaved = detail.header.Contains("*");
+                    tabItems[i].IsSaved = !detail.header.Contains("*");
 
 
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
+                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.Language = JsonDeserialize.GetLanguageFromString(detail.language);
+
+                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;//Set Language then highlight it
 
                     // Add content to richTextBox
                     (tabItems[i].Content as TabItemContentUC).Data = tabItems[i].Data;// Set Data For RTB
 
-                    //Highlight
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.highlighter.HighlightRange(0, (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length);
-
                     //Resubscribe
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
-
+                     (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
 
 
                     //Scroll to the end of the text
                     (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
                     (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
 
+
+                    //Change menu item to fit with content's language
+                    switch ((tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.Language)
+                    {
+                        case Snippets.Languages.None:
+                            this.PlainText.IsChecked = true;
+                            break;
+                        case Snippets.Languages.CSharph:
+                            this.CSharph.IsChecked = true;
+                            break;
+                        case Snippets.Languages.Java:
+                            this.Java.IsChecked = true;
+                            break;
+                        case Snippets.Languages.CPlusPlus:
+                            this.CPlusPlus.IsChecked = true;
+                            break;
+                        case Snippets.Languages.C:
+                            this.C.IsChecked = true;
+                            break;
+                    }
+
                     i++;
                 }
             }
 
-            this.PlainText.IsChecked = true;
         }
 
         #region Variables
@@ -213,24 +237,30 @@ namespace Notepad
 
 
             //Change menu item to fit with content's language
-            //switch((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language)
-            //{
-            //    case Snippets.Languages.None:
-            //        this.PlainText.IsChecked = true;
-            //        break;
-            //    case Snippets.Languages.CSharph:
-            //        this.CSharph.IsChecked = true;
-            //        break;
-            //    case Snippets.Languages.Java:
-            //        this.Java.IsChecked = true;
-            //        break;
-            //    case Snippets.Languages.CPlusPlus:
-            //        this.CPlusPlus.IsChecked = true;
-            //        break;
-            //    case Snippets.Languages.C:
-            //        this.C.IsChecked = true;
-            //        break;
-            //}
+            switch ((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language)
+            {
+                case Snippets.Languages.None:
+                    this.PlainText.IsChecked = true;
+                    break;
+                case Snippets.Languages.CSharph:
+                    this.CSharph.IsChecked = true;
+                    break;
+                case Snippets.Languages.Java:
+                    this.Java.IsChecked = true;
+                    break;
+                case Snippets.Languages.CPlusPlus:
+                    this.CPlusPlus.IsChecked = true;
+                    break;
+                case Snippets.Languages.C:
+                    this.C.IsChecked = true;
+                    break;
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            Commands.ExitExecuted();
         }
 
         #region Language Check
