@@ -9,6 +9,10 @@
              d:DesignHeight="450" d:DesignWidth="800"
              local:InputBindingsBehavior.TakesInputBindingPrecedence="True">
 
+    <UserControl.InputBindings>
+        <KeyBinding Command="{Binding NewFileCommand}" Modifiers="Ctrl" Key="N"/>
+    </UserControl.InputBindings>
+    
     <Grid>
         <WindowsFormsHost>
             <wf:RichTextBox 
@@ -19,7 +23,7 @@
                 ScrollBars="Both"
                 VScroll="richTextBox_VScroll"
                 BorderStyle="None"
-                
+                PreviewKeyDown="richTextBox_PreviewKeyDown"
                 />
             
         </WindowsFormsHost>

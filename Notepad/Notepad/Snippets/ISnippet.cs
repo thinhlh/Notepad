@@ -10,7 +10,7 @@ namespace Notepad.Snippets
     {
         void Highlight();
 
-        void HighlightRange(int start,int end);
+        void HighlightRange(int start,int length);
         
         string GetListOfKeyWord(List<Dictionary<string, string>> keywords);
 
@@ -19,6 +19,7 @@ namespace Notepad.Snippets
 
 
     }
+
     public enum Languages
     {
         CSharph,

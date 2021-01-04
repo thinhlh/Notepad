@@ -26,5 +26,10 @@ namespace Notepad.Classes
         /// store value of richtextbox
         /// </summary>
         public string text { get; set; }
+
+        /// <summary>
+        /// store language of current RTB
+        /// </summary>
+        public string language { get; set; }
     }
 }

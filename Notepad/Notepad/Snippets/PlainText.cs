@@ -24,17 +24,27 @@ namespace Notepad.Snippets
             richtextBox.currentCaret = richtextBox.richTextBox.SelectionStart;
             int length = richtextBox.richTextBox.SelectionLength;
 
+            richtextBox.ClearStyle();
+
+            richtextBox.previousCaret = richtextBox.richTextBox.SelectionStart;
+            richtextBox.richTextBox.SelectionStart = richtextBox.currentCaret;
+            richtextBox.richTextBox.SelectionLength = length;
+
+        }
+
+        public void HighlightRange(int start, int end)
+        {
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            RichTextBoxUC richtextBox = (mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl;
+
+            richtextBox.currentCaret = richtextBox.richTextBox.SelectionStart;
+            int length = richtextBox.richTextBox.SelectionLength;
+
             richtextBox.ClearStyle(0, richtextBox.richTextBox.Text.Length);
 
             richtextBox.previousCaret = richtextBox.richTextBox.SelectionStart;
             richtextBox.richTextBox.SelectionStart = richtextBox.currentCaret;
             richtextBox.richTextBox.SelectionLength = length;
-        }
-
-        public void HighlightRange(int start, int end)
-        {
-            return;
-            throw new NotImplementedException();
         }
 
         public bool IsNumber(string token)

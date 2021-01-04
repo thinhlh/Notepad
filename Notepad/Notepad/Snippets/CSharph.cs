@@ -50,6 +50,9 @@ namespace Notepad.Snippets
 
             richtextBox.currentCaret = richtextBox.richTextBox.SelectionStart;
             int length = richtextBox.richTextBox.SelectionLength;
+
+            
+
             /*
              * For every Language, the below code block are different 
              */
