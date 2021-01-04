@@ -11,6 +11,8 @@ using System.Windows.Media;
 using Notepad.Classes;
 using System.Text.RegularExpressions;
 using Notepad.Snippets;
+using System.ComponentModel;
+using Notepad.resources;
 namespace Notepad
 {
     /// <summary>
@@ -60,8 +62,8 @@ namespace Notepad
 
 
                     //Scroll to the end of the text
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
+                    //(tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
+                    //(tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
 
 
                     //Change menu item to fit with content's language
@@ -237,30 +239,37 @@ namespace Notepad
 
 
             //Change menu item to fit with content's language
-            switch ((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language)
+            if (tabControl.SelectedIndex < 0)
             {
-                case Snippets.Languages.None:
-                    this.PlainText.IsChecked = true;
-                    break;
-                case Snippets.Languages.CSharph:
-                    this.CSharph.IsChecked = true;
-                    break;
-                case Snippets.Languages.Java:
-                    this.Java.IsChecked = true;
-                    break;
-                case Snippets.Languages.CPlusPlus:
-                    this.CPlusPlus.IsChecked = true;
-                    break;
-                case Snippets.Languages.C:
-                    this.C.IsChecked = true;
-                    break;
+                this.PlainText.IsChecked = true;
+            }
+            else
+            {
+                switch ((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language)
+                {
+                    case Snippets.Languages.None:
+                        this.PlainText.IsChecked = true;
+                        break;
+                    case Snippets.Languages.CSharph:
+                        this.CSharph.IsChecked = true;
+                        break;
+                    case Snippets.Languages.Java:
+                        this.Java.IsChecked = true;
+                        break;
+                    case Snippets.Languages.CPlusPlus:
+                        this.CPlusPlus.IsChecked = true;
+                        break;
+                    case Snippets.Languages.C:
+                        this.C.IsChecked = true;
+                        break;
+                }
             }
         }
 
-        protected override void OnClosed(EventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
-            base.OnClosed(e);
             Commands.ExitExecuted();
+            base.OnClosing(e);
         }
 
         #region Language Check
@@ -272,7 +281,10 @@ namespace Notepad
             this.CPlusPlus.IsChecked = false;
             this.C.IsChecked = false;
 
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.None;
+            if (tabControl.SelectedIndex >=0)
+            {
+                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.None;
+            }
 
         }
         private void CSharph_Checked(object sender,RoutedEventArgs e)
@@ -281,7 +293,12 @@ namespace Notepad
             this.Java.IsChecked = false;
             this.CPlusPlus.IsChecked = false;
             this.C.IsChecked = false;
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.CSharph;
+
+            if (tabControl.SelectedIndex >= 0)
+            {
+                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.CSharph;
+            }
+
         }
 
         private void Java_Checked(object sender, RoutedEventArgs e)
@@ -291,7 +308,10 @@ namespace Notepad
             this.CPlusPlus.IsChecked = false;
             this.C.IsChecked = false;
 
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.Java;
+            if (tabControl.SelectedIndex >= 0)
+            {
+                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.Java;
+            }
         }
 
         private void CPlusPlus_Checked(object sender, RoutedEventArgs e)
@@ -301,7 +321,10 @@ namespace Notepad
             this.Java.IsChecked = false;
             this.C.IsChecked = false;
 
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.CPlusPlus;
+            if (tabControl.SelectedIndex >= 0)
+            {
+                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.CPlusPlus;
+            }
         }
 
         private void C_Checked(object sender, RoutedEventArgs e)
@@ -311,10 +334,59 @@ namespace Notepad
             this.Java.IsChecked = false;
             this.CPlusPlus.IsChecked = false;
 
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.C;
+            if (tabControl.SelectedIndex >= 0)
+            {
+                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.C;
+            }
         }
 
         #endregion
+
+        private void Find_Click(object sender, RoutedEventArgs e)
+        {
+        //        < Grid >
+        //< Grid.ColumnDefinitions >
+        //    < ColumnDefinition Width = "*" />
+ 
+        //     < ColumnDefinition Width = "10*" />
+  
+        //      < ColumnDefinition Width = "2*" />
+   
+        //       < ColumnDefinition Width = "2*" />
+    
+        //    </ Grid.ColumnDefinitions >
+    
+
+        //    < Grid.RowDefinitions >
+    
+        //        < RowDefinition Height = "*" />
+     
+        //         < RowDefinition Height = "*" />
+      
+        //      </ Grid.RowDefinitions >
+      
+
+        //      < Label Content = "Find:" HorizontalAlignment = "Center" VerticalAlignment = "Center" Grid.Column = "0" Grid.Row = "0" />
+               
+        //               < TextBox x: Name = "FindTextBox" Grid.Row = "0" Grid.Column = "1" ></ TextBox >
+                     
+        //                     < Button x: Name = "FindButton" Content = "Find" Grid.Row = "0" Grid.Column = "2" ></ Button >
+                             
+        //                             < Button x: Name = "FindAllbutton" Content = "Find All" Grid.Row = "0" Grid.Column = "3" />
+                                     
+
+        //                                     < Label Content = "Replace" HorizontalAlignment = "Center" VerticalAlignment = "Center" Grid.Row = "1" Grid.Column = "0" />
+                                              
+        //                                              < TextBox x: Name = "ReplaceTextBox" Grid.Row = "1" Grid.Column = "1" />
+                                                    
+        //                                                    < Button x: Name = "ReplaceButton" Content = "Replace"  VerticalAlignment = "Top" Grid.Row = "1" Grid.Column = "2" />
+                                                              
+        //                                                              < Button x: Name = "ReplaceAllButton" Content = "Replace All" VerticalAlignment = "Top" Grid.Row = "1" Grid.Column = "3" />
+                                                                        
+        //                                                                    </ Grid >
+
+
+        }
     }
 
 }

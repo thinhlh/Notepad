@@ -85,8 +85,6 @@ namespace Notepad.Classes
                     tabItems[tabControl.SelectedIndex].IsSaved = false;
                 }
             }
-
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;
             //Resubscribe when this tab is Saved
         }
 
@@ -138,7 +136,6 @@ namespace Notepad.Classes
                 }
                 else SaveAsExecuted(index);
             }
-            (tabItems[index].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[index].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;
             //subscribe to listen when text changed again
         }
         public static void SaveAsExecuted(int index)

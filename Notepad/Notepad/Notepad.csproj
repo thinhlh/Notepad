@@ -76,11 +76,19 @@
     <Compile Include="Classes\Commands.cs" />
     <Compile Include="Classes\MainWindowExtension.cs" />
     <Compile Include="Classes\TemporaryDetail.cs" />
+    <Compile Include="MainResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MainResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="resources\FindAndReplace.xaml.cs">
+      <DependentUpon>FindAndReplace.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Snippets\CSnippet.cs" />
     <Compile Include="Snippets\CPlusPlusSnippet.cs" />
     <Compile Include="Classes\InputBindingsBehavior.cs" />
     <Compile Include="Classes\JsonDeserialize.cs" />
-    <Compile Include="Classes\RichTextBoxUC.xaml.cs">
+    <Compile Include="resources\RichTextBoxUC.xaml.cs">
       <DependentUpon>RichTextBoxUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="Snippets\C.cs" />
@@ -91,10 +99,14 @@
     <Compile Include="Snippets\Java.cs" />
     <Compile Include="Snippets\JavaSnippet.cs" />
     <Compile Include="Snippets\PlainText.cs" />
-    <Compile Include="TabItemContentUC.xaml.cs">
+    <Compile Include="resources\TabItemContentUC.xaml.cs">
       <DependentUpon>TabItemContentUC.xaml</DependentUpon>
     </Compile>
-    <Page Include="Classes\RichTextBoxUC.xaml">
+    <Page Include="resources\FindAndReplace.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="resources\RichTextBoxUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -113,7 +125,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="TabItemContentUC.xaml">
+    <Page Include="resources\TabItemContentUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -132,6 +144,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="MainResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MainResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -141,6 +157,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="resources\CSharphSnippet.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -153,6 +170,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="SublimeIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\SublimeIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

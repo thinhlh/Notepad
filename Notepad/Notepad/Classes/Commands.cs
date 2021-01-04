@@ -251,7 +251,7 @@ namespace Notepad.Classes
         }
         public static bool NewTerminalCurrentDirCanExecute
         {
-            get => tabItems[tabControl.SelectedIndex].IsSaved;
+            get => string.IsNullOrEmpty(tabItems[tabControl.SelectedIndex].FilePath);
         }
 
         /// <summary>

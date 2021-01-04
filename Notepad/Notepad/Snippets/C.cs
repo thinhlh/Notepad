@@ -19,7 +19,7 @@ namespace Notepad.Snippets
                 using (
                     StreamReader streamReader = File.OpenText(
                         (JsonDeserialize.TryGetSolutionDirectoryInfo().FullName
-                        + @"\Notepad\CSharphSnippet.json").ToString()))
+                        + @"\Notepad\resources\CSharphSnippet.json").ToString()))
                 {
                     var jsonString = streamReader.ReadToEnd();
                     JsonDeserialize.CSharph = Newtonsoft.Json.JsonConvert.DeserializeObject<CSharphSnippet>(jsonString);

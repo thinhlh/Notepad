@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\App.xaml
-31489208
+41611709824
 
-27748209619
+29-1630164192
 21376177221
-Classes\RichTextBoxUC.xaml;MainWindow.xaml;TabItemContentUC.xaml;
+resources\FindAndReplace.xaml;resources\RichTextBoxUC.xaml;MainWindow.xaml;resources\TabItemContentUC.xaml;
 
 True
 

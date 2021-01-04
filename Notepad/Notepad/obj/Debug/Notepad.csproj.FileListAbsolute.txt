@@ -102,10 +102,7 @@ C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.pdb
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.g.cs
 C:\Users\jonhn\OneDrive\Máy tính\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.baml
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.g.cs
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.baml
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe.config
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Classes\RichTextBoxUC.g.cs
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Text.Json.dll
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Memory.dll
@@ -114,7 +111,6 @@ C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Numerics.Ve
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Threading.Tasks.Extensions.dll
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Classes\RichTextBoxUC.baml
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Newtonsoft.Json.dll
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Newtonsoft.Json.xml
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\bin\Debug\Notepad.exe.config
@@ -153,3 +149,10 @@ C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\No
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.csproj.CopyComplete
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.pdb
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.MainResource.resources
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\TabItemContentUC.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\TabItemContentUC.baml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\RichTextBoxUC.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\RichTextBoxUC.baml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\FindAndReplace.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\FindAndReplace.baml
