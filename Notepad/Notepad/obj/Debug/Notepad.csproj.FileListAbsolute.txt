@@ -132,16 +132,12 @@ C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\bin\Debug\Co
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\bin\Debug\Newtonsoft.Json.xml
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.csprojAssemblyReference.cache
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe.config
-C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Classes\RichTextBoxUC.g.cs
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\MainWindow.g.cs
-C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.g.cs
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\App.g.cs
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad_MarkupCompile.cache
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad_MarkupCompile.lref
-C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Classes\RichTextBoxUC.baml
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\MainWindow.baml
-C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.baml
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.g.resources
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.Properties.Resources.resources
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.csproj.GenerateResource.cache
@@ -156,3 +152,10 @@ C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\RichText
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\RichTextBoxUC.baml
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\FindAndReplace.g.cs
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\FindAndReplace.baml
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\resources\RichTextBoxUC.g.cs
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\resources\TabItemContentUC.g.cs
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\resources\RichTextBoxUC.baml
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\resources\TabItemContentUC.baml
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.MainResource.resources
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\resources\FindAndReplace.g.cs
+C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\resources\FindAndReplace.baml
