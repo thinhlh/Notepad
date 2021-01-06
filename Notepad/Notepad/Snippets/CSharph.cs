@@ -11,6 +11,8 @@ namespace Notepad.Snippets
 {
     public class CSharph : ISnippet
     {
+        private string pattern;
+
         public CSharph() //Initialize and Deserialize Snippet if haven't
         {
             if (JsonDeserialize.CSharph == null)
@@ -25,9 +27,11 @@ namespace Notepad.Snippets
                 }
             }
 
+            pattern = @"\b(" + GetPatternFromListOfKeyword(JsonDeserialize.CSharph.keywords) + ")\\b";
+
         }
 
-        public string GetListOfKeyWord(List<Dictionary<string, string>> keywords)
+        public string GetPatternFromListOfKeyword(List<Dictionary<string, string>> keywords)
         {
             string regex = "";
             foreach (Dictionary<string, string> keyword in keywords)
@@ -42,6 +46,7 @@ namespace Notepad.Snippets
         {
             
             MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow.tabControl.SelectedIndex < 0) return;
             RichTextBoxUC richtextBox=(mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl;
 
             richtextBox.currentCaret = richtextBox.richTextBox.SelectionStart;
@@ -53,12 +58,12 @@ namespace Notepad.Snippets
              * For every Language, the below code block are different 
              */
             richtextBox.ClearStyle();
-            richtextBox.SetStyle(@"\b(" + GetListOfKeyWord(JsonDeserialize.CSharph.keywords) + ")\\b", TokenType.keywords);
+            richtextBox.SetStyle(pattern, TokenType.keywords);
             richtextBox.SetStyle(@"\s*#\s*(define|error|import|undef|elif|if|include|using|else|ifdef|line|endif|ifndef|pragma)\s*\S*", TokenType.preprocessor);
             richtextBox.SetStyle("\".*\"", TokenType.String);
             richtextBox.SetStyle(@"\/\/.*", TokenType.comment);
             richtextBox.SetStyle(@"\/\*.*\*\/", TokenType.comment);
-            
+
             //Return normal
             richtextBox.previousCaret = richtextBox.richTextBox.SelectionStart;
             richtextBox.richTextBox.SelectionStart = richtextBox.currentCaret;
@@ -76,7 +81,7 @@ namespace Notepad.Snippets
             int currentLength = richtextBox.richTextBox.SelectionLength;
 
             richtextBox.ClearStyle(start,length);
-            richtextBox.SetStyle(start, length, @"\b(" + GetListOfKeyWord(JsonDeserialize.CSharph.keywords) + ")\\b", TokenType.keywords);
+            richtextBox.SetStyle(start, length, pattern, TokenType.keywords);
             richtextBox.SetStyle(start, length, @"\s*#\s*(define|error|import|undef|elif|if|include|using|else|ifdef|line|endif|ifndef|pragma)\s*\S*", TokenType.preprocessor);
             richtextBox.SetStyle(start, length, "\".*\"", TokenType.String);
             richtextBox.SetStyle(start, length, @"\/\/.*", TokenType.comment);

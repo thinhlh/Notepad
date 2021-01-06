@@ -12,19 +12,36 @@ using Notepad.Classes;
 using System.Text.RegularExpressions;
 using Notepad.Snippets;
 using System.ComponentModel;
-using Notepad.resources;
+using System.Resources;
+using System.Runtime.CompilerServices;
+using System.Configuration;
 namespace Notepad
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private List<Classes.TreeViewItem> _items { get; set; }
+        public static System.Collections.Specialized.NameValueCollection appSetting;
+
+        public List<Classes.TreeViewItem> TreeViewItemsList
+        {
+            get => _items;
+            set
+            {
+                _items = value;
+                OnPropertyChanged();
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
+            appSetting = ConfigurationManager.AppSettings;
             this.DataContext = this;
         }
+
 
         /// <summary>
         /// Loaded Event
@@ -44,29 +61,21 @@ namespace Notepad
                 foreach(TemporaryDetail detail in details)
                 {
                     MainWindowExtension.InitializeTabItem();
-                    tabItems[i].FilePath = detail.path;
-                    tabItems[i].Header = detail.header;
-                    tabItems[i].Data = detail.text;
-                    tabItems[i].IsSaved = !detail.header.Contains("*"); 
+                    
+                    tabItems[i].FilePath = detail.path; // after set file path => Update status bar
+                    MainWindowExtension.UpdateStatusBar(i);
 
-
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.Language = JsonDeserialize.GetLanguageFromString(detail.language);
-
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;//Set Language then highlight it
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;//Avoid Invoke save icon when needed
+                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.Language = JsonDeserialize.GetLanguageFromString(detail.language); //set language and highlight it
 
                     // Add content to richTextBox
-                    (tabItems[i].Content as TabItemContentUC).Data = tabItems[i].Data;// Set Data For RTB
+                    (tabItems[i].Content as TabItemContentUC).Data = detail.text;// Set Data For RTB
 
-                    //Resubscribe
-                     (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;//Avoid Invoke save icon when needed
-
-                    
                     //Scroll to the end of the text
                     //(tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
                     //(tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
 
+                    tabItems[i].Header = detail.header;
+                    tabItems[i].IsSaved = !detail.header.Contains("*");
 
                     //Change menu item to fit with content's language
                     switch ((tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.Language)
@@ -230,10 +239,10 @@ namespace Notepad
             get => _buildAndRunCommand ?? (_buildAndRunCommand = new Command(() => Commands.BuildAndRunExecuted(), () => Commands.BuildAndRunCanExecute));
         }
 
-        public ICommand _findAndReplaceCommand;
-        public ICommand FindAndReplaceCommand
+        private ICommand _findCommand;
+        public ICommand FindCommand
         {
-            get => _findAndReplaceCommand ?? (_findAndReplaceCommand = new Command(() => Commands.FindAndReplaceExecuted(), () => Commands.FindAndReplaceCanExecute));
+            get => _findCommand ?? (_findCommand = new Command(() => Commands.FindExecuted(), () => Commands.FindCanExecute));
         }
 
         #endregion
@@ -245,11 +254,11 @@ namespace Notepad
                 MainWindowExtension.UpdateStatusBar(tabControl.SelectedIndex);
             }
 
-
             //Change menu item to fit with content's language
             if (tabControl.SelectedIndex < 0)
             {
                 this.PlainText.IsChecked = true;
+                return;
             }
             else
             {
@@ -341,15 +350,35 @@ namespace Notepad
             this.CSharph.IsChecked = false;
             this.Java.IsChecked = false;
             this.CPlusPlus.IsChecked = false;
-
+            
             if (tabControl.SelectedIndex >= 0)
             {
                 (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.C;
             }
         }
 
+        
         #endregion
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (e.NewValue.GetType() == typeof(FileItem))
+            {
+                var currentFile = e.NewValue as FileItem;
+
+                if (tabControl.SelectedIndex >= 0 && tabItems[tabControl.SelectedIndex].IsSaved) //close current tab and reopen in item with the choosen path
+                {
+                    MainWindowExtension.CloseFileExecuted(tabControl.SelectedIndex);
+                }
+                MainWindowExtension.OpenFileInNewTab(currentFile.language,currentFile.path);
+            }
+        }
     }
 
 }

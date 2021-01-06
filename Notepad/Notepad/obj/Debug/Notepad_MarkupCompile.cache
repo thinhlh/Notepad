@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\
+C:\Users\thinh\Desktop\Notepad\Notepad\obj\Debug\
 Notepad
 none
 false
 DEBUG;TRACE
-C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\App.xaml
-41611709824
+C:\Users\thinh\Desktop\Notepad\Notepad\App.xaml
+41255588337
 
-28-875594408
-125-251159409
-resources\FindAndReplace.xaml;resources\RichTextBoxUC.xaml;MainWindow.xaml;resources\TabItemContentUC.xaml;
+30-1580859040
+138-386095936
+FindWindow.xaml;RichTextBoxUC.xaml;MainWindow.xaml;TabItemContentUC.xaml;
 
 False
 
