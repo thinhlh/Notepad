@@ -40,10 +40,34 @@ namespace Notepad.Classes
             set
             {
                 richTextBox.Text = value;
+
+                List<MainTabItem> tabItems = mainWindow.tabItems;
+                TabControl tabControl = mainWindow.tabControl;
+
+                if (tabControl.SelectedIndex < 0) //Initialize
+                    tabItems[tabItems.Count - 1].Data = value;
+                else
+                    tabItems[tabControl.SelectedIndex].Data = value;
                 //richTextBox.ScrollToCaret();
             }
         }
 
+        public void Find(string token)
+        {
+            Regex regex = new Regex(token);
+            MatchCollection matchCollection = regex.Matches(richTextBox.Text);
+            int start = richTextBox.SelectionStart;
+            int offset = richTextBox.SelectionStart;
+            int length = richTextBox.SelectionLength;
+            richTextBox.TextChanged -= this.richTextBox_Highlight;
+            richTextBox.TextChanged -= this.RichTextBox_TextChangedLineNumber;
+            foreach(Match m in matchCollection)
+            {
+                richTextBox.Select(m.Index, m.Length);
+            }
+            richTextBox.TextChanged -= this.richTextBox_Highlight;
+            richTextBox.TextChanged -= this.RichTextBox_TextChangedLineNumber;
+        }
         
         #endregion
         public RichTextBoxUC()
@@ -66,40 +90,80 @@ namespace Notepad.Classes
             TabControl tabControl = mainWindow.tabControl;
             (mainWindow.tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).textBox.Text = "";
 
-
             int firstLine = GetFirstVisibleLine();
             int lastLine = GetLastVisibleLine();
+
             StringBuilder stringBuilder = new StringBuilder();
             if (firstLine == lastLine) (mainWindow.tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).textBox.Text = (firstLine + 1).ToString() + "\n";
             else
             {
                 for (int i = firstLine + 1; i <= lastLine + 1; i++)
                 {
-
                     stringBuilder.AppendLine(i.ToString());
                 }
-                (mainWindow.tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).textBox.Text = stringBuilder.ToString();
+                (mainWindow.tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).LineNumber = stringBuilder.ToString();
             }
+        }
+
+        private int GetWidth()
+        {
+            int w = 25;
+            // get total lines of richTextBox1    
+            int line = richTextBox.Lines.Length;
+
+            if (line <= 99)
+            {
+                w = 20 + (int)richTextBox.Font.Size;
+            }
+            else if (line <= 999)
+            {
+                w = 30 + (int)richTextBox.Font.Size;
+            }
+            else
+            {
+                w = 50 + (int)richTextBox.Font.Size;
+            }
+
+            return w;
+        }
+
+        private void AddLineNumber()
+        {
+            System.Drawing.Point pt = new System.Drawing.Point(0, 0);
+            // get First Index & First Line from richTextBox1    
+            int First_Index = richTextBox.GetCharIndexFromPosition(pt);
+            int First_Line = richTextBox.GetLineFromCharIndex(First_Index);
+            // set X & Y coordinates of Point pt to ClientRectangle Width & Height respectively    
+            pt.X = richTextBox.Width;
+            pt.Y = richTextBox.Height;
+            // get Last Index & Last Line from richTextBox1    
+            int Last_Index = richTextBox.GetCharIndexFromPosition(pt);
+            int Last_Line = richTextBox.GetLineFromCharIndex(Last_Index);
+
+            // set LineNumberTextBox text to null & width to getWidth() function value    
+            List<MainTabItem> tabItems = mainWindow.tabItems;
+            TabControl tabControl = mainWindow.tabControl;
+
+            tabItems[tabControl.SelectedIndex].Width = GetWidth();
+            // now add each line number to LineNumberTextBox upto last line    
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = First_Line; i <= Last_Line + 2; i++)
+            {
+                stringBuilder.Append(i + 1 + "\n");
+            }
+
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).textBox.Text = stringBuilder.ToString();
         }
         private void RichTextBox_TextChangedLineNumber(object sender, EventArgs e)
         {
-
             CountLineNumber();
+            
         }
 
 
 
         public void richTextBox_TextChangedSavedIcon(object sender, EventArgs e)
         {
-
-            List<MainTabItem> tabItems = mainWindow.tabItems;
-            TabControl tabControl = mainWindow.tabControl;
-
-            if (tabControl.SelectedIndex < 0) //Initialize
-                tabItems[tabItems.Count - 1].Data = Text;
-            else
-                tabItems[tabControl.SelectedIndex].Data = Text;
-
             MainWindowExtension.RaiseUnsavedIcon();
         }
         public void richTextBox_Highlight(object sender,EventArgs e)
@@ -109,6 +173,7 @@ namespace Notepad.Classes
 
         private void InvokeHighlight()
         {
+            
             if (virtualControl == null)
             {
                 virtualControl = mainWindow;
@@ -417,12 +482,20 @@ namespace Notepad.Classes
             {
                 Commands.BuildAndRunExecuted();
             }
+            else if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.H)
+            {
+                Commands.FindAndReplaceExecuted();
+            }
         }
 
         private void richTextBox_VScroll(object sender, EventArgs e)
         {
+            List<MainTabItem> tabItems = mainWindow.tabItems;
+            TabControl tabControl = mainWindow.tabControl;
             ScrollChangedEventArgs scrollChangedEventArgs = e as ScrollChangedEventArgs;
-            CountLineNumber();
+            //CountLineNumber();
+            AddLineNumber();
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).textBox.Invalidate();
         }
     }
 }

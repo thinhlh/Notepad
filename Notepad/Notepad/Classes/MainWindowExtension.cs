@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -75,16 +76,14 @@ namespace Notepad.Classes
                 return;
             }
             else
+            
             {
-                if (string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].Data)) //Initialize Circumstance
-                    return;
-                else
-                {
-                    //Raise* at the end and keep isSaved = false when there is a change with out save before
-                    tabItems[tabControl.SelectedIndex].Header += "*";
-                    tabItems[tabControl.SelectedIndex].IsSaved = false;
-                }
+                //Raise* at the end and keep isSaved = false when there is a change with out save before
+                tabItems[tabControl.SelectedIndex].Header += "*";
+                tabItems[tabControl.SelectedIndex].IsSaved = false;
             }
+
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;
             //Resubscribe when this tab is Saved
         }
 
@@ -94,6 +93,7 @@ namespace Notepad.Classes
 
             string header = tabItems[index].Header.ToString();
             tabItems[index].Header = header.Remove(header.Length - 1, 1);
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;
         }
 
         public static string GetParentFullPath(int index)
@@ -183,5 +183,37 @@ namespace Notepad.Classes
             closedTabIndexes.Sort();
         }
 
+        public static void Find(string token)
+        {
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Find(token);
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Focus();
+        }
+
+        public static void LoadFile(int tabIndex,string path)
+        {
+            System.IO.FileInfo fi = new System.IO.FileInfo(path);
+            System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.Open);
+            System.IO.BufferedStream bs = new System.IO.BufferedStream(fs);
+            int bufferSize = 40000000;      //Set the buffer size to 10MB.
+            Byte[] buffer = new byte[bufferSize];
+            int readLength;
+            do
+            {
+                readLength = bs.Read(buffer, 0, bufferSize);
+                (tabItems[tabIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text += System.Text.Encoding.ASCII.GetString(buffer);
+            } while (readLength == bufferSize);
+        }
+
+        private static void AppendText(System.Windows.Forms.RichTextBox richTextBox,string line)
+        {
+            if (richTextBox.InvokeRequired)
+            {
+                richTextBox.Invoke((ThreadStart)(() => AppendText(richTextBox,line)));
+            }
+            else
+            {
+                richTextBox.AppendText(line + Environment.NewLine);
+            }
+        }
     }
 }

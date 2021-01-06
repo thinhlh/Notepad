@@ -11,8 +11,6 @@ namespace Notepad.Snippets
 {
     public class CSharph : ISnippet
     {
-        private string pattern;
-
         public CSharph() //Initialize and Deserialize Snippet if haven't
         {
             if (JsonDeserialize.CSharph == null)
@@ -26,8 +24,6 @@ namespace Notepad.Snippets
                     JsonDeserialize.CSharph = Newtonsoft.Json.JsonConvert.DeserializeObject<CSharphSnippet>(jsonString);
                 }
             }
-
-            pattern = @"\b(" + GetListOfKeyWord(JsonDeserialize.CSharph.keywords) + ")\\b";
 
         }
 
@@ -57,12 +53,12 @@ namespace Notepad.Snippets
              * For every Language, the below code block are different 
              */
             richtextBox.ClearStyle();
-            richtextBox.SetStyle(pattern, TokenType.keywords);
+            richtextBox.SetStyle(@"\b(" + GetListOfKeyWord(JsonDeserialize.CSharph.keywords) + ")\\b", TokenType.keywords);
             richtextBox.SetStyle(@"\s*#\s*(define|error|import|undef|elif|if|include|using|else|ifdef|line|endif|ifndef|pragma)\s*\S*", TokenType.preprocessor);
             richtextBox.SetStyle("\".*\"", TokenType.String);
             richtextBox.SetStyle(@"\/\/.*", TokenType.comment);
             richtextBox.SetStyle(@"\/\*.*\*\/", TokenType.comment);
-
+            
             //Return normal
             richtextBox.previousCaret = richtextBox.richTextBox.SelectionStart;
             richtextBox.richTextBox.SelectionStart = richtextBox.currentCaret;
@@ -80,7 +76,7 @@ namespace Notepad.Snippets
             int currentLength = richtextBox.richTextBox.SelectionLength;
 
             richtextBox.ClearStyle(start,length);
-            richtextBox.SetStyle(start, length, pattern, TokenType.keywords);
+            richtextBox.SetStyle(start, length, @"\b(" + GetListOfKeyWord(JsonDeserialize.CSharph.keywords) + ")\\b", TokenType.keywords);
             richtextBox.SetStyle(start, length, @"\s*#\s*(define|error|import|undef|elif|if|include|using|else|ifdef|line|endif|ifndef|pragma)\s*\S*", TokenType.preprocessor);
             richtextBox.SetStyle(start, length, "\".*\"", TokenType.String);
             richtextBox.SetStyle(start, length, @"\/\/.*", TokenType.comment);

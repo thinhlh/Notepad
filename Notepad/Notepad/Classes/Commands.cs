@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Newtonsoft.Json;
+using Notepad.resources;
 namespace Notepad.Classes
 {
     public static class Commands
@@ -51,7 +52,7 @@ namespace Notepad.Classes
                  * If open in new tab => tabItems.Count-1
                  * if open in recent tab => tabControl.selected
                 */
-                if (tabItems[tabControl.SelectedIndex].FilePath != "" || !string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].Data))
+                if (tabControl.SelectedIndex<0||tabItems[tabControl.SelectedIndex].FilePath != "" || !string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].Data))
                 {
                     MainWindowExtension.InitializeTabItem();
                     indexForTab = tabItems.Count - 1;
@@ -60,6 +61,8 @@ namespace Notepad.Classes
                     indexForTab = tabControl.SelectedIndex;
 
                 tabItems[indexForTab].Data = System.IO.File.ReadAllText(openFileDialog.FileName); //Read File here
+                //MainWindowExtension.LoadFile(indexForTab,openFileDialog.FileName);
+
 
                 //Unsubscribe TextChange event
                 (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
@@ -322,6 +325,16 @@ namespace Notepad.Classes
         public static bool BuildAndRunCanExecute
         {
             get => true;
+        }
+
+        public static void FindAndReplaceExecuted()
+        {
+            FindAndReplace findAndReplace = new FindAndReplace();
+            findAndReplace.Show();
+        }
+        public static bool FindAndReplaceCanExecute
+        {
+            get => tabControl.SelectedIndex >= 0;
         }
         
     }

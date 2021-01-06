@@ -47,20 +47,22 @@ namespace Notepad
                     tabItems[i].FilePath = detail.path;
                     tabItems[i].Header = detail.header;
                     tabItems[i].Data = detail.text;
-                    tabItems[i].IsSaved = !detail.header.Contains("*");
+                    tabItems[i].IsSaved = !detail.header.Contains("*"); 
 
 
                     (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.Language = JsonDeserialize.GetLanguageFromString(detail.language);
 
                     (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;//Set Language then highlight it
+                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;//Avoid Invoke save icon when needed
 
                     // Add content to richTextBox
                     (tabItems[i].Content as TabItemContentUC).Data = tabItems[i].Data;// Set Data For RTB
 
                     //Resubscribe
                      (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
+                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_TextChangedSavedIcon;//Avoid Invoke save icon when needed
 
-
+                    
                     //Scroll to the end of the text
                     //(tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
                     //(tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
@@ -228,6 +230,12 @@ namespace Notepad
             get => _buildAndRunCommand ?? (_buildAndRunCommand = new Command(() => Commands.BuildAndRunExecuted(), () => Commands.BuildAndRunCanExecute));
         }
 
+        public ICommand _findAndReplaceCommand;
+        public ICommand FindAndReplaceCommand
+        {
+            get => _findAndReplaceCommand ?? (_findAndReplaceCommand = new Command(() => Commands.FindAndReplaceExecuted(), () => Commands.FindAndReplaceCanExecute));
+        }
+
         #endregion
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -342,51 +350,6 @@ namespace Notepad
 
         #endregion
 
-        private void Find_Click(object sender, RoutedEventArgs e)
-        {
-        //        < Grid >
-        //< Grid.ColumnDefinitions >
-        //    < ColumnDefinition Width = "*" />
- 
-        //     < ColumnDefinition Width = "10*" />
-  
-        //      < ColumnDefinition Width = "2*" />
-   
-        //       < ColumnDefinition Width = "2*" />
-    
-        //    </ Grid.ColumnDefinitions >
-    
-
-        //    < Grid.RowDefinitions >
-    
-        //        < RowDefinition Height = "*" />
-     
-        //         < RowDefinition Height = "*" />
-      
-        //      </ Grid.RowDefinitions >
-      
-
-        //      < Label Content = "Find:" HorizontalAlignment = "Center" VerticalAlignment = "Center" Grid.Column = "0" Grid.Row = "0" />
-               
-        //               < TextBox x: Name = "FindTextBox" Grid.Row = "0" Grid.Column = "1" ></ TextBox >
-                     
-        //                     < Button x: Name = "FindButton" Content = "Find" Grid.Row = "0" Grid.Column = "2" ></ Button >
-                             
-        //                             < Button x: Name = "FindAllbutton" Content = "Find All" Grid.Row = "0" Grid.Column = "3" />
-                                     
-
-        //                                     < Label Content = "Replace" HorizontalAlignment = "Center" VerticalAlignment = "Center" Grid.Row = "1" Grid.Column = "0" />
-                                              
-        //                                              < TextBox x: Name = "ReplaceTextBox" Grid.Row = "1" Grid.Column = "1" />
-                                                    
-        //                                                    < Button x: Name = "ReplaceButton" Content = "Replace"  VerticalAlignment = "Top" Grid.Row = "1" Grid.Column = "2" />
-                                                              
-        //                                                              < Button x: Name = "ReplaceAllButton" Content = "Replace All" VerticalAlignment = "Top" Grid.Row = "1" Grid.Column = "3" />
-                                                                        
-        //                                                                    </ Grid >
-
-
-        }
     }
 
 }

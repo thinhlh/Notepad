@@ -14,12 +14,13 @@ namespace Notepad
     public partial class TabItemContentUC : UserControl,INotifyPropertyChanged
     {
         private MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-        private int _lineNumber;
+        private string _lineNumber;
 
-        public int LineNumber {
+        public string LineNumber {
             get => _lineNumber; 
             set {
                 _lineNumber = value;
+                textBox.Text = value;
                 NotifyPropertyChanged(); 
             } 
         }
@@ -38,12 +39,8 @@ namespace Notepad
         {
             InitializeComponent();
             DataContext = this;
-            LineNumber = 0;
-        }
-
-        public void LoadLineNumber()
-        {
-
+            LineNumber = 1.ToString()+"\n";
+            textBox.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericSansSerif, 14+1.019f, System.Drawing.FontStyle.Regular);
         }
 
 

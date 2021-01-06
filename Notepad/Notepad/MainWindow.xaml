@@ -66,8 +66,8 @@
 
                 <Separator/>
 
-                <MenuItem Header="Find" x:Name="Find"  Click="Find_Click"/>
-                <MenuItem Header="Replace" x:Name="Replace" Command="ApplicationCommands.Replace"/>
+                <MenuItem Header="Find" x:Name="Find" InputGestureText="Ctrl+F"/>
+                <MenuItem Header="Replace" x:Name="Replace" Command="{Binding FindAndReplaceCommand}" InputGestureText="Ctrl+H"/>
             </MenuItem>
 
             <MenuItem Header="Selection" x:Name="Selection">
