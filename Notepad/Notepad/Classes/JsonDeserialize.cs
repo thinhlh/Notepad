@@ -42,5 +42,15 @@ namespace Notepad.Classes
                 return Languages.CPlusPlus;
             else return Languages.None;
         }
+
+        public static List<string> GetListOfKeywords(List<Dictionary<string, string>> keywords)
+        {
+            List<string> keyword = new List<string>();
+            foreach (Dictionary<string, string> keyValuePairs in keywords)
+            {
+                keyword.AddRange(keyValuePairs.Keys.ToList());
+            }
+            return keyword;
+        }
     }
 }

@@ -27,6 +27,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,6 +37,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ConsoleControl.WPF, Version=1.3.0.0, Culture=neutral, PublicKeyToken=bb812711dbc508e1, processorArchitecture=MSIL">
@@ -44,13 +46,40 @@
     <Reference Include="ConsoleControlAPI, Version=1.3.0.0, Culture=neutral, PublicKeyToken=7c86b8a36b9c33e2, processorArchitecture=MSIL">
       <HintPath>..\packages\ConsoleControlAPI.1.3.0\lib\net40\ConsoleControlAPI.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.ConfigurationManager, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Configuration.ConfigurationManager.5.0.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.AccessControl, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.AccessControl.5.0.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Permissions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Permissions.5.0.0\lib\net461\System.Security.Permissions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Text.Json, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -74,21 +103,19 @@
     </ApplicationDefinition>
     <Compile Include="Classes\Command.cs" />
     <Compile Include="Classes\Commands.cs" />
+    <Compile Include="Classes\DirectoryItem.cs" />
+    <Compile Include="Classes\FileItem.cs" />
     <Compile Include="Classes\MainWindowExtension.cs" />
     <Compile Include="Classes\TemporaryDetail.cs" />
-    <Compile Include="MainResource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MainResource.resx</DependentUpon>
-    </Compile>
-    <Compile Include="resources\FindAndReplace.xaml.cs">
-      <DependentUpon>FindAndReplace.xaml</DependentUpon>
+    <Compile Include="Classes\TreeViewItem.cs" />
+    <Compile Include="FindWindow.xaml.cs">
+      <DependentUpon>FindWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Snippets\CSnippet.cs" />
     <Compile Include="Snippets\CPlusPlusSnippet.cs" />
     <Compile Include="Classes\InputBindingsBehavior.cs" />
     <Compile Include="Classes\JsonDeserialize.cs" />
-    <Compile Include="resources\RichTextBoxUC.xaml.cs">
+    <Compile Include="RichTextBoxUC.xaml.cs">
       <DependentUpon>RichTextBoxUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="Snippets\C.cs" />
@@ -99,14 +126,14 @@
     <Compile Include="Snippets\Java.cs" />
     <Compile Include="Snippets\JavaSnippet.cs" />
     <Compile Include="Snippets\PlainText.cs" />
-    <Compile Include="resources\TabItemContentUC.xaml.cs">
+    <Compile Include="TabItemContentUC.xaml.cs">
       <DependentUpon>TabItemContentUC.xaml</DependentUpon>
     </Compile>
-    <Page Include="resources\FindAndReplace.xaml">
+    <Page Include="FindWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="resources\RichTextBoxUC.xaml">
+    <Page Include="RichTextBoxUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -125,7 +152,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="resources\TabItemContentUC.xaml">
+    <Page Include="TabItemContentUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -144,10 +171,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="MainResource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>MainResource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -157,7 +180,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="resources\CPlusPlusSnippet.json" />
     <None Include="resources\CSharphSnippet.json" />
+    <None Include="resources\CSnippet.json" />
+    <None Include="resources\JavaSnippet.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -169,10 +195,26 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="SublimeIcon.png" />
+    <None Include="resources\SublimeIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\SublimeIcon.png" />
+    <Resource Include="resources\FolderIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\JavaIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\CSharphIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\CPlusPlusIcon.png" />
+    <Resource Include="resources\CICon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\TextIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="SublimeIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

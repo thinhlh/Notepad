@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
 using Notepad;
+using Notepad.Snippets;
+
 namespace Notepad.Classes
 {
     /// <summary>
@@ -22,7 +25,7 @@ namespace Notepad.Classes
         private static TabControl tabControl = (Application.Current.MainWindow as MainWindow).tabControl;
         private static List<MainTabItem> tabItems = (Application.Current.MainWindow as MainWindow).tabItems;
         private static List<int> closedTabIndexes = (Application.Current.MainWindow as MainWindow).closedTabIndexes;
-
+        private static System.Collections.Specialized.NameValueCollection appSetting = ConfigurationManager.AppSettings;
 
         public static void InitializeTabItem()
         {
@@ -70,20 +73,16 @@ namespace Notepad.Classes
             List<MainTabItem> tabItems = mainWindow.tabItems;
             TabControl tabControl = mainWindow.tabControl;
 
+            if (tabControl.SelectedIndex < 0) return;
             if (tabItems[tabControl.SelectedIndex].IsSaved == false)
             {
                 return;
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].Data)) //Initialize Circumstance
-                    return;
-                else
-                {
-                    //Raise* at the end and keep isSaved = false when there is a change with out save before
-                    tabItems[tabControl.SelectedIndex].Header += "*";
-                    tabItems[tabControl.SelectedIndex].IsSaved = false;
-                }
+                //Raise* at the end and keep isSaved = false when there is a change with out save before
+                tabItems[tabControl.SelectedIndex].Header += "*";
+                tabItems[tabControl.SelectedIndex].IsSaved = false;  
             }
             //Resubscribe when this tab is Saved
         }
@@ -105,13 +104,13 @@ namespace Notepad.Classes
         {
             var directory = new DirectoryInfo(
                 currentPath ?? Directory.GetCurrentDirectory());
-            while (directory != null &&!directory.GetFiles("*.sln").Any())
+            while (directory != null && !directory.GetFiles("*.sln").Any())
             {
                 directory = directory.Parent;
             }
             return directory;
         }
-        
+
         public static List<TemporaryDetail> DeserializeTemporaryDetail()
         {
             string JsonPath = TryGetSolutionDirectoryInfo().FullName + @"\Notepad\temp\TabDetails.json";
@@ -121,7 +120,7 @@ namespace Notepad.Classes
             var details = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TemporaryDetail>>(output);
             return details;
         }
-        
+
         public static void SaveExecuted(int index)
         {
             if (!tabItems[index].IsSaved || string.IsNullOrWhiteSpace(tabItems[index].Data)) // not yet saved or new tab but not have data
@@ -157,6 +156,8 @@ namespace Notepad.Classes
                 //Update Status Bar
                 UpdateStatusBar(index);
             }
+
+            mainWindow.treeView.Items.Refresh();
         }
         public static void CloseFileExecuted(int index)
         {
@@ -183,5 +184,71 @@ namespace Notepad.Classes
             closedTabIndexes.Sort();
         }
 
+
+        public static void OpenFileInNewTab(Languages language,string path )
+        {
+            MainWindowExtension.InitializeTabItem();
+
+            int indexForTab;
+            /* 
+             * Determining which tab the file will be open
+             * If open in new tab => tabItems.Count-1
+             * if open in recent tab => tabControl.selected
+            */
+            if (tabItems[tabControl.SelectedIndex].FilePath != "" || !string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].Data))
+            {
+                MainWindowExtension.InitializeTabItem();
+                indexForTab = tabItems.Count - 1;
+            }
+            else
+                indexForTab = tabControl.SelectedIndex;
+
+            tabItems[indexForTab].Data = System.IO.File.ReadAllText(path); //Read File here
+
+            //Unsubscribe TextChange event
+            (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
+
+            // Add content to richTextBox
+            (tabItems[indexForTab].Content as TabItemContentUC).Data = tabItems[indexForTab].Data;// Set Data For RTB
+
+            //set language => auto Highlight all
+            (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.Language =language;
+
+            //Resubscribe
+            (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
+
+
+
+            //Scroll to the end of the text
+            (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
+
+            tabItems[indexForTab].Header = Path.GetFileName(path);
+            tabItems[indexForTab].FilePath = path;
+            tabItems[indexForTab].IsSaved = true;
+
+            //Update Status Bar
+            MainWindowExtension.UpdateStatusBar(indexForTab);
+        }
+
+        /// <summary>
+        /// Get Languages From The extension
+        /// </summary>
+        /// <param name="pathHasExtension"> Path to the file that contains Extension</param>
+        public static Languages GetLanguageFromExtension(string pathHasExtension)
+        {
+            switch (Path.GetExtension(pathHasExtension))
+            {
+                case ".cs":
+                    return Languages.CSharph;
+                case ".cpp":
+                    return Languages.CPlusPlus;
+                case ".c":
+                    return Languages.C;
+                case ".java":
+                    return Languages.Java;
+                default:
+                    return Languages.None;
+            }
+        }
     }
 }

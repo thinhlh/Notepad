@@ -27,11 +27,11 @@ namespace Notepad.Snippets
                 }
             }
 
-            pattern = @"\b(" + GetListOfKeyWord(JsonDeserialize.CSharph.keywords) + ")\\b";
+            pattern = @"\b(" + GetPatternFromListOfKeyword(JsonDeserialize.CSharph.keywords) + ")\\b";
 
         }
 
-        public string GetListOfKeyWord(List<Dictionary<string, string>> keywords)
+        public string GetPatternFromListOfKeyword(List<Dictionary<string, string>> keywords)
         {
             string regex = "";
             foreach (Dictionary<string, string> keyword in keywords)
@@ -46,6 +46,7 @@ namespace Notepad.Snippets
         {
             
             MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow.tabControl.SelectedIndex < 0) return;
             RichTextBoxUC richtextBox=(mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl;
 
             richtextBox.currentCaret = richtextBox.richTextBox.SelectionStart;

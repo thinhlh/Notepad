@@ -1,0 +1,33 @@
+﻿<Window x:Class="Notepad.FindWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Notepad"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        Title="Search" Height="120" Width="500"
+        Loaded="Window_Loaded"
+        ResizeMode="NoResize">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="Search:" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" FontSize="10" FontWeight="Bold"/>
+        <TextBox AcceptsReturn="False" AcceptsTab="False" VerticalAlignment="Center" Grid.Column="1" FontSize="18" Name="textBox"/>
+        <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Center" Margin="2,0,2,0">
+            <Button Content="Find" Margin="1" Click="Find_ButtonClick"/>
+            <Button Content="Find Next" Margin="1"/>
+            <Button Content="Find Previous" Margin="1"/>
+        </StackPanel>
+        <StackPanel Grid.Column="3" Orientation="Vertical" VerticalAlignment="Center" Margin="2,0,2,0" Visibility="Collapsed">
+            <Button Content="Replace"/>
+            <Separator Height="10"/>
+            <Button Content=" Replace All"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>

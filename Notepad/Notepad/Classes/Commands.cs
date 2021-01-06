@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Newtonsoft.Json;
+using Microsoft.WindowsAPICodePack.Dialogs;
 namespace Notepad.Classes
 {
     public static class Commands
@@ -51,7 +52,7 @@ namespace Notepad.Classes
                  * If open in new tab => tabItems.Count-1
                  * if open in recent tab => tabControl.selected
                 */
-                if (tabItems[tabControl.SelectedIndex].FilePath != "" || !string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].Data))
+                if (tabControl.SelectedIndex<0||tabItems[tabControl.SelectedIndex].FilePath != "" || !string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].Data))
                 {
                     MainWindowExtension.InitializeTabItem();
                     indexForTab = tabItems.Count - 1;
@@ -59,25 +60,22 @@ namespace Notepad.Classes
                 else 
                     indexForTab = tabControl.SelectedIndex;
 
-                tabItems[indexForTab].Data = System.IO.File.ReadAllText(openFileDialog.FileName); //Read File here
-
-                //Unsubscribe TextChange event
-                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
-
                 // Add content to richTextBox
-                (tabItems[indexForTab].Content as TabItemContentUC).Data = tabItems[indexForTab].Data;// Set Data For RTB
+                (tabItems[indexForTab].Content as TabItemContentUC).Data = System.IO.File.ReadAllText(openFileDialog.FileName);// Set Data For RTB
 
-                //Highlight
-                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.highlighter.HighlightRange(0, (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length);
+                //Unsubscribe TextChange events
+                //(tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
+
+                //Set highlighter and then Highlight
+                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.Language = MainWindowExtension.GetLanguageFromExtension(openFileDialog.FileName);
 
                 //Resubscribe
-                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
-
+                //(tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
 
 
                 //Scroll to the end of the text
                 (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
-                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
+                //(tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
 
                 tabItems[indexForTab].Header = Path.GetFileName(openFileDialog.FileName);
                 tabItems[indexForTab].FilePath = openFileDialog.FileName;
@@ -87,6 +85,7 @@ namespace Notepad.Classes
                 MainWindowExtension.UpdateStatusBar(indexForTab);
             }
         }
+
         public static bool OpenFileCanExecute 
         { 
             get => true; 
@@ -98,10 +97,46 @@ namespace Notepad.Classes
         public static void OpenFolderExecuted()
         {
 
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            dialog.IsFolderPicker = true;
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                (Application.Current.MainWindow as MainWindow).TreeViewItemsList = GetItems(dialog.FileName);
+                (Application.Current.MainWindow as MainWindow).treeViewGrid.Visibility = Visibility.Visible;
+            }
+        }
+
+        public static List<TreeViewItem> GetItems(string path)
+        {
+            List<TreeViewItem> items = new List<TreeViewItem>();
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+
+            foreach (DirectoryInfo directory in directoryInfo.GetDirectories())
+            {
+                var item = new DirectoryItem { name = directory.Name, path = directory.FullName, items = GetItems(directory.FullName) };
+                items.Add(item);
+            }
+
+            foreach (var file in directoryInfo.GetFiles())
+            {
+                var item = new FileItem
+                {
+                    name = file.Name,
+                    path = file.FullName
+                };
+
+                items.Add(item);
+            }
+
+
+            return items;
         }
         public static bool OpenFolderCanExecute
         {
-            get => false;
+            get => true;
         }
 
         /// <summary>
@@ -113,7 +148,7 @@ namespace Notepad.Classes
         }
         public static bool SaveCanExecute
         {
-            get=> true;
+            get=> tabControl.SelectedIndex>=0;
         }
 
         /// <summary>
@@ -122,10 +157,12 @@ namespace Notepad.Classes
         public static void SaveAsExecuted()
         {
             MainWindowExtension.SaveAsExecuted(tabControl.SelectedIndex);
+            mainWindow.treeView.Items.Refresh();
+            mainWindow.treeView.UpdateLayout();
         }
         public static bool SaveAsCanExecute
         {
-            get => true;
+            get => tabControl.SelectedIndex >= 0;
         }
 
         /// <summary>
@@ -322,6 +359,20 @@ namespace Notepad.Classes
         public static bool BuildAndRunCanExecute
         {
             get => true;
+        }
+        
+        /// <summary>
+        /// Find Executed and Can Execute
+        /// </summary>
+        public static void FindExecuted()
+        {
+            FindWindow find = new FindWindow();
+            find.ShowInTaskbar = false;
+            find.Show();
+        }
+        public static bool FindCanExecute
+        {
+            get=>tabControl.SelectedIndex >= 0;
         }
         
     }

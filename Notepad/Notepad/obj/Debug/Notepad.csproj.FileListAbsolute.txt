@@ -149,10 +149,26 @@ C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\No
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.csproj.CopyComplete
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.exe
 C:\Users\jonhn\OneDrive\Máy tính\19520285\Notepad\Notepad\Notepad\obj\Debug\Notepad.pdb
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\Notepad.MainResource.resources
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\TabItemContentUC.g.cs
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\TabItemContentUC.baml
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\RichTextBoxUC.g.cs
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\RichTextBoxUC.baml
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\FindAndReplace.g.cs
-C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\resources\FindAndReplace.baml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\RichTextBoxUC.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\RichTextBoxUC.baml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\TabItemContentUC.baml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.WindowsAPICodePack.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.WindowsAPICodePack.Shell.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.WindowsAPICodePack.pdb
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.WindowsAPICodePack.xml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.WindowsAPICodePack.Shell.pdb
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.WindowsAPICodePack.Shell.xml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.pdb
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.xml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Configuration.ConfigurationManager.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Security.AccessControl.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Security.Permissions.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Security.Principal.Windows.dll
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Configuration.ConfigurationManager.xml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Security.AccessControl.xml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Security.Permissions.xml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\bin\Debug\System.Security.Principal.Windows.xml
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\FindWindow.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\FindWindow.baml

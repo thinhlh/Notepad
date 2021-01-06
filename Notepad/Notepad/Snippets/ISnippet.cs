@@ -12,11 +12,9 @@ namespace Notepad.Snippets
 
         void HighlightRange(int start,int length);
         
-        string GetListOfKeyWord(List<Dictionary<string, string>> keywords);
+        string GetPatternFromListOfKeyword(List<Dictionary<string, string>> keywords);
 
         bool IsNumber(string token);
-        
-
 
     }
 
