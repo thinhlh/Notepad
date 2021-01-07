@@ -27,6 +27,8 @@ namespace Notepad.Classes
         private static List<int> closedTabIndexes = (Application.Current.MainWindow as MainWindow).closedTabIndexes;
         private static System.Collections.Specialized.NameValueCollection appSetting = ConfigurationManager.AppSettings;
 
+
+
         public static void InitializeTabItem()
         {
             MainTabItem tabItem = new MainTabItem();
@@ -229,7 +231,6 @@ namespace Notepad.Classes
             //Update Status Bar
             MainWindowExtension.UpdateStatusBar(indexForTab);
         }
-
         /// <summary>
         /// Get Languages From The extension
         /// </summary>
@@ -250,5 +251,11 @@ namespace Notepad.Classes
                     return Languages.None;
             }
         }
+
+        public static void ReadFile(string path)
+        {
+
+        }
+
     }
 }

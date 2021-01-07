@@ -51,8 +51,6 @@ namespace Notepad.Snippets
             richtextBox.currentCaret = richtextBox.richTextBox.SelectionStart;
             int length = richtextBox.richTextBox.SelectionLength;
 
-            richtextBox.richTextBox.TextChanged -= richtextBox.richTextBox_TextChangedSavedIcon;
-
             /*
              * For every Language, the below code block are different 
              */
@@ -66,8 +64,6 @@ namespace Notepad.Snippets
             richtextBox.previousCaret = richtextBox.richTextBox.SelectionStart;
             richtextBox.richTextBox.SelectionStart = richtextBox.currentCaret;
             richtextBox.richTextBox.SelectionLength = length;
-
-            richtextBox.richTextBox.TextChanged += richtextBox.richTextBox_TextChangedSavedIcon;
         }
 
         public void HighlightRange(int start, int length)
@@ -79,7 +75,6 @@ namespace Notepad.Snippets
             richtextBox.currentCaret = richtextBox.richTextBox.SelectionStart;
             int currentLength = richtextBox.richTextBox.SelectionLength;
 
-            richtextBox.richTextBox.TextChanged -= richtextBox.richTextBox_TextChangedSavedIcon;
 
             richtextBox.ClearStyle(start, length);
             richtextBox.SetStyle(start, length, pattern, TokenType.keywords);
@@ -91,7 +86,6 @@ namespace Notepad.Snippets
             richtextBox.richTextBox.SelectionStart = richtextBox.currentCaret;
             richtextBox.richTextBox.SelectionLength = currentLength;
 
-            richtextBox.richTextBox.TextChanged += richtextBox.richTextBox_TextChangedSavedIcon;
         }
 
         public bool IsNumber(string token)

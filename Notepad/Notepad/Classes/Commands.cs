@@ -4,23 +4,95 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Newtonsoft.Json;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using System.ComponentModel;
+using System.Text;
+
 namespace Notepad.Classes
 {
     public static class Commands
     {
+
         /// <summary>
         /// Fields to access easier
         /// </summary>
         private static MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
         private static TabControl tabControl = (Application.Current.MainWindow as MainWindow).tabControl;
         private static List<MainTabItem> tabItems = (Application.Current.MainWindow as MainWindow).tabItems;
+        private static bool haveRedoStack = false;
+        public static void OpenLargeFileExecuted()
+        {
 
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            openFileDialog.DefaultExt = ".txt";
+            openFileDialog.Filter = "Text files (*.txt)|*.txt|Java (*.java)|*.java|C (*.c)|*.c|C++ (*.cpp)|*.cpp|C# (*.cs)|*.cs|All files (*.*)|*.*";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                int indexForTab;
+                /* 
+                 * Determining which tab the file will be open
+                 * If open in new tab => tabItems.Count-1
+                 * if open in recent tab => tabControl.selected
+                */
+                if (tabControl.SelectedIndex < 0 || tabItems[tabControl.SelectedIndex].FilePath != "" || !string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].Data))
+                {
+                    MainWindowExtension.InitializeTabItem();
+                    indexForTab = tabItems.Count - 1;
+                }
+                else
+                    indexForTab = tabControl.SelectedIndex;
+
+                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.UnsubscribeTextChangedEvents();
+                var richTextBox = (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox;
+
+                // Add content to richTextBox
+                //(tabItems[indexForTab].Content as TabItemContentUC).Data = System.IO.File.ReadAllText(openFileDialog.FileName);// Set Data For RTB
+
+
+                using (FileStream fileStream = new FileStream(openFileDialog.FileName, FileMode.Open))
+                {
+                    using (StreamReader streamReader = new StreamReader(fileStream,Encoding.UTF8,true,4096,true))
+                    {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < 200; i++)
+                        {
+                            stringBuilder.AppendLine(streamReader.ReadLine());
+                        }
+                        (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text = stringBuilder.ToString();
+                        (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.lazyload = true;
+                        (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.nextStreamReaderPosition = (int)fileStream.Position;
+                        (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.fileStream = streamReader;
+                    }
+                }
+                int maxline = ((tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.GetLastVisibleLine() - (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.GetFirstVisibleLine());
+
+                //GC.Collect();
+                //GC.GetTotalMemory(true);
+                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.Language = MainWindowExtension.GetLanguageFromExtension(openFileDialog.FileName);
+
+                //Scroll to the end of the text
+                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
+                //(tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
+
+                tabItems[indexForTab].Header = Path.GetFileName(openFileDialog.FileName);
+                tabItems[indexForTab].FilePath = openFileDialog.FileName;
+                tabItems[indexForTab].IsSaved = true;
+
+                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.SubscribeTextChangedEvents();
+                //Update Status Bar
+                MainWindowExtension.UpdateStatusBar(indexForTab);
+            }
+        }
+        public static bool OpenLargeFileCanExecute
+        {
+            get => true;
+        }
 
         /// <summary>
         /// New File Executed and Can Execute
@@ -63,15 +135,7 @@ namespace Notepad.Classes
                 // Add content to richTextBox
                 (tabItems[indexForTab].Content as TabItemContentUC).Data = System.IO.File.ReadAllText(openFileDialog.FileName);// Set Data For RTB
 
-                //Unsubscribe TextChange events
-                //(tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
-
-                //Set highlighter and then Highlight
                 (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.Language = MainWindowExtension.GetLanguageFromExtension(openFileDialog.FileName);
-
-                //Resubscribe
-                //(tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
-
 
                 //Scroll to the end of the text
                 (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
@@ -226,7 +290,9 @@ namespace Notepad.Classes
                 List<TemporaryDetail> details = new List<TemporaryDetail>();
                 for(int i=0;i<tabControl.Items.Count;i++)
                 {
-                    
+                    if ((tabControl.Items[i] as MainTabItem).IsPinned)
+                        (tabControl.Items[i] as MainTabItem).SetDefaultHeader();
+
                     details.Add(new TemporaryDetail());
                     details[i].path = (tabControl.Items[i] as MainTabItem).FilePath;
                     details[i].header = (tabControl.Items[i] as MainTabItem).Header as string;
@@ -368,12 +434,116 @@ namespace Notepad.Classes
         {
             FindWindow find = new FindWindow();
             find.ShowInTaskbar = false;
+            find.replaceLabel.Visibility = Visibility.Collapsed;
+            find.replaceTextBox.Visibility = Visibility.Collapsed;
+            find.replaceStackPanel.Visibility = Visibility.Collapsed;
             find.Show();
         }
         public static bool FindCanExecute
         {
             get=>tabControl.SelectedIndex >= 0;
         }
-        
+
+        /// <summary>
+        /// Replace Executed and Can Execute
+        /// </summary>
+        public static void ReplaceExecuted()
+        {
+            FindWindow find = new FindWindow();
+            find.ShowInTaskbar = false;
+            find.replaceLabel.Visibility = Visibility.Visible;
+            find.replaceTextBox.Visibility = Visibility.Visible;
+            find.replaceTextBox.Visibility = Visibility.Visible;
+            find.Show();
+        }
+        public static bool ReplaceCanExecute
+        {
+            get => tabControl.SelectedIndex >= 0;
+        }
+
+        /// <summary>
+        /// Paste Executed and Can Execute
+        /// </summary>
+        public static void PasteExecuted()
+        {
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Paste();
+        }
+        public static bool PasteCanExecute
+        {
+            get => (tabControl.SelectedIndex >= 0&&tabControl.Items.Count>=0);
+        }
+
+        /// <summary>
+        /// Cut Executed and Can Execute
+        /// </summary>
+        public static void CutExecuted()
+        {
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Cut();
+        }
+        public static bool CutCanExecute
+        {
+            get => (tabControl.SelectedIndex >= 0 && tabControl.Items.Count >= 0);
+        }
+
+        /// <summary>
+        /// Copy Executed and Can Execute
+        /// </summary>
+        public static void CopyExecuted()
+        {
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Copy();
+        }
+        public static bool CopyCanExecute
+        {
+            get => (tabControl.SelectedIndex >= 0 && tabControl.Items.Count >= 0);
+        }
+
+        /// <summary>
+        /// Undo Executed
+        /// </summary>
+        public static void UndoExecuted()
+        {
+            int curentCaret = (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart;
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).Data = (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.undoStack.Pop();
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Push((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).Data);
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = curentCaret;
+        }
+        public static bool UndoCanExecute
+        {
+            get => (tabControl.SelectedIndex >= 0 && tabControl.Items.Count >= 0 && (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.undoStack.Count > 1); // because first init it contains 1 stack
+        }
+
+        /// <summary>
+        /// Redo Executed
+        /// </summary>
+        public static void RedoExecuted()
+        {
+            int curentCaret = (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart;
+            if(haveRedoStack==false) //first time has stack =>clear the first one
+            {
+                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Pop();
+                haveRedoStack = true;
+            }
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).Data = (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Pop();
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.undoStack.Push((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).Data);
+            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = curentCaret;
+
+            if ((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Count <= 0) haveRedoStack = false;
+        }
+        public static bool RedoCanExecute
+        {
+            get => (tabControl.SelectedIndex >= 0 && tabControl.Items.Count >= 0 && (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Count >0); // because first init it contains 1 stack
+        }
+
+        /// <summary>
+        /// Open Containing Folder Executed and Can Execute
+        /// </summary>
+        public static void OpenContainingFolderExecuted()
+        {
+            Process.Start(Directory.GetParent(tabItems[tabControl.SelectedIndex].FilePath).FullName);
+        }
+        public static bool OpenContainingFolderCanExecute
+        {
+            get => !string.IsNullOrEmpty(tabItems[tabControl.SelectedIndex].FilePath);
+        }
     }
 }

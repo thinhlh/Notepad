@@ -7,26 +7,42 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         Title="Search" Height="120" Width="500"
-        Loaded="Window_Loaded"
         ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="12*"/>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
-        <Label Content="Search:" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" FontSize="10" FontWeight="Bold"/>
-        <TextBox AcceptsReturn="False" AcceptsTab="False" VerticalAlignment="Center" Grid.Column="1" FontSize="18" Name="textBox"/>
-        <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Center" Margin="2,0,2,0">
-            <Button Content="Find" Margin="1" Click="Find_ButtonClick"/>
-            <Button Content="Find Next" Margin="1"/>
-            <Button Content="Find Previous" Margin="1"/>
+        
+        <Grid x:Name="labelAndTextBoxGrid" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Search:" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Grid.RowSpan="1"/>
+            <Label Content="Replace:" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" FontWeight="Bold" Grid.Row="1" Grid.Column="0" Name="replaceLabel"/>
+
+            <TextBox AcceptsReturn="False" AcceptsTab="False" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" FontSize="18" Name="textBox" Grid.RowSpan="1" TextChanged="textBox_TextChanged"/>
+            <TextBox AcceptsReturn="False" AcceptsTab="False" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" FontSize="18" Name="replaceTextBox"/>
+            <CheckBox Content="Match Case" x:Name="matchCase" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Checked="matchCase_Checked" Unchecked="matchCase_Checked"/>
+        </Grid>
+
+        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Margin="2,0,2,0">
+            <Button Content="Find Next" Margin="1" Click="FindNext_ButtonClick"/>
+            <Button Content="Find Previous" Margin="1" Click="FindPrevious_ButtonClick"/>
         </StackPanel>
-        <StackPanel Grid.Column="3" Orientation="Vertical" VerticalAlignment="Center" Margin="2,0,2,0" Visibility="Collapsed">
-            <Button Content="Replace"/>
+        <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Center" Margin="2,0,2,0" x:Name="replaceStackPanel">
+            <Button Content="Replace" Command="{Binding ReplaceCommand}"/>
             <Separator Height="10"/>
-            <Button Content=" Replace All"/>
+            <Button Content=" Replace All" Command="{Binding ReplaceAllCommand}"/>
         </StackPanel>
         
     </Grid>

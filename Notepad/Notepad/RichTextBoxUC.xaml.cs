@@ -9,6 +9,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Notepad.Snippets;
 using Notepad.Classes;
+using System.IO;
+
 namespace Notepad
 {
     /// <summary>
@@ -18,12 +20,17 @@ namespace Notepad
     {
         #region field
 
+        public bool lazyload; //true if test is loaded by lazy load method
+        public  int nextStreamReaderPosition;
+        public StreamReader fileStream;
         private Font defaultFont;
         private Color defaultColor;
         private Color defaultBackColor;
         private MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
         private Control virtualControl = null;
         private Languages _language=Languages.None;
+        public Stack<string> undoStack = new Stack<string>();
+        public Stack<string> redoStack = new Stack<string>();
         public Languages Language { 
             get => _language; 
             set { 
@@ -41,13 +48,8 @@ namespace Notepad
             set
             {
                 richTextBox.Text = value;
-                List<MainTabItem> tabItems = mainWindow.tabItems;
-                TabControl tabControl = mainWindow.tabControl;
 
-                if (tabControl.SelectedIndex < 0) //Initialize
-                    tabItems[tabItems.Count - 1].Data = value;
-                else
-                    tabItems[tabControl.SelectedIndex].Data = value;
+                MainWindowExtension.RaiseUnsavedIcon();
                 //richTextBox.ScrollToCaret();
             }
         }
@@ -65,13 +67,8 @@ namespace Notepad
             defaultBackColor = JsonDeserialize.GetColorFromString(MainWindow.appSetting.Get("background_color"));
             #endregion
 
-
-
             #region Setup RichTextBox
-
-            richTextBox.TextChanged += richTextBox_TextChangedSavedIcon;
-            richTextBox.TextChanged += richTextBox_Highlight;
-            richTextBox.TextChanged += RichTextBox_TextChangedLineNumber;
+            SubscribeTextChangedEvents();
             richTextBox.Font = defaultFont;
             #endregion
         }
@@ -104,15 +101,33 @@ namespace Notepad
             CountLineNumber();
         }
 
-
-
-        public void richTextBox_TextChangedSavedIcon(object sender, EventArgs e)
+        public void UnsubscribeTextChangedEvents()
         {
-            MainWindowExtension.RaiseUnsavedIcon();
+            richTextBox.TextChanged -= this.richTextBox_UpdateTabItem;
+            richTextBox.TextChanged -= this.richTextBox_Highlight;
+            richTextBox.TextChanged -= this.RichTextBox_TextChangedLineNumber;
+        }
+
+        public void SubscribeTextChangedEvents()
+        {
+            richTextBox.TextChanged += this.richTextBox_UpdateTabItem;
+            richTextBox.TextChanged += this.richTextBox_Highlight;
+            richTextBox.TextChanged += this.RichTextBox_TextChangedLineNumber;
+        }
+        public void richTextBox_UpdateTabItem(object sender,EventArgs e)
+        {
+            List<MainTabItem> tabItems = mainWindow.tabItems;
+            TabControl tabControl = mainWindow.tabControl;
+
+            if (tabControl.SelectedIndex < 0) //Initialize
+                tabItems[tabItems.Count - 1].Data = richTextBox.Text;
+            else
+                tabItems[tabControl.SelectedIndex].Data = richTextBox.Text;
         }
         public void richTextBox_Highlight(object sender,EventArgs e)
         {
-            InvokeHighlight();         
+            InvokeHighlight();
+            MainWindowExtension.RaiseUnsavedIcon();
         }
 
         private void InvokeHighlight()
@@ -123,9 +138,7 @@ namespace Notepad
                 virtualControl.Focus();
             }
             //Unsubscribe TextChanged Events
-            richTextBox.TextChanged -= this.richTextBox_Highlight;
-            richTextBox.TextChanged -= this.richTextBox_TextChangedSavedIcon;
-            richTextBox.TextChanged -= this.RichTextBox_TextChangedLineNumber;
+            UnsubscribeTextChangedEvents();
 
             //check for highlight and return highlighter here
 
@@ -148,14 +161,12 @@ namespace Notepad
             richTextBox.SelectionStart = currentCaret;
 
             //Subscribe TextChanged events;
-            richTextBox.TextChanged += this.richTextBox_Highlight;
-            richTextBox.TextChanged += this.richTextBox_TextChangedSavedIcon;
-            richTextBox.TextChanged += this.RichTextBox_TextChangedLineNumber;
+            SubscribeTextChangedEvents();
 
             virtualControl = null;
         }
 
-        private void InvokeHighlightAll()
+        public void InvokeHighlightAll()
         {
             if (virtualControl == null)
             {
@@ -164,9 +175,7 @@ namespace Notepad
             }
 
             //Unsubscribe TextChanged events;
-            richTextBox.TextChanged -= this.richTextBox_Highlight;
-            richTextBox.TextChanged -= this.richTextBox_TextChangedSavedIcon;
-            richTextBox.TextChanged -= this.RichTextBox_TextChangedLineNumber;
+            UnsubscribeTextChangedEvents();
 
             //check for highlight and return highlighter here
 
@@ -189,9 +198,7 @@ namespace Notepad
             richTextBox.SelectionStart = currentCaret;
 
             //Subscribe TextChanged events;
-            richTextBox.TextChanged += this.richTextBox_Highlight;
-            richTextBox.TextChanged += this.richTextBox_TextChangedSavedIcon;
-            richTextBox.TextChanged += this.RichTextBox_TextChangedLineNumber;
+            SubscribeTextChangedEvents();
 
             virtualControl = null;
         }
@@ -484,54 +491,80 @@ namespace Notepad
         }
         #endregion
 
-        private void richTextBox_PreviewKeyDown(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
-        {
-            if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.N&&Commands.NewFileCanExecute)
-            {
-                Commands.NewFileExecuted();
-            }
-            else if(!e.Shift&&e.Control&&e.KeyCode==System.Windows.Forms.Keys.O&&Commands.OpenFileCanExecute)
-            {
-                Commands.OpenFileExecuted();
-            }
-            else if(e.Control&&e.Shift&&e.KeyCode==System.Windows.Forms.Keys.O&&Commands.OpenFolderCanExecute)
-            {
-                Commands.OpenFolderExecuted();
-            }
-            else if(!e.Shift&&e.Control&&e.KeyCode==System.Windows.Forms.Keys.S&&Commands.SaveCanExecute)
-            {
-                Commands.SaveExecuted();
-            }
-            else if(e.Control&&e.Shift&&e.KeyCode==System.Windows.Forms.Keys.S&&Commands.SaveAsCanExecute)
-            {
-                Commands.SaveAsExecuted();
-            }
-            else if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.W&&Commands.CloseAllFilesCanExecute)
-            {
-                Commands.CloseFileExecuted();
-            }
-            else if(!e.Shift&&e.Control&&e.KeyCode==System.Windows.Forms.Keys.T&&Commands.NewTerminalCanExecute)
-            {
-                Commands.NewTerminalExecuted();
-            }
-            else if(e.Control&&e.Shift&&e.KeyCode==System.Windows.Forms.Keys.T&&Commands.NewTerminalCurrentDirCanExecute)
-            {
-                Commands.NewTerminalCurrentDirExecuted();
-            }
-            else if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.B&&Commands.BuildCanExecute)
-            {
-                Commands.BuildExecuted();
-            }
-            else if(!e.Shift&&e.Control&&e.Shift&&e.KeyCode==System.Windows.Forms.Keys.B&&Commands.BuildAndRunCanExecute)
-            {
-                Commands.BuildAndRunExecuted();
-            }
-        }
-
         private void richTextBox_VScroll(object sender, EventArgs e)
         {
             ScrollChangedEventArgs scrollChangedEventArgs = e as ScrollChangedEventArgs;
+            StringBuilder stringBuilder = new StringBuilder(richTextBox.Text);
+            if (lazyload==true)
+            {
+                while(!fileStream.EndOfStream)
+                {
+                    stringBuilder.Append(fileStream.ReadLine());
+                }
+            }
+            richTextBox.Text = stringBuilder.ToString();
+
             CountLineNumber();
+        }
+
+        private void richTextBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == System.Windows.Forms.Keys.N && Commands.NewFileCanExecute)
+            {
+                Commands.NewFileExecuted();
+            }
+            else if (!e.Shift && e.Control && e.KeyCode == System.Windows.Forms.Keys.O && Commands.OpenFileCanExecute)
+            {
+                Commands.OpenFileExecuted();
+            }
+            else if (e.Control && e.Shift && e.KeyCode == System.Windows.Forms.Keys.O && Commands.OpenFolderCanExecute)
+            {
+                Commands.OpenFolderExecuted();
+            }
+            else if (!e.Shift && e.Control && e.KeyCode == System.Windows.Forms.Keys.S && Commands.SaveCanExecute)
+            {
+                Commands.SaveExecuted();
+            }
+            else if (e.Control && e.Shift && e.KeyCode == System.Windows.Forms.Keys.S && Commands.SaveAsCanExecute)
+            {
+                Commands.SaveAsExecuted();
+            }
+            else if (e.Control && e.KeyCode == System.Windows.Forms.Keys.W && Commands.CloseAllFilesCanExecute)
+            {
+                Commands.CloseFileExecuted();
+            }
+            else if (!e.Shift && e.Control && e.KeyCode == System.Windows.Forms.Keys.T && Commands.NewTerminalCanExecute)
+            {
+                Commands.NewTerminalExecuted();
+            }
+            else if (e.Control && e.Shift && e.KeyCode == System.Windows.Forms.Keys.T && Commands.NewTerminalCurrentDirCanExecute)
+            {
+                Commands.NewTerminalCurrentDirExecuted();
+            }
+            else if (e.Control && e.KeyCode == System.Windows.Forms.Keys.B && Commands.BuildCanExecute)
+            {
+                Commands.BuildExecuted();
+            }
+            else if (!e.Shift && e.Control && e.Shift && e.KeyCode == System.Windows.Forms.Keys.B && Commands.BuildAndRunCanExecute)
+            {
+                Commands.BuildAndRunExecuted();
+            }
+            else if (e.Control && e.KeyCode == System.Windows.Forms.Keys.F && Commands.FindCanExecute)
+            {
+                Commands.FindExecuted();
+            }
+            else if (e.Control && e.KeyCode == System.Windows.Forms.Keys.H && Commands.ReplaceCanExecute)
+            {
+                Commands.ReplaceExecuted();
+            }
+            else if (e.Control && e.KeyCode == System.Windows.Forms.Keys.Z && Commands.UndoCanExecute)
+            {
+                Commands.UndoExecuted();
+            }
+        }
+        private void richTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            undoStack.Push(Text);
         }
     }
 }

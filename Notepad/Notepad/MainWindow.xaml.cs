@@ -22,15 +22,15 @@ namespace Notepad
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private List<Classes.TreeViewItem> _items { get; set; }
+        private List<Classes.TreeViewItem> _treeViewItems { get; set; }
         public static System.Collections.Specialized.NameValueCollection appSetting;
 
         public List<Classes.TreeViewItem> TreeViewItemsList
         {
-            get => _items;
+            get => _treeViewItems;
             set
             {
-                _items = value;
+                _treeViewItems = value;
                 OnPropertyChanged();
             }
         }
@@ -140,6 +140,12 @@ namespace Notepad
             get => _openFolderCommand ?? (_openFolderCommand = new Command(() => Commands.OpenFolderExecuted(), () => Commands.OpenFolderCanExecute));
         }
 
+        private ICommand _openLargeFileCommand;
+        public ICommand OpenLargeFileCommand
+        {
+            get => _openLargeFileCommand ?? (_openLargeFileCommand = new Command(() => Commands.OpenLargeFileExecuted(), () => Commands.OpenLargeFileCanExecute));
+        }
+
         /// <summary>
         /// Save Command
         /// </summary>
@@ -238,11 +244,76 @@ namespace Notepad
         {
             get => _buildAndRunCommand ?? (_buildAndRunCommand = new Command(() => Commands.BuildAndRunExecuted(), () => Commands.BuildAndRunCanExecute));
         }
-
+        /// <summary>
+        /// Find Command
+        /// </summary>
         private ICommand _findCommand;
         public ICommand FindCommand
         {
             get => _findCommand ?? (_findCommand = new Command(() => Commands.FindExecuted(), () => Commands.FindCanExecute));
+        }
+
+        /// <summary>
+        /// Replace Command
+        /// </summary>
+        private ICommand _replaceCommand;
+        public ICommand ReplaceCommand
+        {
+            get => _replaceCommand ?? (_replaceCommand = new Command(() => Commands.ReplaceExecuted(), () => Commands.ReplaceCanExecute));
+        }
+
+        /// <summary>
+        /// Paste Command
+        /// </summary>
+        private ICommand _pasteCommand;
+        public ICommand PasteCommand
+        {
+            get => _pasteCommand ?? (_pasteCommand = new Command(() => Commands.PasteExecuted(),()=> Commands.PasteCanExecute));
+        }
+
+        /// <summary>
+        /// Copy Command
+        /// </summary>
+        private ICommand _copyCommand;
+        public ICommand CopyCommand
+        {
+            get => _copyCommand ?? (_copyCommand = new Command(() => Commands.CopyExecuted(), () => Commands.CopyCanExecute));
+        }
+
+        /// <summary>
+        /// Cut Command
+        /// </summary>
+        private ICommand _cutCommand;
+        public ICommand CutCommand
+        {
+            get => _cutCommand ?? (_cutCommand = new Command(() => Commands.CutExecuted(), () => Commands.CutCanExecute));
+        }
+        
+        /// <summary>
+        /// Undo Command
+        /// </summary>
+        public ICommand _undoCommand;
+        public ICommand UndoCommand
+        {
+            get => _undoCommand ?? (_undoCommand = new Command(() => Commands.UndoExecuted(), () => Commands.UndoCanExecute));
+        }
+
+        /// <summary>
+        /// Redo Command
+        /// </summary>
+        public ICommand _redoCommand;
+        public ICommand RedoCommand
+        {
+            get => _redoCommand ?? (_redoCommand = new Command(() => Commands.RedoExecuted(), () => Commands.RedoCanExecute));
+        }
+
+        /// <summary>
+        /// Open Containing Folder Command
+        /// </summary>
+        public ICommand _openContainingFolderCommand;
+        public ICommand OpenContainingFolderCommand
+        {
+            get => _openContainingFolderCommand ?? (_openContainingFolderCommand = new Command(() => Commands.OpenContainingFolderExecuted(), () => Commands.OpenContainingFolderCanExecute));
         }
 
         #endregion
@@ -285,7 +356,7 @@ namespace Notepad
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            Commands.ExitExecuted();
+            Commands.ExitExecuted(); //Save all current file to JSON
             base.OnClosing(e);
         }
 

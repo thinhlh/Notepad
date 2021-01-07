@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:classes="clr-namespace:Notepad.Classes"
+        xmlns:local="clr-namespace:Notepad"
         xmlns:WPF="clr-namespace:ConsoleControl.WPF;assembly=ConsoleControl.WPF" 
         x:Class="Notepad.MainWindow"
         mc:Ignorable="d"
@@ -16,6 +17,7 @@
         WindowStartupLocation="CenterScreen" Icon="SublimeIcon.png">
 
     <Window.Resources>
+
         <HierarchicalDataTemplate DataType="{x:Type classes:DirectoryItem}" ItemsSource="{Binding items}">
             <StackPanel Orientation="Horizontal" x:Name="ttackPanelFolderTree">
                 <Separator></Separator>
@@ -47,6 +49,13 @@
         <KeyBinding Command="{Binding BuildAndRunCommand}" Modifiers="Ctrl" Key="F5"/>
         <KeyBinding Command="{Binding OpenFolderCommand}" Modifiers="Ctrl+Shift" Key="O"/>
         <KeyBinding Command="{Binding FindCommand}" Modifiers="Ctrl" Key="F"/>
+        <KeyBinding Command="{Binding ReplaceCommand}" Modifiers="Ctrl" Key="H"/>
+        <KeyBinding Command="{Binding CopyCommand}" Modifiers="Ctrl" Key="C"/>
+        <KeyBinding Command="{Binding CutCommand}" Modifiers="Ctrl" Key="X"/>
+        <KeyBinding Command="{Binding PasteCommand}" Modifiers="Ctrl" Key="V"/>
+        <KeyBinding Command="{Binding UndoCommand}" Modifiers="Ctrl" Key="Z"/>
+        <KeyBinding Command="{Binding RedoCommand}" Modifiers="Ctrl" Key="Y"/>
+        <KeyBinding Command="{Binding SelectAllCommand}" Modifiers="Ctrl" Key="Y"/>
     </Window.InputBindings>
 
 
@@ -61,7 +70,7 @@
                 <MenuItem Header="New File" Command="{Binding NewFileCommand}" x:Name="NewFileMenuItem" InputGestureText="Ctrl+N"/>
                 <MenuItem Header="Open File" Command="{Binding OpenFileCommand}" x:Name="OpenFileMenuItem" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="Open Folder" Command="{Binding OpenFolderCommand}" x:Name="OpenFolderMenuItem" InputGestureText="Ctrl+Shift+O"/>
-
+                <MenuItem Header="Open Large File" Command="{Binding OpenLargeFileCommand}" x:Name="OpenLargeFileMenuItem"/>
                 <Separator/>
 
                 <MenuItem Header="Save" Command="{Binding SaveCommand}" x:Name="SaveMenuItem" InputGestureText="Ctrl+S"/>
@@ -71,28 +80,33 @@
                 <Separator/>
 
                 <MenuItem Header="Close File" Command="{Binding CloseFileCommand}" x:Name="CloseFileMenuItem" InputGestureText="Ctrl+W"/>
-                <MenuItem Header="Close All Files" Command="{Binding CloseAllFilesCommand}" x:Name="CloseAllFiles"/>
-                <MenuItem Header="New Window" Command="{Binding NewWindowCommand}" x:Name="NewWindow"/>
+                <MenuItem Header="Close All Files" Command="{Binding CloseAllFilesCommand}" x:Name="CloseAllFilesMenuItem"/>
+                <MenuItem Header="New Window" Command="{Binding NewWindowCommand}" x:Name="NewWindowMenuItem"/>
 
                 <Separator/>
 
-                <MenuItem Header="Exit" Command="{Binding ExitCommand}" x:Name="Exit" InputGestureText="Alt+F4"/>
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}" x:Name="ExitMenuItem" InputGestureText="Alt+F4"/>
             </MenuItem>
 
             <MenuItem Header="Edit">
-                <MenuItem Header="Cut" x:Name="Cut" Command="ApplicationCommands.Cut"/>
-                <MenuItem Header="Copy" x:Name="Copy" Command="ApplicationCommands.Copy"/>
-                <MenuItem Header="Paste" x:Name="Paste" Command="ApplicationCommands.Paste"/>
-                <MenuItem Header="Undo" x:Name="Undo" Command="ApplicationCommands.Undo"/>
+                <MenuItem Header="Copy" x:Name="CopyMenuItem" Command="{Binding CopyCommand}" InputGestureText="Ctrl+C"/>
+                <MenuItem Header="Cut" x:Name="CutMenuItem" Command="{Binding CutCommand}" InputGestureText="Ctrl+X"/>
+                <MenuItem Header="Paste" x:Name="PasteMenuItem" Command="{Binding PasteCommand}" InputGestureText="Ctrl+V"/>
+                <MenuItem Header="Undo" x:Name="UndoMenuItem" Command="{Binding UndoCommand}" InputGestureText="Ctrl+Z"/>
+                <MenuItem Header="Redo" x:Name="RedoMenuItem" Command="{Binding RedoCommand}" InputGestureText="Ctrl+Y"/>
 
                 <Separator/>
 
-                <MenuItem Header="Find" x:Name="Find" Command="{Binding FindCommand}" InputGestureText="Ctrl+F"/>
-                <MenuItem Header="Replace" x:Name="Replace" Command="ApplicationCommands.Replace"/>
+                <MenuItem Header="Open Containing Folder" x:Name="OpenContainingFolderMenuItem" Command="{Binding OpenContainingFolderCommand}" />
+                <MenuItem Header="Copy File Path"/>
+
+
             </MenuItem>
 
-            <MenuItem Header="Selection" x:Name="Selection">
-                <MenuItem Header="Select All" x:Name="SelectAll" Command="ApplicationCommands.SelectAll"/>
+            <MenuItem Header="Selection" x:Name="SelectionMenuItem">
+                <MenuItem Header="Find" x:Name="FindMenuItem" Command="{Binding FindCommand}" InputGestureText="Ctrl+F"/>
+                <MenuItem Header="Replace" x:Name="ReplaceMenuItem" Command="{Binding ReplaceCommand}" InputGestureText="Ctrl+H"/>
+
             </MenuItem>
 
 
@@ -105,18 +119,18 @@
             </MenuItem>
 
             <MenuItem Header="Run" x:Name="Run">
-                <MenuItem Header="Build" x:Name="Build" Command="{Binding BuildCommand}" InputGestureText="Ctrl+B"/>
-                <MenuItem Header="Build And Run" x:Name="BuildAndRun" Command="{Binding BuildAndRunCommand}" InputGestureText="Ctrl+Shift+B"/>
+                <MenuItem Header="Build" x:Name="BuildMenuItem" Command="{Binding BuildCommand}" InputGestureText="Ctrl+B"/>
+                <MenuItem Header="Build And Run" x:Name="BuildAndRunMenuItem" Command="{Binding BuildAndRunCommand}" InputGestureText="Ctrl+Shift+B"/>
 
                 <Separator/>
 
-                <MenuItem Header="Debug" x:Name="Debug"/>
-                <MenuItem Header="Run Without Debug" x:Name="RunWithoutDebug"/>
+                <MenuItem Header="Debug" x:Name="DebugMenuItem"/>
+                <MenuItem Header="Run Without Debug" x:Name="RunWithoutDebugMenuItem"/>
             </MenuItem>
 
             <MenuItem Header="Terminal" x:Name="Terminal">
-                <MenuItem Header="New Terminal" x:Name="NewTerminal" Command="{Binding NewTerminalCommand}" InputGestureText="Ctrl+T"/>
-                <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDir" Command="{Binding NewTerminalCurrentDir}" InputGestureText="Ctrl+Shift+T"/>
+                <MenuItem Header="New Terminal" x:Name="NewTerminalMenuItem" Command="{Binding NewTerminalCommand}" InputGestureText="Ctrl+T"/>
+                <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDirMenuItem" Command="{Binding NewTerminalCurrentDir}" InputGestureText="Ctrl+Shift+T"/>
             </MenuItem>
 
             <MenuItem Header="Preferences" x:Name="Preferences">
