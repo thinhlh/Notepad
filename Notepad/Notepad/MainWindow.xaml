@@ -10,8 +10,8 @@
         mc:Ignorable="d"
         Loaded="Window_Loaded"
         Title="Notepad" 
-        Height="1080" 
-        Width="1920" 
+        Height="720" 
+        Width="1080" 
         ScrollViewer.HorizontalScrollBarVisibility="Auto" 
         ScrollViewer.VerticalScrollBarVisibility="Auto"
         WindowStartupLocation="CenterScreen" Icon="SublimeIcon.png">
@@ -133,9 +133,10 @@
                 <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDirMenuItem" Command="{Binding NewTerminalCurrentDirCommand}" InputGestureText="Ctrl+Shift+T"/>
             </MenuItem>
 
-            <!--<MenuItem Header="Preferences" x:Name="Preferences">
-                <MenuItem Header="Dark Mode" x:Name="Darkmode" IsCheckable="True" Checked="Darkmode_Checked"/>
-            </MenuItem>-->
+            <MenuItem Header="Preferences" x:Name="Preferences" Click="Preferences_Click">
+                
+                <!--<MenuItem Header="Dark Mode" x:Name="Darkmode" IsCheckable="True" Checked="Darkmode_Checked"/>-->
+            </MenuItem>
 
             <MenuItem Header="Help" x:Name="Help">
                 <MenuItem Header="About" Click="About_Click"/>

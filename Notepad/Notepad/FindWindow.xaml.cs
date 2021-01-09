@@ -167,23 +167,22 @@ namespace Notepad
 
                 richTextBox.Select(tokensFound[searchIndex], textBox.Text.Length);
             }
-            //richTextBox.Focus();
 
             (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.SubscribeTextChangedEvents();
         }
 
 
-        protected override void OnDeactivated(EventArgs e)
-        {
-            this.Opacity = 0.5;
-            richTextBox.Focus();
-            base.OnDeactivated(e);
-        }
-        protected override void OnActivated(EventArgs e)
-        {
-            this.Opacity = 1;
-            base.OnActivated(e);
-        }
+        //protected override void OnDeactivated(EventArgs e)
+        //{
+        //    this.Opacity = 0.5;
+        //    richTextBox.Focus();
+        //    base.OnDeactivated(e);
+        //}
+        //protected override void OnActivated(EventArgs e)
+        //{
+        //    this.Opacity = 1;
+        //    base.OnActivated(e);
+        //}
         protected override void OnClosing(CancelEventArgs e)
         {
             (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.UnsubscribeTextChangedEvents();

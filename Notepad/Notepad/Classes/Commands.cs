@@ -65,10 +65,10 @@ namespace Notepad.Classes
                         {
                             stringBuilder.AppendLine(streamReader.ReadLine());
                         }
-                        (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text = stringBuilder.ToString();
-                        (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.lazyload = true;
-                        (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.nextStreamReaderPosition = (int)fileStream.Position;
-                        (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.fileStream = streamReader;
+                        tabItems[indexForTab].RichTextBox.lazyload = true;
+                        tabItems[indexForTab].Data = stringBuilder.ToString();
+                        tabItems[indexForTab].RichTextBox.nextStreamReaderPosition = (int)fileStream.Position;
+                        tabItems[indexForTab].RichTextBox.fileStream = streamReader;
                     }
                 }
                 int maxline = ((tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.GetLastVisibleLine() - (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.GetFirstVisibleLine());

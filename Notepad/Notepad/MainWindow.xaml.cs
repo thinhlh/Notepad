@@ -490,6 +490,11 @@ namespace Notepad
         {
             MessageBox.Show("For more information click about or report to Le Hoang Thinh");
         }
+
+        private void Preferences_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 }

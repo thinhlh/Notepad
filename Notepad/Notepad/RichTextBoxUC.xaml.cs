@@ -21,7 +21,7 @@ namespace Notepad
         #region field
 
         public bool lazyload; //true if test is loaded by lazy load method
-        public  int nextStreamReaderPosition;
+        public int nextStreamReaderPosition;
         public StreamReader fileStream;
         private Font defaultFont=new Font(new FontFamily(MainWindow.appSetting.Get("font_family")), float.Parse(MainWindow.appSetting.Get("font_size")), System.Drawing.FontStyle.Regular);
         private Color defaultColor= JsonDeserialize.GetColorFromString(MainWindow.appSetting.Get("foreground_color"));
@@ -592,7 +592,7 @@ namespace Notepad
                 Commands.RedoExecuted();
             }
         }
-
+        private int loadedLine=200;
         private void richTextBox_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (Keyboard.Modifiers == ModifierKeys.Control)
@@ -601,6 +601,25 @@ namespace Notepad
                 mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].TabItem.textBox.Font = new Font(richTextBox.Font.FontFamily, richTextBox.ZoomFactor * richTextBox.Font.Size);
                 mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].TabItem.textBox.Width = getWidth();
             }
+            if (lazyload == true)
+            {
+                {
+                    if (e.Delta>0)
+                    {
+                        var lines = System.IO.File.ReadLines(mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].FilePath).Skip(loadedLine).Take(200).ToArray();
+                        StringBuilder stringBuilder = new StringBuilder();
+                        foreach (string line in lines)
+                        {
+                            richTextBox.Text += line+"\n";
+                            //richTextBox.Text.Insert(richTextBox.TextLength - 1, line+"\n");
+                            richTextBox.SelectionStart += line.Length;
+                        }
+                        loadedLine += 200;
+                    }
+                }
+            }
+            else
+                lazyload = false;
         }
 
         //declare  isCurslyBracesKeyPressed variable as Boolean and assign false value  
@@ -651,7 +670,9 @@ namespace Notepad
                     e.Handled = true;
                     richTextBox.SelectionStart = sel + 1;
                     break;
+                    
             }
+            InvokeHighlight();
         }
 
 
@@ -676,32 +697,35 @@ namespace Notepad
                     richTextBox.Text = richTextBox.Text.Insert(sel, "\n\t\n");
                     e.Handled = true;
                     richTextBox.SelectionStart = sel + "\t\t".Length;
+                    //sel = richTextBox.SelectionStart;
+                    //richTextBox.SelectionStart += "\n".Length;
+                    //richTextBox.SelectionStart = sel;
                     isCurslyBracesKeyPressed = false;
                 }
             }
         }
         private void richTextBox_AutoIndentLine(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            if(e.KeyCode==System.Windows.Forms.Keys.Enter||e.KeyCode==System.Windows.Forms.Keys.Return)
-            {
-                int previousLineNumber = richTextBox.GetLineFromCharIndex(richTextBox.SelectionStart) - 1;
-                if (previousLineNumber < 0 || previousLineNumber > richTextBox.Lines.Count())
-                    return;
+            //if (e.KeyCode == System.Windows.Forms.Keys.Enter || e.KeyCode == System.Windows.Forms.Keys.Return)
+            //{
+            //    int previousLineNumber = richTextBox.GetLineFromCharIndex(richTextBox.SelectionStart) - 1;
+            //    if (previousLineNumber < 0 || previousLineNumber > richTextBox.Lines.Count())
+            //        return;
 
-                //get previous line
-                string previousLine = richTextBox.Lines[previousLineNumber];
+            //    //get previous line
+            //    string previousLine = richTextBox.Lines[previousLineNumber];
 
-                //get the amount of indent of previous line
-                //read more about regex here: https://autohotkey.com/docs/misc/RegEx-QuickRef.htm
-                Match indent = Regex.Match(previousLine, @"^[ \t]*");
+            //    //get the amount of indent of previous line
+            //    //read more about regex here: https://autohotkey.com/docs/misc/RegEx-QuickRef.htm
+            //    Match indent = Regex.Match(previousLine, @"^[ \t]*");
 
-                richTextBox.SelectedText = indent.Value;
-                if(Regex.IsMatch(richTextBox.Lines[richTextBox.GetLineFromCharIndex(richTextBox.SelectionStart)], @"}\s*"))
-                {
-                    richTextBox.SelectedText = "\t\n" + indent.Value;
-                    richTextBox.SelectionStart = richTextBox.GetFirstCharIndexOfCurrentLine() - 1;
-                }
-            }
+            //    richTextBox.SelectedText = indent.Value;
+            //    if (Regex.IsMatch(richTextBox.Lines[richTextBox.GetLineFromCharIndex(richTextBox.SelectionStart)], @"}\s*"))
+            //    {
+            //        richTextBox.SelectedText = "\t\n" + indent.Value;
+            //        richTextBox.SelectionStart = richTextBox.GetFirstCharIndexOfCurrentLine() - 1;
+            //    }
+            //}
         }
     }
 }
