@@ -9,8 +9,6 @@ namespace Notepad.Classes
 {
     public class FileItem :TreeViewItem
     {
-        public string name { get; set; }
-        public string path { get; set; }
 
         public Languages language {
             get => MainWindowExtension.GetLanguageFromExtension(Path.GetExtension(path));

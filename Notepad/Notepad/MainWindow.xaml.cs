@@ -24,7 +24,6 @@ namespace Notepad
     {
         private List<Classes.TreeViewItem> _treeViewItems { get; set; }
         public static System.Collections.Specialized.NameValueCollection appSetting;
-
         public List<Classes.TreeViewItem> TreeViewItemsList
         {
             get => _treeViewItems;
@@ -34,6 +33,7 @@ namespace Notepad
                 OnPropertyChanged();
             }
         }
+        public List<MainTabItem> pinnedTab = new List<MainTabItem>();
 
         public MainWindow()
         {
@@ -41,7 +41,6 @@ namespace Notepad
             appSetting = ConfigurationManager.AppSettings;
             this.DataContext = this;
         }
-
 
         /// <summary>
         /// Loaded Event
@@ -65,20 +64,16 @@ namespace Notepad
                     tabItems[i].FilePath = detail.path; // after set file path => Update status bar
                     MainWindowExtension.UpdateStatusBar(i);
 
-                    (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.Language = JsonDeserialize.GetLanguageFromString(detail.language); //set language and highlight it
-
                     // Add content to richTextBox
-                    (tabItems[i].Content as TabItemContentUC).Data = detail.text;// Set Data For RTB
+                    tabItems[i].Data = detail.text;// Set Data For RTB
 
-                    //Scroll to the end of the text
-                    //(tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
-                    //(tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
+                    tabItems[i].Language = JsonDeserialize.GetLanguageFromString(detail.language); //set language and highlight it
 
                     tabItems[i].Header = detail.header;
                     tabItems[i].IsSaved = !detail.header.Contains("*");
 
                     //Change menu item to fit with content's language
-                    switch ((tabItems[i].Content as TabItemContentUC).richTextBoxUserControl.Language)
+                    switch (tabItems[i].Language)
                     {
                         case Snippets.Languages.None:
                             this.PlainText.IsChecked = true;
@@ -316,6 +311,18 @@ namespace Notepad
             get => _openContainingFolderCommand ?? (_openContainingFolderCommand = new Command(() => Commands.OpenContainingFolderExecuted(), () => Commands.OpenContainingFolderCanExecute));
         }
 
+        public ICommand _gotoCommand;
+        public ICommand GoToCommand
+        {
+            get => _gotoCommand ?? (_gotoCommand = new Command(() => Commands.GoToExecuted(), () => Commands.GoToCanExecute));
+        }
+
+        public ICommand _copyFilePathCommand;
+        public ICommand CopyFilePathCommand
+        {
+            get => _copyFilePathCommand ?? (_copyFilePathCommand = new Command(() => Commands.CopyFilePathExecuted(), () => Commands.CopyFilePathCanExecute));
+        }
+
         #endregion
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -333,7 +340,7 @@ namespace Notepad
             }
             else
             {
-                switch ((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language)
+                switch (tabItems[tabControl.SelectedIndex].Language)
                 {
                     case Snippets.Languages.None:
                         this.PlainText.IsChecked = true;
@@ -371,12 +378,15 @@ namespace Notepad
 
             if (tabControl.SelectedIndex >=0)
             {
-                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.None;
+                if (tabItems[tabControl.SelectedIndex].Language == Snippets.Languages.None) //ignore to avoid restyle
+                    return;
+                tabItems[tabControl.SelectedIndex].Language = Snippets.Languages.None;
             }
 
         }
         private void CSharph_Checked(object sender,RoutedEventArgs e)
         {
+            
             this.PlainText.IsChecked = false;
             this.Java.IsChecked = false;
             this.CPlusPlus.IsChecked = false;
@@ -384,13 +394,16 @@ namespace Notepad
 
             if (tabControl.SelectedIndex >= 0)
             {
-                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.CSharph;
+                if (tabItems[tabControl.SelectedIndex].Language == Snippets.Languages.CSharph) //ignore to avoid restyle
+                    return;
+                tabItems[tabControl.SelectedIndex].Language = Snippets.Languages.CSharph;
             }
 
         }
 
         private void Java_Checked(object sender, RoutedEventArgs e)
         {
+
             this.PlainText.IsChecked = false;
             this.CSharph.IsChecked = false;
             this.CPlusPlus.IsChecked = false;
@@ -398,7 +411,9 @@ namespace Notepad
 
             if (tabControl.SelectedIndex >= 0)
             {
-                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.Java;
+                if (tabItems[tabControl.SelectedIndex].Language == Snippets.Languages.Java) //ignore to avoid restyle
+                    return;
+                tabItems[tabControl.SelectedIndex].Language = Snippets.Languages.Java;
             }
         }
 
@@ -411,7 +426,9 @@ namespace Notepad
 
             if (tabControl.SelectedIndex >= 0)
             {
-                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.CPlusPlus;
+                if (tabItems[tabControl.SelectedIndex].Language == Snippets.Languages.CPlusPlus) //ignore to avoid restyle
+                    return;
+                tabItems[tabControl.SelectedIndex].Language = Snippets.Languages.CPlusPlus;
             }
         }
 
@@ -424,7 +441,9 @@ namespace Notepad
             
             if (tabControl.SelectedIndex >= 0)
             {
-                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.Language = Snippets.Languages.C;
+                if (tabItems[tabControl.SelectedIndex].Language == Snippets.Languages.C) //ignore to avoid restyle
+                    return;
+                tabItems[tabControl.SelectedIndex].Language = Snippets.Languages.C;
             }
         }
 
@@ -449,6 +468,27 @@ namespace Notepad
                 }
                 MainWindowExtension.OpenFileInNewTab(currentFile.language,currentFile.path);
             }
+        }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(Properties.Resources.Information,"Notepad++ version 1.0",MessageBoxButton.OK,MessageBoxImage.Information,MessageBoxResult.OK,MessageBoxOptions.DefaultDesktopOnly);
+            Clipboard.SetText(Properties.Resources.Information);
+        }
+
+        private void Darkmode_Checked(object sender, RoutedEventArgs e)
+        {
+            foreach(MainTabItem tabItem in tabItems)
+            {
+                tabItem.RichTextBox.richTextBox.SelectionColor = System.Drawing.Color.White;
+                tabItem.RichTextBox.richTextBox.BackColor = System.Drawing.Color.Black;
+                
+            }    
+        }
+
+        private void Help_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("For more information click about or report to Le Hoang Thinh");
         }
     }
 

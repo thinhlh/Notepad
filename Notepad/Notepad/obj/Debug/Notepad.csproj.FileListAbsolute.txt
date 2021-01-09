@@ -226,3 +226,5 @@ C:\Users\thinh\Desktop\Notepad\Notepad\obj\Debug\Notepad.csproj.CoreCompileInput
 C:\Users\thinh\Desktop\Notepad\Notepad\obj\Debug\Notepad.csproj.CopyComplete
 C:\Users\thinh\Desktop\Notepad\Notepad\obj\Debug\Notepad.exe
 C:\Users\thinh\Desktop\Notepad\Notepad\obj\Debug\Notepad.pdb
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\GotoWindow.g.cs
+C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\obj\Debug\GotoWindow.baml

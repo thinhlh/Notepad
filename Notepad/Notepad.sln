@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notepad", "Notepad\Notepad.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LazyLoad", "LazyLoad\LazyLoad.csproj", "{36373AE1-69A8-43D1-82DE-9A757DD003A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LineNumber", "LineNumber\LineNumber.csproj", "{F59CF20D-5FF1-4F4F-A1F1-ADC245A394FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{36373AE1-69A8-43D1-82DE-9A757DD003A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36373AE1-69A8-43D1-82DE-9A757DD003A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36373AE1-69A8-43D1-82DE-9A757DD003A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F59CF20D-5FF1-4F4F-A1F1-ADC245A394FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F59CF20D-5FF1-4F4F-A1F1-ADC245A394FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F59CF20D-5FF1-4F4F-A1F1-ADC245A394FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F59CF20D-5FF1-4F4F-A1F1-ADC245A394FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

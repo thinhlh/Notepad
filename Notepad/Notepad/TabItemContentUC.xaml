@@ -15,24 +15,16 @@
         </Grid.ColumnDefinitions>
 
         <WindowsFormsHost Grid.Column="0">
-            <wf:TextBox x:Name="textBox" BorderStyle="None" Multiline="True" WordWrap="True" ReadOnly="True" HideSelection="True" IsAccessible="False"/>
+            <wf:TextBox 
+                x:Name="textBox" 
+                BorderStyle="None"
+                Multiline="True" 
+                WordWrap="False" 
+                ReadOnly="True"
+                BackColor="White"/>
         </WindowsFormsHost>
-        <!--<TextBox Grid.Column="0" x:Name="textBox" Text="{Binding LineNumber}" TextAlignment="Left">
-            <TextBox.Style>
-                <Style TargetType="{x:Type TextBox}" >
-                    <Setter Property="IsReadOnly" Value="true"/>
-                    <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
-                    <Setter Property="IsEnabled" Value="False"/>
-                    <Setter Property="BorderBrush" Value="Black"/>
-                    <Setter Property="FontSize" Value="14"/>
-                    <Setter Property="TextAlignment" Value="Center"/>
-                    <Setter Property="BorderThickness" Value="0,0,0.7,0"/>
-                    <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
-                    <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
-                </Style>
-            </TextBox.Style>
-        </TextBox>-->
-        <local:RichTextBoxUC Grid.Column="1" x:Name="richTextBoxUserControl" Margin="0,-2,0,0"/>
+        
+        <local:RichTextBoxUC Grid.Column="1" x:Name="richTextBoxUserControl" Margin="0,0,0,0" BorderBrush="Black"/>
 
 
     </Grid>

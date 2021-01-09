@@ -23,9 +23,9 @@ namespace Notepad
         public bool lazyload; //true if test is loaded by lazy load method
         public  int nextStreamReaderPosition;
         public StreamReader fileStream;
-        private Font defaultFont;
-        private Color defaultColor;
-        private Color defaultBackColor;
+        private Font defaultFont=new Font(new FontFamily(MainWindow.appSetting.Get("font_family")), float.Parse(MainWindow.appSetting.Get("font_size")), System.Drawing.FontStyle.Regular);
+        private Color defaultColor= JsonDeserialize.GetColorFromString(MainWindow.appSetting.Get("foreground_color"));
+        private Color defaultBackColor= JsonDeserialize.GetColorFromString(MainWindow.appSetting.Get("background_color"));
         private MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
         private Control virtualControl = null;
         private Languages _language=Languages.None;
@@ -48,8 +48,7 @@ namespace Notepad
             set
             {
                 richTextBox.Text = value;
-
-                MainWindowExtension.RaiseUnsavedIcon();
+                UpdateLineNumber(Text.Split('\n').Length);
                 //richTextBox.ScrollToCaret();
             }
         }
@@ -62,74 +61,103 @@ namespace Notepad
             this.DataContext = mainWindow;
 
             #region setup
-            defaultFont = new Font(new FontFamily(MainWindow.appSetting.Get("font_family")), float.Parse(MainWindow.appSetting.Get("font_size")), System.Drawing.FontStyle.Regular);
-            defaultColor = JsonDeserialize.GetColorFromString(MainWindow.appSetting.Get("foreground_color"));
-            defaultBackColor = JsonDeserialize.GetColorFromString(MainWindow.appSetting.Get("background_color"));
+            //defaultFont = de
+            //defaultColor = JsonDeserialize.GetColorFromString(MainWindow.appSetting.Get("foreground_color"));
+            //defaultBackColor = JsonDeserialize.GetColorFromString(MainWindow.appSetting.Get("background_color"));
+            undoStack.Push("");
             #endregion
 
             #region Setup RichTextBox
+            richTextBox.KeyDown += richTextBox_AutoBracketKeyDown;
+            richTextBox.KeyDown += richTextBox_AutoIndentLine;
+            richTextBox.Resize += RichTextBox_Resize;
             SubscribeTextChangedEvents();
             richTextBox.Font = defaultFont;
             #endregion
         }
 
-        private void CountLineNumber()
+        private void RichTextBox_Resize(object sender, EventArgs e)
         {
-            TabControl tabControl = mainWindow.tabControl;
+            UpdateLineNumber();
+        }
 
-            if(tabControl.SelectedIndex<0) return;
+        private int getWidth()
+        {
+            int w = 25;
+            // get total lines of richTextBox1    
+            int line = richTextBox.Lines.Length;
 
-            (mainWindow.tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).textBox.Text = "";
-
-
-            int firstLine = GetFirstVisibleLine();
-            int lastLine = GetLastVisibleLine();
-            StringBuilder stringBuilder = new StringBuilder();
-            if (firstLine == lastLine) (mainWindow.tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).textBox.Text = (firstLine + 1).ToString() + "\n";
+            if (line <= 99)
+            {
+                w = 20 + (int)richTextBox.Font.Size;
+            }
+            else if (line <= 999)
+            {
+                w = 30 + (int)richTextBox.Font.Size;
+            }
             else
             {
-                for (int i = firstLine + 1; i <= lastLine + 1; i++)
-                {
+                w = 50 + (int)richTextBox.Font.Size;
+            }
 
+            return w;
+        }
+        private void CountLineNumber(int linesCount=Int16.MaxValue)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            if (linesCount == Int16.MaxValue)
+            {
+                int firstLine = GetFirstVisibleLine();
+                int lastLine = GetLastVisibleLine();
+                for (int i = firstLine; i <= lastLine; i++)
+                {
+                    stringBuilder.AppendLine((i + 1).ToString());
+                }
+            }
+            else
+            {
+                for (int i = 1; i <= linesCount; i++)
+                {
                     stringBuilder.AppendLine(i.ToString());
                 }
-                //(mainWindow.tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).textBox.Text = stringBuilder.ToString();
             }
+            mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].TabItem.LineNumber = stringBuilder.ToString();
         }
         public void RichTextBox_TextChangedLineNumber(object sender, EventArgs e)
         {
-            CountLineNumber();
+            UpdateLineNumber();
         }
 
         public void UnsubscribeTextChangedEvents()
         {
-            richTextBox.TextChanged -= this.richTextBox_UpdateTabItem;
+            richTextBox.TextChanged -= this.richTextBox_TextChangedSavedIcon;
+            richTextBox.TextChanged -= this.richTextBox_UndoStackTextChanged;
             richTextBox.TextChanged -= this.richTextBox_Highlight;
             richTextBox.TextChanged -= this.RichTextBox_TextChangedLineNumber;
         }
 
         public void SubscribeTextChangedEvents()
         {
-            richTextBox.TextChanged += this.richTextBox_UpdateTabItem;
+            richTextBox.TextChanged += this.richTextBox_TextChangedSavedIcon;
+            richTextBox.TextChanged += this.richTextBox_UndoStackTextChanged;
             richTextBox.TextChanged += this.richTextBox_Highlight;
             richTextBox.TextChanged += this.RichTextBox_TextChangedLineNumber;
         }
-        public void richTextBox_UpdateTabItem(object sender,EventArgs e)
-        {
-            List<MainTabItem> tabItems = mainWindow.tabItems;
-            TabControl tabControl = mainWindow.tabControl;
 
-            if (tabControl.SelectedIndex < 0) //Initialize
-                tabItems[tabItems.Count - 1].Data = richTextBox.Text;
-            else
-                tabItems[tabControl.SelectedIndex].Data = richTextBox.Text;
+        public void richTextBox_UndoStackTextChanged(object sender, EventArgs e)
+        {
+            undoStack.Push(Text);
+            GC.Collect();
         }
+
         public void richTextBox_Highlight(object sender,EventArgs e)
         {
             InvokeHighlight();
-            MainWindowExtension.RaiseUnsavedIcon();
         }
-
+        public void richTextBox_TextChangedSavedIcon(object sender, EventArgs e)
+        {
+            MainWindowExtension.RaiseUnsavedIcon();
+        }    
         private void InvokeHighlight()
         {
             if (virtualControl == null)
@@ -203,13 +231,8 @@ namespace Notepad
             virtualControl = null;
         }
 
-        
-
-        
 
         #region Extension Methods
-
-        
 
         public void SetStyle(string Pattern, TokenType tokenType) //the range should be the first character of the lineBefore textchanged and the last character of the line after changed
         {
@@ -314,8 +337,6 @@ namespace Notepad
             richTextBox.SelectionStart = currentPosition;
             richTextBox.SelectionLength = currenLength;
         }
-
-
         public void SetStyle(int start,int length,string Pattern, TokenType tokenType) //the range should be the first character of the lineBefore textchanged and the last character of the line after changed
         {
             string token = richTextBox.Text.Substring(start,length);
@@ -419,13 +440,10 @@ namespace Notepad
             richTextBox.SelectionStart = currentPosition;
             richTextBox.SelectionLength = currenLength;
         }
-
-
         public void ClearStyle()
         {
 
             previousCaret = (previousCaret > currentCaret) ? currentCaret - 1 : previousCaret;
-
 
             richTextBox.SelectionStart = GetFirstCharIndexFromLine(previousCaret);
             richTextBox.SelectionLength = GetLastCharIndexFromLine(currentCaret) - richTextBox.SelectionStart;
@@ -434,15 +452,14 @@ namespace Notepad
             richTextBox.SelectionFont = defaultFont;
             
         }
-
         public void ClearStyle(int start,int length)
         {
+            previousCaret = (previousCaret > currentCaret) ? currentCaret - 1 : previousCaret;
 
             richTextBox.SelectionStart = start;
             richTextBox.SelectionLength = length;
 
             richTextBox.SelectionColor = defaultColor;
-            richTextBox.SelectionBackColor = defaultBackColor;
             richTextBox.SelectionFont = defaultFont;
             
 
@@ -494,17 +511,26 @@ namespace Notepad
         private void richTextBox_VScroll(object sender, EventArgs e)
         {
             ScrollChangedEventArgs scrollChangedEventArgs = e as ScrollChangedEventArgs;
-            StringBuilder stringBuilder = new StringBuilder(richTextBox.Text);
-            if (lazyload==true)
-            {
-                while(!fileStream.EndOfStream)
-                {
-                    stringBuilder.Append(fileStream.ReadLine());
-                }
-            }
-            richTextBox.Text = stringBuilder.ToString();
+            //StringBuilder stringBuilder = new StringBuilder(richTextBox.Text);
+            //if (lazyload==true)
+            //{
+            //    while(!fileStream.EndOfStream)
+            //    {
+            //        stringBuilder.Append(fileStream.ReadLine());
+            //    }
+            //}
+            //richTextBox.Text = stringBuilder.ToString();
+            UpdateLineNumber();
+        }
+        private void UpdateLineNumber(int linesCount=Int16.MaxValue)
+        {
+            mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].TabItem.LineNumber = "";
 
-            CountLineNumber();
+            if (Int16.MaxValue == linesCount)
+                CountLineNumber();
+            else
+                CountLineNumber(linesCount);
+            mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].TabItem.textBox.Invalidate();
         }
 
         private void richTextBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -561,10 +587,121 @@ namespace Notepad
             {
                 Commands.UndoExecuted();
             }
+            else if(e.Control&&e.KeyCode==System.Windows.Forms.Keys.Y&&Commands.RedoCanExecute)
+            {
+                Commands.RedoExecuted();
+            }
         }
+
+        private void richTextBox_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            { 
+                UpdateLineNumber();
+                mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].TabItem.textBox.Font = new Font(richTextBox.Font.FontFamily, richTextBox.ZoomFactor * richTextBox.Font.Size);
+                mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].TabItem.textBox.Width = getWidth();
+            }
+        }
+
+        //declare  isCurslyBracesKeyPressed variable as Boolean and assign false value  
+        //to check { key is pressed or not  
+        public static Boolean isCurslyBracesKeyPressed = false;
+
+        //richTextBox1 KeyPress events  
+
+        // if key (,{,<,",',[ is pressed then insert opposite key to richTextBox1 at Position SelectionStart+1  
+        // add one line after inserting, e.Handled=true;  
+        //finally set SelectionStart to specified position  
+
+
         private void richTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
-            undoStack.Push(Text);
+            String s = e.KeyChar.ToString();
+            int sel = richTextBox.SelectionStart;
+            
+            switch (s)
+            {
+                case "(":
+                    richTextBox.Text = richTextBox.Text.Insert(sel, "()");
+                    e.Handled = true;
+                    richTextBox.SelectionStart = sel + 1;
+                    break;
+
+                case "{":
+                    richTextBox.Text = richTextBox.Text.Insert(sel, "{}");
+                    e.Handled = true;
+                    richTextBox.SelectionStart = sel + 1;
+                    isCurslyBracesKeyPressed = true;
+                    break;
+
+                case "[":
+                    richTextBox.Text = richTextBox.Text.Insert(sel, "[]");
+                    e.Handled = true;
+                    richTextBox.SelectionStart = sel + 1;
+                    break;
+
+                case "\"":
+                    richTextBox.Text = richTextBox.Text.Insert(sel, "\"\"");
+                    e.Handled = true;
+                    richTextBox.SelectionStart = sel + 1;
+                    break;
+
+                case "'":
+                    richTextBox.Text = richTextBox.Text.Insert(sel, "''");
+                    e.Handled = true;
+                    richTextBox.SelectionStart = sel + 1;
+                    break;
+            }
+        }
+
+
+        // richTextBox1 Key Down event  
+        /// <summary>
+        /// Check if user press enter between Cursly Bracket, a line break will be insert 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+
+        private void richTextBox_AutoBracketKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            /// when key  {  is pressed and {} is inserted in richTextBox 
+            /// and isCurslyBracesKeyPressed is true then insert some blank text to richTextBox1
+            /// it will look like this when Enter key is down
+            /// 
+            int sel = richTextBox.SelectionStart;
+            if (e.KeyCode == System.Windows.Forms.Keys.Enter)
+            {
+                if (isCurslyBracesKeyPressed == true)
+                {
+                    richTextBox.Text = richTextBox.Text.Insert(sel, "\n\t\n");
+                    e.Handled = true;
+                    richTextBox.SelectionStart = sel + "\t\t".Length;
+                    isCurslyBracesKeyPressed = false;
+                }
+            }
+        }
+        private void richTextBox_AutoIndentLine(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if(e.KeyCode==System.Windows.Forms.Keys.Enter||e.KeyCode==System.Windows.Forms.Keys.Return)
+            {
+                int previousLineNumber = richTextBox.GetLineFromCharIndex(richTextBox.SelectionStart) - 1;
+                if (previousLineNumber < 0 || previousLineNumber > richTextBox.Lines.Count())
+                    return;
+
+                //get previous line
+                string previousLine = richTextBox.Lines[previousLineNumber];
+
+                //get the amount of indent of previous line
+                //read more about regex here: https://autohotkey.com/docs/misc/RegEx-QuickRef.htm
+                Match indent = Regex.Match(previousLine, @"^[ \t]*");
+
+                richTextBox.SelectedText = indent.Value;
+                if(Regex.IsMatch(richTextBox.Lines[richTextBox.GetLineFromCharIndex(richTextBox.SelectionStart)], @"}\s*"))
+                {
+                    richTextBox.SelectedText = "\t\n" + indent.Value;
+                    richTextBox.SelectionStart = richTextBox.GetFirstCharIndexOfCurrentLine() - 1;
+                }
+            }
         }
     }
 }

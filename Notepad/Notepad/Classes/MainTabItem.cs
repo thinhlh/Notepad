@@ -5,44 +5,58 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
+using Notepad.Snippets;
 namespace Notepad.Classes
 {
     public class MainTabItem : TabItem  // each Tab Item is contained here
     {
         private bool _isSaved { get; set; } //Check whether a file is Saved or not
-        private string _data { get; set; } //Data for each File
+        //private string _data { get; set; } //Data for each File
         private string _filePath { get; set; }  // FilePath for each Tab
         private bool _isPinned { get; set; } //pinned or havent pinned
-        private string tempHeader;
-        
-        public bool IsSaved
-        {
-            get => _isSaved;
-            set => _isSaved = value;
-        }
+        private string tempHeader { get; set; } //temporary header
 
         public string Data
         {
-            get => _data;
-            set => _data = value;
+            get => (Content as TabItemContentUC).Data;
+            set => (Content as TabItemContentUC).Data = value;
         }
-
         public string FilePath
         {
             get => _filePath;
             set => _filePath = value;
         }
-
+        public bool IsSaved
+        {
+            get => _isSaved;
+            set => _isSaved = value;
+        }
+        
         public bool IsPinned
         {
             get => _isPinned;
             set => _isPinned = value;
         }
+        public Languages Language
+        {
+            get => (Content as TabItemContentUC).Language;
+            set => (Content as TabItemContentUC).Language = value;
+        }
+
+        public TabItemContentUC TabItem
+        {
+            set => Content = value;
+            get => Content as TabItemContentUC;
+        }
+        public RichTextBoxUC RichTextBox
+        {
+            set => (Content as TabItemContentUC).richTextBoxUserControl = value;
+            get => (Content as TabItemContentUC).richTextBoxUserControl;
+        }
+
         public MainTabItem()
         {
             _isSaved = true;
-            _data = "";
             _filePath = "";
             this.Content = new TabItemContentUC() { Name = "UC" };
 
@@ -58,6 +72,11 @@ namespace Notepad.Classes
             this.MouseRightButtonDown += MainTabItem_MouseRightButtonDown;
         }
 
+        public void ScrollToEnd()
+        {
+            RichTextBox.richTextBox.SelectionStart = RichTextBox.richTextBox.Text.Length;
+            RichTextBox.richTextBox.ScrollToCaret();
+        }
         private void PinTab_Checked(object sender, RoutedEventArgs e)
         {
             if ((sender as MenuItem).IsChecked)
@@ -65,6 +84,8 @@ namespace Notepad.Classes
                 tempHeader = Header as string;
                 Header = (IsSaved)?"Tab":"Tab*";
                 IsPinned = true;
+
+                MainWindowExtension.MovePinnedTab(this);
             }
             else
             {
@@ -85,7 +106,6 @@ namespace Notepad.Classes
                 IsPinned = false;
             }
         }
-
         public void SetDefaultHeader()
         {
             Header = tempHeader;

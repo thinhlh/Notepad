@@ -7,7 +7,6 @@
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
     <Grid>
         <WindowsFormsHost>
             <wf:RichTextBox 
@@ -20,8 +19,8 @@
                 BorderStyle="None"
                 KeyDown="richTextBox_KeyDown"
                 KeyPress="richTextBox_KeyPress"
+                MouseWheel="richTextBox_MouseWheel"
                 />
-            
         </WindowsFormsHost>
     </Grid>
 </UserControl>

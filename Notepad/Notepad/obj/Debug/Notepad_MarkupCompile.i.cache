@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\thinh\Desktop\Data\Notepad\Notepad\Notepad\App.xaml
-41255588337
+51630193407
 
-29-521838038
+29-479469561
 34-317876454
-FindWindow.xaml;RichTextBoxUC.xaml;MainWindow.xaml;TabItemContentUC.xaml;
+FindWindow.xaml;GotoWindow.xaml;RichTextBoxUC.xaml;MainWindow.xaml;TabItemContentUC.xaml;
 
-True
+False
 

@@ -22,7 +22,8 @@ namespace Notepad.Classes
         private static MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
         private static TabControl tabControl = (Application.Current.MainWindow as MainWindow).tabControl;
         private static List<MainTabItem> tabItems = (Application.Current.MainWindow as MainWindow).tabItems;
-        private static bool haveRedoStack = false;
+
+
         public static void OpenLargeFileExecuted()
         {
 
@@ -133,23 +134,20 @@ namespace Notepad.Classes
                     indexForTab = tabControl.SelectedIndex;
 
                 // Add content to richTextBox
-                (tabItems[indexForTab].Content as TabItemContentUC).Data = System.IO.File.ReadAllText(openFileDialog.FileName);// Set Data For RTB
+                
+                tabItems[indexForTab].Data = System.IO.File.ReadAllText(openFileDialog.FileName);// Set Data For RTB
 
-                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.Language = MainWindowExtension.GetLanguageFromExtension(openFileDialog.FileName);
-
+                (tabItems[indexForTab].RichTextBox).Language = MainWindowExtension.GetLanguageFromExtension(openFileDialog.FileName);
                 //Scroll to the end of the text
-                (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
-                //(tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.ScrollToCaret();
+                tabItems[indexForTab].ScrollToEnd();
 
                 tabItems[indexForTab].Header = Path.GetFileName(openFileDialog.FileName);
                 tabItems[indexForTab].FilePath = openFileDialog.FileName;
                 tabItems[indexForTab].IsSaved = true;
-
                 //Update Status Bar
                 MainWindowExtension.UpdateStatusBar(indexForTab);
             }
         }
-
         public static bool OpenFileCanExecute 
         { 
             get => true; 
@@ -171,7 +169,6 @@ namespace Notepad.Classes
                 (Application.Current.MainWindow as MainWindow).treeViewGrid.Visibility = Visibility.Visible;
             }
         }
-
         public static List<TreeViewItem> GetItems(string path)
         {
             List<TreeViewItem> items = new List<TreeViewItem>();
@@ -194,7 +191,6 @@ namespace Notepad.Classes
 
                 items.Add(item);
             }
-
 
             return items;
         }
@@ -251,7 +247,7 @@ namespace Notepad.Classes
         }
         public static bool CloseFileCanExecute
         {
-            get => !(tabControl.SelectedIndex < 0);
+            get => (tabControl.SelectedIndex >= 0);
         }
 
         /// <summary>
@@ -290,15 +286,14 @@ namespace Notepad.Classes
                 List<TemporaryDetail> details = new List<TemporaryDetail>();
                 for(int i=0;i<tabControl.Items.Count;i++)
                 {
-                    if ((tabControl.Items[i] as MainTabItem).IsPinned)
-                        (tabControl.Items[i] as MainTabItem).SetDefaultHeader();
+                    if (tabItems[i].IsPinned)
+                        tabItems[i].SetDefaultHeader();
 
                     details.Add(new TemporaryDetail());
-                    details[i].path = (tabControl.Items[i] as MainTabItem).FilePath;
-                    details[i].header = (tabControl.Items[i] as MainTabItem).Header as string;
-                    details[i].text = ((tabControl.Items[i] as MainTabItem).Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text;
-                    details[i].language = ((tabControl.Items[i] as MainTabItem).Content as TabItemContentUC).richTextBoxUserControl.Language.ToString();
-
+                    details[i].path = tabItems[i].FilePath;
+                    details[i].header = tabItems[i].Header as string;
+                    details[i].text = tabItems[i].Data;
+                    details[i].language = tabItems[i].Language.ToString();
                 }
                 string JsonPath = MainWindowExtension.TryGetSolutionDirectoryInfo().FullName+ @"\Notepad\temp\TabDetails.json";
                 string output = JsonConvert.SerializeObject(details);
@@ -308,7 +303,6 @@ namespace Notepad.Classes
                     file.WriteLine(output);
                     //file.WriteLineAsync(output);
                 }
-
             }
             else
             {
@@ -354,7 +348,11 @@ namespace Notepad.Classes
         }
         public static bool NewTerminalCurrentDirCanExecute
         {
-            get => string.IsNullOrEmpty(tabItems[tabControl.SelectedIndex].FilePath);
+            get
+            {
+                if (tabControl.SelectedIndex < 0) return false;
+                return !string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].FilePath);
+            }
         }
 
         /// <summary>
@@ -466,7 +464,7 @@ namespace Notepad.Classes
         /// </summary>
         public static void PasteExecuted()
         {
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Paste();
+            tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox.Paste();
         }
         public static bool PasteCanExecute
         {
@@ -478,7 +476,7 @@ namespace Notepad.Classes
         /// </summary>
         public static void CutExecuted()
         {
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Cut();
+            tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox.Cut();
         }
         public static bool CutCanExecute
         {
@@ -490,7 +488,7 @@ namespace Notepad.Classes
         /// </summary>
         public static void CopyExecuted()
         {
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Copy();
+            tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox.Copy();
         }
         public static bool CopyCanExecute
         {
@@ -502,37 +500,69 @@ namespace Notepad.Classes
         /// </summary>
         public static void UndoExecuted()
         {
-            int curentCaret = (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart;
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).Data = (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.undoStack.Pop();
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Push((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).Data);
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = curentCaret;
+            int curentCaret = tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox.SelectionStart;
+            
+            tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox.TextChanged -= tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox_UndoStackTextChanged;
+
+            tabItems[tabControl.SelectedIndex].RichTextBox.redoStack.Push(tabItems[tabControl.SelectedIndex].Data);
+
+            if (tabItems[tabControl.SelectedIndex].Data == tabItems[tabControl.SelectedIndex].RichTextBox.undoStack.Peek()) //first undo, peek is equal to the current
+                tabItems[tabControl.SelectedIndex].RichTextBox.undoStack.Pop();
+            
+            tabItems[tabControl.SelectedIndex].Data = tabItems[tabControl.SelectedIndex].RichTextBox.undoStack.Pop();
+            
+            tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox.TextChanged -= tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox_UndoStackTextChanged;
+
+
+            tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox.SelectionStart = curentCaret;
         }
         public static bool UndoCanExecute
         {
-            get => (tabControl.SelectedIndex >= 0 && tabControl.Items.Count >= 0 && (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.undoStack.Count > 1); // because first init it contains 1 stack
+            get => (tabControl.SelectedIndex >= 0 && tabControl.Items.Count >= 0 && tabItems[tabControl.SelectedIndex].RichTextBox.undoStack.Count >=1); // because first init it contains 1 stack
         }
 
         /// <summary>
-        /// Redo Executed
+        /// Redo Executed and Can Execute
         /// </summary>
         public static void RedoExecuted()
         {
-            int curentCaret = (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart;
-            if(haveRedoStack==false) //first time has stack =>clear the first one
-            {
-                (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Pop();
-                haveRedoStack = true;
-            }
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).Data = (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Pop();
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.undoStack.Push((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).Data);
-            (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = curentCaret;
+            int curentCaret = tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox.SelectionStart;
 
-            if ((tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Count <= 0) haveRedoStack = false;
+            tabItems[tabControl.SelectedIndex].Data = tabItems[tabControl.SelectedIndex].RichTextBox.redoStack.Pop();
+            tabItems[tabControl.SelectedIndex].RichTextBox.undoStack.Push(tabItems[tabControl.SelectedIndex].Data);
+            tabItems[tabControl.SelectedIndex].RichTextBox.richTextBox.SelectionStart = curentCaret;
         }
         public static bool RedoCanExecute
         {
             get => (tabControl.SelectedIndex >= 0 && tabControl.Items.Count >= 0 && (tabItems[tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl.redoStack.Count >0); // because first init it contains 1 stack
         }
+
+        /// <summary>
+        /// Goto executed and can execute
+        /// </summary>
+        public static void GoToExecuted()
+        {
+            GotoWindow gotoWindow = new GotoWindow();
+            gotoWindow.Show();
+        }
+        public static bool GoToCanExecute
+        {
+            get => tabControl.SelectedIndex >= 0;
+        }
+
+        /// <summary>
+        /// Copy File Path Executed and Can Execute
+        /// </summary>
+        public static void CopyFilePathExecuted()
+        {
+            Clipboard.SetText(tabItems[tabControl.SelectedIndex].FilePath);
+            MessageBox.Show("Copied");
+        }
+        public static bool CopyFilePathCanExecute
+        {
+            get => !string.IsNullOrWhiteSpace(tabItems[tabControl.SelectedIndex].FilePath);
+        }
+
 
         /// <summary>
         /// Open Containing Folder Executed and Can Execute

@@ -27,8 +27,6 @@ namespace Notepad.Classes
         private static List<int> closedTabIndexes = (Application.Current.MainWindow as MainWindow).closedTabIndexes;
         private static System.Collections.Specialized.NameValueCollection appSetting = ConfigurationManager.AppSettings;
 
-
-
         public static void InitializeTabItem()
         {
             MainTabItem tabItem = new MainTabItem();
@@ -96,7 +94,6 @@ namespace Notepad.Classes
             string header = tabItems[index].Header.ToString();
             tabItems[index].Header = header.Remove(header.Length - 1, 1);
         }
-
         public static string GetParentFullPath(int index)
         {
             return Path.Combine(tabItems[index].FilePath, "..");
@@ -158,8 +155,9 @@ namespace Notepad.Classes
                 //Update Status Bar
                 UpdateStatusBar(index);
             }
-
+            
             mainWindow.treeView.Items.Refresh();
+            mainWindow.treeView.UpdateLayout();
         }
         public static void CloseFileExecuted(int index)
         {
@@ -176,7 +174,6 @@ namespace Notepad.Classes
                     return;
             }
             tabControl.Items.RemoveAt(index);
-
             int deletedIndexTab = Int16.Parse(tabItems[index].Name.Substring(7)); // Return the index of deleted tabItem by get subTring from name then convert to int
 
             tabItems.RemoveAt(index);
@@ -187,7 +184,7 @@ namespace Notepad.Classes
         }
 
 
-        public static void OpenFileInNewTab(Languages language,string path )
+        public static void OpenFileInNewTab(Languages language,string path)
         {
             MainWindowExtension.InitializeTabItem();
 
@@ -208,21 +205,19 @@ namespace Notepad.Classes
             tabItems[indexForTab].Data = System.IO.File.ReadAllText(path); //Read File here
 
             //Unsubscribe TextChange event
-            (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged -= (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
+            tabItems[indexForTab].RichTextBox.richTextBox.TextChanged -= tabItems[indexForTab].RichTextBox.richTextBox_Highlight;
 
             // Add content to richTextBox
-            (tabItems[indexForTab].Content as TabItemContentUC).Data = tabItems[indexForTab].Data;// Set Data For RTB
+            tabItems[indexForTab].Data = tabItems[indexForTab].Data;// Set Data For RTB
 
             //set language => auto Highlight all
-            (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.Language =language;
+            tabItems[indexForTab].RichTextBox.Language =language;
 
             //Resubscribe
-            (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.TextChanged += (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox_Highlight;
-
-
+            tabItems[indexForTab].RichTextBox.richTextBox.TextChanged += tabItems[indexForTab].RichTextBox.richTextBox_Highlight;
 
             //Scroll to the end of the text
-            (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.SelectionStart = (tabItems[indexForTab].Content as TabItemContentUC).richTextBoxUserControl.richTextBox.Text.Length;
+            tabItems[indexForTab].RichTextBox.richTextBox.SelectionStart = tabItems[indexForTab].RichTextBox.richTextBox.Text.Length;
 
             tabItems[indexForTab].Header = Path.GetFileName(path);
             tabItems[indexForTab].FilePath = path;
@@ -251,10 +246,18 @@ namespace Notepad.Classes
                     return Languages.None;
             }
         }
-
         public static void ReadFile(string path)
         {
 
+        }
+
+        public static void MovePinnedTab(MainTabItem tabItem)
+        {
+            tabControl.Items.Remove(tabItem);
+            tabItems.Remove(tabItem);
+            tabControl.Items.Insert(0, tabItem);
+            tabItems.Insert(0, tabItem);
+            tabItem.IsSelected = true;
         }
 
     }

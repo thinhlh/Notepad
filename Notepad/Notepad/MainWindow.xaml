@@ -10,8 +10,8 @@
         mc:Ignorable="d"
         Loaded="Window_Loaded"
         Title="Notepad" 
-        Height="450" 
-        Width="800" 
+        Height="1080" 
+        Width="1920" 
         ScrollViewer.HorizontalScrollBarVisibility="Auto" 
         ScrollViewer.VerticalScrollBarVisibility="Auto"
         WindowStartupLocation="CenterScreen" Icon="SublimeIcon.png">
@@ -19,7 +19,7 @@
     <Window.Resources>
 
         <HierarchicalDataTemplate DataType="{x:Type classes:DirectoryItem}" ItemsSource="{Binding items}">
-            <StackPanel Orientation="Horizontal" x:Name="ttackPanelFolderTree">
+            <StackPanel Orientation="Horizontal" x:Name="stackPanelFolderTree">
                 <Separator></Separator>
                 <Image Width="16" Height="16" Margin="0,0,2,0" Source="resources/FolderIcon.png"/>
                 <TextBlock Text="{Binding Path=name}" ToolTip="{Binding Path=path}" Foreground="White"/>
@@ -98,7 +98,7 @@
                 <Separator/>
 
                 <MenuItem Header="Open Containing Folder" x:Name="OpenContainingFolderMenuItem" Command="{Binding OpenContainingFolderCommand}" />
-                <MenuItem Header="Copy File Path"/>
+                <MenuItem Header="Copy File Path" Command="{Binding CopyFilePathCommand}"/>
 
 
             </MenuItem>
@@ -106,7 +106,7 @@
             <MenuItem Header="Selection" x:Name="SelectionMenuItem">
                 <MenuItem Header="Find" x:Name="FindMenuItem" Command="{Binding FindCommand}" InputGestureText="Ctrl+F"/>
                 <MenuItem Header="Replace" x:Name="ReplaceMenuItem" Command="{Binding ReplaceCommand}" InputGestureText="Ctrl+H"/>
-
+                <MenuItem Header="Go To" x:Name="GoToMenuItem" Command="{Binding GoToCommand}"/>
             </MenuItem>
 
 
@@ -122,25 +122,23 @@
                 <MenuItem Header="Build" x:Name="BuildMenuItem" Command="{Binding BuildCommand}" InputGestureText="Ctrl+B"/>
                 <MenuItem Header="Build And Run" x:Name="BuildAndRunMenuItem" Command="{Binding BuildAndRunCommand}" InputGestureText="Ctrl+Shift+B"/>
 
-                <Separator/>
+                <!--<Separator/>
 
-                <MenuItem Header="Debug" x:Name="DebugMenuItem"/>
-                <MenuItem Header="Run Without Debug" x:Name="RunWithoutDebugMenuItem"/>
+                <MenuItem Header="Debug" x:Name="DebugMenuItem"  IsEnabled="False"/>
+                <MenuItem Header="Run Without Debug" x:Name="RunWithoutDebugMenuItem"  IsEnabled="False"/>-->
             </MenuItem>
 
             <MenuItem Header="Terminal" x:Name="Terminal">
                 <MenuItem Header="New Terminal" x:Name="NewTerminalMenuItem" Command="{Binding NewTerminalCommand}" InputGestureText="Ctrl+T"/>
-                <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDirMenuItem" Command="{Binding NewTerminalCurrentDir}" InputGestureText="Ctrl+Shift+T"/>
+                <MenuItem Header="Open Terminal in Current Workspace" x:Name="NewTerminalCurrentDirMenuItem" Command="{Binding NewTerminalCurrentDirCommand}" InputGestureText="Ctrl+Shift+T"/>
             </MenuItem>
 
-            <MenuItem Header="Preferences" x:Name="Preferences">
-                <MenuItem Header="Dark Mode" x:Name="Darkmode"/>
-                <MenuItem Header="Auto Save" x:Name="AutoSave" IsCheckable="True"/>
-            </MenuItem>
+            <!--<MenuItem Header="Preferences" x:Name="Preferences">
+                <MenuItem Header="Dark Mode" x:Name="Darkmode" IsCheckable="True" Checked="Darkmode_Checked"/>
+            </MenuItem>-->
 
             <MenuItem Header="Help" x:Name="Help">
-                <MenuItem Header="About" x:Name="About"/>
-                <MenuItem Header="Report" x:Name="Report"/>
+                <MenuItem Header="About" Click="About_Click"/>
             </MenuItem>
         </Menu>
 

@@ -111,6 +111,9 @@
     <Compile Include="FindWindow.xaml.cs">
       <DependentUpon>FindWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GotoWindow.xaml.cs">
+      <DependentUpon>GotoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Snippets\CSnippet.cs" />
     <Compile Include="Snippets\CPlusPlusSnippet.cs" />
     <Compile Include="Classes\JsonDeserialize.cs" />
@@ -132,6 +135,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="GotoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="RichTextBoxUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -145,7 +152,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\MainTabItem.cs" />
-    <Compile Include="Classes\SyntaxHighlight.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -210,6 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resources\TextIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\Information.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="SublimeIcon.png" />

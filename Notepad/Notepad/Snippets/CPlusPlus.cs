@@ -45,7 +45,7 @@ namespace Notepad.Snippets
         public void Highlight()
         {
             MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-            RichTextBoxUC richtextBox = (mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl;
+            RichTextBoxUC richtextBox = mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].RichTextBox;
 
             richtextBox.currentCaret = richtextBox.richTextBox.SelectionStart;
             int length = richtextBox.richTextBox.SelectionLength;
@@ -69,7 +69,7 @@ namespace Notepad.Snippets
         public void HighlightRange(int start, int length)
         {
             MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-            RichTextBoxUC richtextBox = (mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].Content as TabItemContentUC).richTextBoxUserControl;
+            RichTextBoxUC richtextBox = mainWindow.tabItems[mainWindow.tabControl.SelectedIndex].RichTextBox;
 
 
             richtextBox.currentCaret = richtextBox.richTextBox.SelectionStart;

@@ -59,5 +59,24 @@ namespace Notepad.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to See More Information at https://github.com/thinhlh/Notepad.
+        /// </summary>
+        internal static string Information {
+            get {
+                return ResourceManager.GetString("Information", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] JavaSnippet {
+            get {
+                object obj = ResourceManager.GetObject("JavaSnippet", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
